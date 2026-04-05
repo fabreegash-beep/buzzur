@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>عبز تربح | مسابقة المعرفة التفاعلية</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(145deg, #0b2b3b 0%, #1a4a5f 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Glassmorphic container */
+        .app-container {
+            max-width: 700px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(2px);
+            border-radius: 48px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .panel {
+            padding: 30px 28px;
+        }
+
+        h1, h2 {
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e2a3a, #0f2c39);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        h1 i, h2 i {
+            color: #f39c12;
+            margin-left: 12px;
+        }
+
+        /* Inputs & selects */
+        .input-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #1f3b43;
+            font-size: 0.9rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e0eef2;
+            border-radius: 28px;
+            font-size: 1rem;
+            font-family: 'Cairo', sans-serif;
+            background: white;
+            transition: 0.2s;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74,144,226,0.2);
+        }
+
+        .btn {
+            padding: 14px 22px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(95deg, #2c7da0, #1f5e7a);
+            color: white;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.02);
+        }
+
+        .btn-success {
+            background: linear-gradient(95deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(95deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(95deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .question-card {
+            background: linear-gradient(125deg, #0f2c3b, #1b4e62);
+            padding: 24px;
+            border-radius: 38px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 15px 25px rgba(0,0,0,0.3);
+            margin: 20px 0;
+        }
+
+        .question-text {
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            line-height: 1.4;
+        }
+
+        .answer-hint {
+            background: rgba(0,0,0,0.3);
+            border-radius: 60px;
+            display: inline-block;
+            padding: 6px 18px;
+            font-size: 0.9rem;
+            margin-top: 12px;
+        }
+
+        .buzzer-btn {
+            width: 170px;
+            height: 170px;
+            background: radial-gradient(circle at 30% 20%, #ff4d4d, #b91c1c);
+            border: none;
+            border-radius: 50%;
+            font-size: 28px;
+            font-weight: 800;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 12px 0 0 #7a2e2e;
+            transition: 0.08s linear;
+            margin: 15px auto;
+            display: block;
+            font-family: monospace;
+            letter-spacing: 2px;
+        }
+
+        .buzzer-btn:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 6px 0 0 #7a2e2e;
+        }
+
+        .buzzer-btn:disabled {
+            background: #6c757d;
+            box-shadow: 0 8px 0 #3a3f44;
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.6;
+        }
+
+        .alert-buzzer {
+            background: #fff8e7;
+            border-right: 8px solid #f1c40f;
+            padding: 18px;
+            border-radius: 28px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .leaderboard {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fef9e8;
+            border-radius: 28px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .leaderboard th, .leaderboard td {
+            padding: 12px 16px;
+            text-align: center;
+            border-bottom: 1px solid #ffe6b3;
+        }
+
+        .leaderboard th {
+            background: #ffdfaa;
+            color: #4a2c00;
+        }
+
+        .winner-screen {
+            background: linear-gradient(145deg, #f9e45b, #ffc107);
+            padding: 25px;
+            border-radius: 45px;
+            text-align: center;
+            color: #2c3e2f;
+            font-weight: 800;
+            margin-top: 20px;
+        }
+
+        .toast-msg {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c3e50;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-weight: bold;
+            z-index: 1000;
+            animation: fadeUp 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px);}
+            to { opacity: 1; transform: translateX(-50%) translateY(0);}
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .room-badge {
+            background: #1e2a3a;
+            color: #ffd966;
+            padding: 8px 18px;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        hr {
+            margin: 20px 0;
+            border-color: #d4e6f1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- شاشة الإعداد -->
+    <div id="setup-screen" class="panel">
+        <h1><i class="fas fa-crown"></i> عبز تربح</h1>
+        <div class="input-group">
+            <label><i class="fas fa-user"></i> اسمك التنافسي</label>
+            <input type="text" id="user-name" placeholder="مثلاً: الأسطورة X" autocomplete="off">
+        </div>
+        <div id="admin-options">
+            <div class="input-group">
+                <label><i class="fas fa-trophy"></i> هدف الفوز (النقاط)</label>
+                <select id="win-limit">
+                    <option value="50">🏆 50 نقطة</option>
+                    <option value="70" selected>🔥 70 نقطة</option>
+                    <option value="100">👑 100 نقطة</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="initAdmin()"><i class="fas fa-door-open"></i> إنشاء غرفة وبدء المسابقة</button>
+        </div>
+        <hr>
+        <div class="input-group">
+            <label><i class="fas fa-key"></i> رقم الغرفة للانضمام</label>
+            <input type="number" id="room-input" placeholder="مثال: 1234">
+        </div>
+        <button class="btn btn-primary" style="background: #2e7d64;" onclick="joinRoom()"><i class="fas fa-users"></i> انضمام كمتسابق</button>
+    </div>
+
+    <!-- واجهة المضيف (صاحب الغرفة) -->
+    <div id="admin-view" class="panel hidden">
+        <div class="flex-between">
+            <div class="room-badge"><i class="fas fa-hashtag"></i> غرفة: <span id="admin-room-id">---</span></div>
+            <div class="room-badge"><i class="fas fa-bullseye"></i> الهدف: <span id="goal-display">--</span></div>
+        </div>
+        <div class="question-card">
+            <div class="question-text"><span id="admin-q-text">تحميل السؤال...</span></div>
+            <div class="answer-hint"><i class="fas fa-lightbulb"></i> الجواب السري: <span id="admin-a-text">...</span></div>
+        </div>
+        
+        <div id="buzzer-alert" class="alert-buzzer hidden">
+            <span><i class="fas fa-bell" style="color:#e67e22;"></i> <strong id="first-player-name">...</strong> ضغط أولاً! يحق له الإجابة.</span>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-success" style="width:auto; padding:8px 20px;" onclick="handleAnswer(true)"><i class="fas fa-check-circle"></i> صحيحة ✅</button>
+                <button class="btn btn-danger" style="width:auto; padding:8px 20px;" onclick="handleAnswer(false)"><i class="fas fa-times-circle"></i> خاطئة ❌</button>
+            </div>
+        </div>
+
+        <button class="btn btn-warning" onclick="nextQuestion()"><i class="fas fa-forward-step"></i> تغيير السؤال + التالي</button>
+        <h3 style="margin-top: 20px;"><i class="fas fa-ranking-star"></i> لوحة المتصدرين (المتسابقون فقط)</h3>
+        <table class="leaderboard">
+            <thead><tr><th>#</th><th>اللاعب</th><th>⭐ النقاط</th></tr></thead>
+            <tbody id="admin-list"></tbody>
+        </table>
+    </div>
+
+    <!-- واجهة المتسابق -->
+    <div id="guest-view" class="panel hidden">
+        <div class="flex-between">
+            <div class="room-badge"><i class="fas fa-door-open"></i> غرفة: <span id="guest-room-display"></span></div>
+            <div class="room-badge"><i class="fas fa-flag-checkered"></i> الهدف: <span id="guest-goal-display">--</span></div>
+        </div>
+        <div id="game-content">
+            <div class="question-card">
+                <div class="question-text"><span id="guest-q-text">استعد للانطلاق...</span></div>
+            </div>
+            <button id="buzzer-btn" class="buzzer-btn" onclick="pressBuzzer()"><i class="fas fa-hand-fist"></i> BUZZ</button>
+            <p id="msg-status" style="text-align:center; font-weight:600; margin:10px 0; color:#2c3e50;"><i class="fas fa-microphone-alt"></i> انتظر ظهور السؤال!</p>
+        </div>
+        <div id="winner-screen" class="winner-screen hidden">
+            <i class="fas fa-trophy" style="font-size: 3rem;"></i>
+            <h2>الفائز هو <span id="winner-name"></span>! 🎉</h2>
+            <p>إنجاز عظيم يستحق الإشادة</p>
+        </div>
+        <h3><i class="fas fa-chart-simple"></i> الترتيب المباشر (المتسابقون)</h3>
+        <table class="leaderboard">
+            <thead><tr><th>#</th><th>اللاعب</th><th>النقاط</th></tr></thead>
+            <tbody id="guest-list"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Firebase Config
+    const firebaseConfig = {
+        apiKey: "AIzaSyCTKYD680Jdbl0azC9RTtuKZBaLX2uU_Ck",
+        authDomain: "my-online-store-34f34.firebaseapp.com",
+        databaseURL: "https://my-online-store-34f34-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "my-online-store-34f34",
+        storageBucket: "my-online-store-34f34.firebasestorage.app",
+        messagingSenderId: "288655549705",
+        appId: "1:288655549705:web:06901ce4ac1a50eebe1fd8"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // بنك الأسئلة مع إجابات دقيقة
+    const questions = [
+        { q: "🇯🇵 ما هي عاصمة اليابان؟", a: "طوكيو" },
+        { q: "🐋 ما هو أكبر حيوان على وجه الأرض؟", a: "الحوت الأزرق" },
+        { q: "🌍 كم عدد قارات العالم؟", a: "7" },
+        { q: "☄️ أسرع كوكب في الدوران حول الشمس؟", a: "عطارد" },
+        { q: "🍎 من هو مكتشف الجاذبية الأرضية؟", a: "نيوتن" },
+        { q: "🇪🇬 عاصمة مصر؟", a: "القاهرة" },
+        { q: "🧪 ما هو المعدن السائل الوحيد في درجة حرارة الغرفة؟", a: "الزئبق" },
+        { q: "⚡ أعلى قمة جبلية في العالم؟", a: "إيفرست" },
+        { q: "📖 من هو مؤلف رحلة ابن بطوطة؟", a: "ابن بطوطة" },
+        { q: "🎨 من رسم لوحة الموناليزا؟", a: "ليوناردو دافنشي" }
+    ];
+
+    let currentRoom = "";
+    let myName = "";
+    let winScore = 70;
+    let currentToastTimeout = null;
+    let isHost = false;      // نعرف إذا كان المستخدم الحالي هو المضيف (صاحب الغرفة)
+
+    // وظيفة عرض رسالة عائمة (toast) احترافية
+    function showFloatingMessage(message, isSuccess = false) {
+        if (currentToastTimeout) clearTimeout(currentToastTimeout);
+        const existingToast = document.querySelector('.toast-msg');
+        if(existingToast) existingToast.remove();
+        const toast = document.createElement('div');
+        toast.className = 'toast-msg';
+        toast.innerHTML = isSuccess ? `<i class="fas fa-bolt" style="color:#f9d423;"></i> ${message}` : `${message}`;
+        if(isSuccess) toast.style.background = "#2ecc71";
+        else toast.style.background = "#e67e22";
+        document.body.appendChild(toast);
+        currentToastTimeout = setTimeout(() => toast.remove(), 2000);
+    }
+
+    // عرض إجابة صحيحة مع emoji قوة وتختفي تلقائياً للمضيف والمتسابق
+    function notifyCorrectAnswer(playerName) {
+        if(document.getElementById('guest-view') && !document.getElementById('guest-view').classList.contains('hidden')) {
+            showFloatingMessage(`🔥 ${playerName || 'أنت'} أجبت إجابة صحيحة! +10 نقاط 💪`, true);
+        } else if(document.getElementById('admin-view') && !document.getElementById('admin-view').classList.contains('hidden')) {
+            showFloatingMessage(`✔️ إجابة صحيحة للاعب ${playerName} +10 نقاط 🚀`, true);
+        } else {
+            showFloatingMessage(`✅ إجابة صحيحة! قوة المعرفة 💪`, true);
+        }
+    }
+
+    function notifyWrongAnswer(playerName) {
+        if(document.getElementById('guest-view') && !document.getElementById('guest-view').classList.contains('hidden')) {
+            showFloatingMessage(`❌ إجابة خاطئة يا ${playerName || ''} -5 نقاط`, false);
+        } else {
+            showFloatingMessage(`⚠️ إجابة خاطئة للاعب ${playerName} -5 نقاط`, false);
+        }
+    }
+
+    function initAdmin() {
+        let rawName = document.getElementById('user-name').value.trim();
+        if(!rawName) rawName = "المضيف";
+        myName = rawName;
+        isHost = true;
+        currentRoom = Math.floor(1000 + Math.random() * 9000);
+        winScore = parseInt(document.getElementById('win-limit').value);
+        const roomRef = db.ref(`rooms/${currentRoom}`);
+        roomRef.set({
+            currentQuestionIndex: 0,
+            winLimit: winScore,
+            firstPress: null,
+            winner: null,
+            createdAt: Date.now(),
+            hostName: myName   // حفظ اسم المضيف لمعرفة من هو في قاعدة البيانات
+        });
+        // إضافة المضيف كلاعب بصفر نقاط (سيتم استبعاده من لوحة المتصدرين لاحقاً)
+        db.ref(`rooms/${currentRoom}/players/${myName}`).set({ name: myName, score: 0, isHost: true });
+        document.getElementById('admin-room-id').innerText = currentRoom;
+        document.getElementById('goal-display').innerText = winScore;
+        showView('admin-view');
+        startSync();
+        showFloatingMessage(`تم إنشاء الغرفة بنجاح! الرقم: ${currentRoom}`, true);
+    }
+
+    function joinRoom() {
+        let rawName = document.getElementById('user-name').value.trim();
+        if(!rawName) return showFloatingMessage("⚠️ أدخل اسمك أولاً", false);
+        myName = rawName;
+        isHost = false;
+        let roomCode = document.getElementById('room-input').value.trim();
+        if(!roomCode) return showFloatingMessage("📛 رقم الغرفة مطلوب", false);
+        currentRoom = roomCode;
+        // التحقق من وجود الغرفة
+        db.ref(`rooms/${currentRoom}`).once('value', (snap) => {
+            if(!snap.exists()) {
+                showFloatingMessage("الغرفة غير موجودة! تأكد من الرقم", false);
+                return;
+            }
+            // منع انضمام شخص بنفس اسم المضيف؟ لا بأس لكن نمنع تسجيل مضيف باسم آخر، لكننا نضيف كلاعب عادي
+            db.ref(`rooms/${currentRoom}/players/${myName}`).set({ name: myName, score: 0, isHost: false });
+            showView('guest-view');
+            document.getElementById('guest-room-display').innerText = currentRoom;
+            startSync();
+            showFloatingMessage("انضممت إلى الحلبة! استعد", true);
+        }).catch(()=> showFloatingMessage("خطأ في الاتصال", false));
+    }
+
+    function showView(viewId) {
+        document.getElementById('setup-screen').classList.add('hidden');
+        document.getElementById('admin-view').classList.add('hidden');
+        document.getElementById('guest-view').classList.add('hidden');
+        document.getElementById(viewId).classList.remove('hidden');
+    }
+
+    function startSync() {
+        if(!currentRoom) return;
+        // تحديث الهدف
+        db.ref(`rooms/${currentRoom}/winLimit`).on('value', (snap) => {
+            let val = snap.val();
+            if(val) winScore = val;
+            if(document.getElementById('goal-display')) document.getElementById('goal-display').innerText = winScore;
+            if(document.getElementById('guest-goal-display')) document.getElementById('guest-goal-display').innerText = winScore;
+        });
+
+        // السؤال الحالي
+        db.ref(`rooms/${currentRoom}/currentQuestionIndex`).on('value', (snap) => {
+            let idx = snap.val() || 0;
+            let qData = questions[idx % questions.length];
+            if(qData) {
+                if(document.getElementById('admin-q-text')) document.getElementById('admin-q-text').innerText = qData.q;
+                if(document.getElementById('admin-a-text')) document.getElementById('admin-a-text').innerText = qData.a;
+                if(document.getElementById('guest-q-text')) document.getElementById('guest-q-text').innerText = qData.q;
+            } else {
+                let fallback = questions[0];
+                if(document.getElementById('guest-q-text')) document.getElementById('guest-q-text').innerText = fallback.q;
+            }
+        });
+
+        // حالة الضغط الأول
+        db.ref(`rooms/${currentRoom}/firstPress`).on('value', (snap) => {
+            const firstPlayer = snap.val();
+            if(firstPlayer) {
+                if(document.getElementById('buzzer-alert')) document.getElementById('buzzer-alert').classList.remove('hidden');
+                if(document.getElementById('first-player-name')) document.getElementById('first-player-name').innerText = firstPlayer;
+                if(document.getElementById('msg-status')) document.getElementById('msg-status').innerHTML = `<i class="fas fa-bell"></i> ⚡ ${firstPlayer} ضغط أولاً! انتظر قرار المضيف.`;
+                if(document.getElementById('buzzer-btn')) document.getElementById('buzzer-btn').disabled = true;
+            } else {
+                if(document.getElementById('buzzer-alert')) document.getElementById('buzzer-alert').classList.add('hidden');
+                if(document.getElementById('msg-status')) document.getElementById('msg-status').innerHTML = `<i class="fas fa-fist-raised"></i> اضغط الجرس بسرعة لتكون الأول!`;
+                if(document.getElementById('buzzer-btn')) document.getElementById('buzzer-btn').disabled = false;
+            }
+        });
+
+        // تحديث قائمة اللاعبين + الفوز التلقائي + إخفاء المضيف من الترتيب المباشر
+        db.ref(`rooms/${currentRoom}/players`).on('value', (snap) => {
+            const players = snap.val() || {};
+            
+            // تحويل اللاعبين إلى مصفوفة وتصفية المضيف (أي لاعب يحمل isHost === true أو اسمه يساوي hostName المخزن)
+            // نأخذ أولاً hostName من الـ room
+            db.ref(`rooms/${currentRoom}/hostName`).once('value', (hostSnap) => {
+                const hostNameFromRoom = hostSnap.val();
+                let playersArray = Object.values(players);
+                // تصفية: استبعاد اللاعب الذي هو المضيف (سواء كان يحوي isHost=true أو اسمه يساوي hostName)
+                let filteredPlayers = playersArray.filter(p => {
+                    if(p.isHost === true) return false;
+                    if(hostNameFromRoom && p.name === hostNameFromRoom) return false;
+                    return true;
+                });
+                // ترتيب حسب النقاط تنازلياً
+                let sorted = filteredPlayers.sort((a,b) => b.score - a.score);
+                
+                let adminHtml = "";
+                let guestHtml = "";
+                let rank = 1;
+                for(let p of sorted) {
+                    adminHtml += `<tr><td>${rank++}</td><td><i class="fas fa-user-astronaut"></i> ${p.name}</td><td style="font-weight:bold;color:#f39c12;">${p.score}</td></tr>`;
+                }
+                rank = 1;
+                for(let p of sorted) {
+                    guestHtml += `<tr><td>${rank++}</td><td><i class="fas fa-user"></i> ${p.name}</td><td>🏅 ${p.score}</td></tr>`;
+                }
+                if(document.getElementById('admin-list')) document.getElementById('admin-list').innerHTML = adminHtml || '<tr><td colspan="3">لا يوجد متسابقون بعد</td></tr>';
+                if(document.getElementById('guest-list')) document.getElementById('guest-list').innerHTML = guestHtml || '<tr><td colspan="3">لا يوجد متسابقون بعد</td></tr>';
+                
+                // التحقق من وصول أي لاعب (من المصفاة) للهدف
+                for(let p of sorted) {
+                    if(p.score >= winScore) {
+                        db.ref(`rooms/${currentRoom}/winner`).set(p.name);
+                        break;
+                    }
+                }
+            });
+        });
+
+        // إعلان الفائز
+        db.ref(`rooms/${currentRoom}/winner`).on('value', (snap) => {
+            const winnerName = snap.val();
+            if(winnerName) {
+                if(document.getElementById('game-content')) document.getElementById('game-content').classList.add('hidden');
+                if(document.getElementById('winner-screen')) document.getElementById('winner-screen').classList.remove('hidden');
+                if(document.getElementById('winner-name')) document.getElementById('winner-name').innerText = winnerName;
+                if(document.getElementById('buzzer-btn')) document.getElementById('buzzer-btn').disabled = true;
+                showFloatingMessage(`🏆 تتويج البطل ${winnerName} فاز بالمسابقة 🎉`, true);
+            } else {
+                if(document.getElementById('game-content') && document.getElementById('game-content').classList.contains('hidden')) {
+                    document.getElementById('game-content').classList.remove('hidden');
+                    if(document.getElementById('winner-screen')) document.getElementById('winner-screen').classList.add('hidden');
+                }
+            }
+        });
+    }
+
+    function pressBuzzer() {
+        if(!currentRoom) return;
+        db.ref(`rooms/${currentRoom}/firstPress`).transaction((current) => {
+            if(current === null) return myName;
+            else return current;
+        }, (error, committed, snapshot) => {
+            if(committed && snapshot.val() === myName) {
+                showFloatingMessage(`🔔 أنت ضغطت أولاً! انتظر دورك للإجابة.`, false);
+            } else if(committed === false && snapshot.val() !== myName && snapshot.val() !== null) {
+                showFloatingMessage(`⏳ سبقك ${snapshot.val()} بالضغط!`, false);
+            }
+        });
+    }
+
+    function nextQuestion() {
+        if(!currentRoom) return;
+        db.ref(`rooms/${currentRoom}/currentQuestionIndex`).transaction(idx => (idx || 0) + 1);
+        db.ref(`rooms/${currentRoom}/firstPress`).set(null);
+        showFloatingMessage("⏩ تم تغيير السؤال، استعدوا!", true);
+    }
+
+    function handleAnswer(correct) {
+        db.ref(`rooms/${currentRoom}/firstPress`).once('value', (snap) => {
+            const playerWhoPressed = snap.val();
+            if(!playerWhoPressed) {
+                showFloatingMessage("لا يوجد لاعب ضغط أولاً!", false);
+                return;
+            }
+            if(correct) {
+                // إضافة 10 نقاط
+                db.ref(`rooms/${currentRoom}/players/${playerWhoPressed}/score`).transaction(s => (s || 0) + 10);
+                notifyCorrectAnswer(playerWhoPressed);
+                // بعد الإجابة الصحيحة ننتقل للسؤال التالي
+                nextQuestion();
+            } else {
+                // خصم 5 نقاط
+                db.ref(`rooms/${currentRoom}/players/${playerWhoPressed}/score`).transaction(s => (s || 0) - 5);
+                notifyWrongAnswer(playerWhoPressed);
+                // إعادة ضبط الضغط ليتاح لأي لاعب الضغط مجدداً
+                db.ref(`rooms/${currentRoom}/firstPress`).set(null);
+            }
+        });
+    }
+
+    // تعريف الوظائف عمومياً
+    window.initAdmin = initAdmin;
+    window.joinRoom = joinRoom;
+    window.pressBuzzer = pressBuzzer;
+    window.nextQuestion = nextQuestion;
+    window.handleAnswer = handleAnswer;
+</script>
+</body>
+</html>
