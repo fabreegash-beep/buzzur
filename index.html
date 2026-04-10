@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>النخبة آرينا | مسابقة المعرفة التفاعلية</title>
+    <title>النخبة آرينا | مسابقة المعرفة التفاعلية (إدارة كاملة)</title>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -11,12 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Cairo', sans-serif;
             background: linear-gradient(145deg, #0b2b3b 0%, #1a4a5f 100%);
@@ -26,303 +21,62 @@
             justify-content: center;
             padding: 20px;
         }
-
         .app-container {
-            max-width: 700px;
+            max-width: 750px;
             width: 100%;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(2px);
             border-radius: 48px;
             box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2);
             overflow: hidden;
-            transition: all 0.3s ease;
         }
-
-        .panel {
-            padding: 30px 28px;
-        }
-
-        h1, h2 {
-            font-weight: 800;
-            background: linear-gradient(135deg, #1e2a3a, #0f2c39);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
-
-        h1 i, h2 i {
-            color: #f39c12;
-            margin-left: 12px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-            text-align: right;
-        }
-
-        .input-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #1f3b43;
-            font-size: 0.9rem;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid #e0eef2;
-            border-radius: 28px;
-            font-size: 1rem;
-            font-family: 'Cairo', sans-serif;
-            background: white;
-            transition: 0.2s;
-            outline: none;
-        }
-
-        input:focus, select:focus {
-            border-color: #4a90e2;
-            box-shadow: 0 0 0 3px rgba(74,144,226,0.2);
-        }
-
-        .btn {
-            padding: 14px 22px;
-            border: none;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            font-family: 'Cairo', sans-serif;
-        }
-
-        .btn-primary {
-            background: linear-gradient(95deg, #2c7da0, #1f5e7a);
-            color: white;
-            box-shadow: 0 5px 12px rgba(0,0,0,0.2);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.02);
-        }
-
-        .btn-success {
-            background: linear-gradient(95deg, #2ecc71, #27ae60);
-            color: white;
-        }
-
-        .btn-danger {
-            background: linear-gradient(95deg, #e74c3c, #c0392b);
-            color: white;
-        }
-
-        .btn-warning {
-            background: linear-gradient(95deg, #f39c12, #e67e22);
-            color: white;
-        }
-
-        .btn-info {
-            background: linear-gradient(95deg, #3498db, #2980b9);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: linear-gradient(95deg, #95a5a6, #7f8c8d);
-            color: white;
-        }
-
-        .question-card {
-            background: linear-gradient(125deg, #0f2c3b, #1b4e62);
-            padding: 24px;
-            border-radius: 38px;
-            color: white;
-            text-align: center;
-            box-shadow: 0 15px 25px rgba(0,0,0,0.3);
-            margin: 20px 0;
-        }
-
-        .question-text {
-            font-size: 1.7rem;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-            line-height: 1.4;
-        }
-
-        .answer-hint {
-            background: rgba(0,0,0,0.3);
-            border-radius: 60px;
-            display: inline-block;
-            padding: 6px 18px;
-            font-size: 0.9rem;
-            margin-top: 12px;
-        }
-
-        .buzzer-btn {
-            width: 170px;
-            height: 170px;
-            background: radial-gradient(circle at 30% 20%, #ff4d4d, #b91c1c);
-            border: none;
-            border-radius: 50%;
-            font-size: 28px;
-            font-weight: 800;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 12px 0 0 #7a2e2e;
-            transition: 0.08s linear;
-            margin: 15px auto;
-            display: block;
-            font-family: monospace;
-            letter-spacing: 2px;
-        }
-
-        .buzzer-btn:active:not(:disabled) {
-            transform: translateY(6px);
-            box-shadow: 0 6px 0 0 #7a2e2e;
-        }
-
-        .buzzer-btn:disabled {
-            background: #6c757d;
-            box-shadow: 0 8px 0 #3a3f44;
-            cursor: not-allowed;
-            transform: none;
-            opacity: 0.6;
-        }
-
-        .alert-buzzer {
-            background: #fff8e7;
-            border-right: 8px solid #f1c40f;
-            padding: 18px;
-            border-radius: 28px;
-            margin: 15px 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .control-buttons {
-            display: flex;
-            gap: 12px;
-            margin: 15px 0;
-            flex-wrap: wrap;
-        }
-
-        .control-buttons .btn {
-            flex: 1;
-            min-width: 120px;
-        }
-
-        .category-row {
-            display: flex;
-            gap: 12px;
-            margin: 15px 0;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .category-row select {
-            flex: 2;
-            min-width: 150px;
-            margin: 0;
-        }
-
-        .category-row .btn {
-            flex: 1;
-            min-width: 120px;
-            margin: 0;
-        }
-
-        .leaderboard {
-            width: 100%;
-            border-collapse: collapse;
-            background: #fef9e8;
-            border-radius: 28px;
-            overflow: hidden;
-            margin: 15px 0;
-        }
-
-        .leaderboard th, .leaderboard td {
-            padding: 12px 16px;
-            text-align: center;
-            border-bottom: 1px solid #ffe6b3;
-        }
-
-        .leaderboard th {
-            background: #ffdfaa;
-            color: #4a2c00;
-        }
-
-        .winner-screen {
-            background: linear-gradient(145deg, #f9e45b, #ffc107);
-            padding: 25px;
-            border-radius: 45px;
-            text-align: center;
-            color: #2c3e2f;
-            font-weight: 800;
-            margin-top: 20px;
-        }
-
-        .toast-msg {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #2c3e50;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 60px;
-            font-weight: bold;
-            z-index: 1000;
-            animation: fadeUp 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateX(-50%) translateY(20px);}
-            to { opacity: 1; transform: translateX(-50%) translateY(0);}
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .room-badge {
-            background: #1e2a3a;
-            color: #ffd966;
-            padding: 8px 18px;
-            border-radius: 100px;
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
-
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        hr {
-            margin: 20px 0;
-            border-color: #d4e6f1;
-        }
+        .panel { padding: 30px 28px; }
+        h1, h2 { font-weight: 800; background: linear-gradient(135deg, #1e2a3a, #0f2c39); -webkit-background-clip: text; background-clip: text; color: transparent; display: inline-block; margin-bottom: 15px; }
+        h1 i, h2 i { color: #f39c12; margin-left: 12px; }
+        .input-group { margin-bottom: 20px; text-align: right; }
+        .input-group label { display: block; font-weight: 600; margin-bottom: 6px; color: #1f3b43; font-size: 0.9rem; }
+        input, select { width: 100%; padding: 14px 18px; border: 2px solid #e0eef2; border-radius: 28px; font-size: 1rem; font-family: 'Cairo', sans-serif; background: white; outline: none; }
+        input:focus, select:focus { border-color: #4a90e2; box-shadow: 0 0 0 3px rgba(74,144,226,0.2); }
+        .btn { padding: 14px 22px; border: none; border-radius: 40px; font-weight: 700; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; font-family: 'Cairo', sans-serif; transition: 0.2s; }
+        .btn-primary { background: linear-gradient(95deg, #2c7da0, #1f5e7a); color: white; box-shadow: 0 5px 12px rgba(0,0,0,0.2); }
+        .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.02); }
+        .btn-success { background: linear-gradient(95deg, #2ecc71, #27ae60); color: white; }
+        .btn-danger { background: linear-gradient(95deg, #e74c3c, #c0392b); color: white; }
+        .btn-warning { background: linear-gradient(95deg, #f39c12, #e67e22); color: white; }
+        .btn-info { background: linear-gradient(95deg, #3498db, #2980b9); color: white; }
+        .btn-secondary { background: linear-gradient(95deg, #95a5a6, #7f8c8d); color: white; }
+        .btn-dark { background: linear-gradient(95deg, #2c3e50, #1a252f); color: white; }
+        .question-card { background: linear-gradient(125deg, #0f2c3b, #1b4e62); padding: 24px; border-radius: 38px; color: white; text-align: center; box-shadow: 0 15px 25px rgba(0,0,0,0.3); margin: 20px 0; }
+        .question-text { font-size: 1.7rem; font-weight: 700; line-height: 1.4; }
+        .answer-hint { background: rgba(0,0,0,0.3); border-radius: 60px; display: inline-block; padding: 6px 18px; font-size: 0.9rem; margin-top: 12px; }
+        .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0 15px; }
+        .option-btn { background: #2c3e50; border: 2px solid #f1c40f; border-radius: 50px; padding: 12px; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.95rem; color: white; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; opacity: 0.9; }
+        .option-btn.disabled-opt { cursor: default; background: #1a2a36; border-color: #7f8c8d; opacity: 0.7; }
+        .buzzer-btn { width: 170px; height: 170px; background: radial-gradient(circle at 30% 20%, #ff4d4d, #b91c1c); border: none; border-radius: 50%; font-size: 28px; font-weight: 800; color: white; cursor: pointer; box-shadow: 0 12px 0 0 #7a2e2e; transition: 0.08s linear; margin: 15px auto; display: block; font-family: monospace; }
+        .buzzer-btn:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 6px 0 0 #7a2e2e; }
+        .buzzer-btn:disabled { background: #6c757d; box-shadow: 0 8px 0 #3a3f44; cursor: not-allowed; opacity: 0.6; }
+        .alert-buzzer { background: #fff8e7; border-right: 8px solid #f1c40f; padding: 18px; border-radius: 28px; margin: 15px 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+        .control-buttons { display: flex; gap: 12px; margin: 15px 0; flex-wrap: wrap; }
+        .control-buttons .btn { flex: 1; min-width: 120px; }
+        .category-row { display: flex; gap: 12px; margin: 15px 0; align-items: center; flex-wrap: wrap; }
+        .category-row select { flex: 2; min-width: 150px; margin: 0; }
+        .category-row .btn { flex: 1; min-width: 120px; margin: 0; }
+        .leaderboard { width: 100%; border-collapse: collapse; background: #fef9e8; border-radius: 28px; overflow: hidden; margin: 15px 0; }
+        .leaderboard th, .leaderboard td { padding: 12px 16px; text-align: center; border-bottom: 1px solid #ffe6b3; }
+        .leaderboard th { background: #ffdfaa; color: #4a2c00; }
+        .winner-screen { background: linear-gradient(145deg, #f9e45b, #ffc107); padding: 25px; border-radius: 45px; text-align: center; color: #2c3e2f; font-weight: 800; margin-top: 20px; }
+        .toast-msg { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2c3e50; color: white; padding: 12px 24px; border-radius: 60px; font-weight: bold; z-index: 1000; animation: fadeUp 0.3s ease; display: flex; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        @keyframes fadeUp { from { opacity: 0; transform: translateX(-50%) translateY(20px);} to { opacity: 1; transform: translateX(-50%) translateY(0);} }
+        .hidden { display: none; }
+        .room-badge { background: #1e2a3a; color: #ffd966; padding: 8px 18px; border-radius: 100px; font-size: 0.9rem; font-weight: bold; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        hr { margin: 20px 0; border-color: #d4e6f1; }
+        .small-toggle { background: #2c7da0; border: none; border-radius: 40px; padding: 8px 18px; color: white; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .kick-btn { background: #c0392b; border: none; border-radius: 30px; padding: 4px 12px; color: white; font-weight: bold; cursor: pointer; margin-right: 8px; font-size: 0.8rem; }
+        .kick-btn:hover { background: #e74c3c; }
     </style>
 </head>
 <body>
-
 <div class="app-container">
     <!-- شاشة الإعداد -->
     <div id="setup-screen" class="panel">
@@ -350,13 +104,12 @@
         <button class="btn btn-primary" style="background: #2e7d64;" onclick="joinRoom()"><i class="fas fa-users"></i> انضمام كمتسابق</button>
     </div>
 
-    <!-- واجهة المضيف (صاحب الغرفة) -->
+    <!-- واجهة المضيف -->
     <div id="admin-view" class="panel hidden">
         <div class="flex-between">
             <div class="room-badge"><i class="fas fa-hashtag"></i> غرفة: <span id="admin-room-id">---</span></div>
             <div class="room-badge"><i class="fas fa-bullseye"></i> الهدف: <span id="goal-display">--</span></div>
         </div>
-        
         <div class="category-row">
             <select id="category-select-live">
                 <option value="all">🌍 مختلط (جميع المجالات)</option>
@@ -374,17 +127,15 @@
             </select>
             <button class="btn btn-info" onclick="changeCategory()"><i class="fas fa-exchange-alt"></i> تغيير المجال الآن</button>
         </div>
-
         <div class="question-card">
             <div class="question-text"><span id="admin-q-text">تحميل السؤال...</span></div>
-            <div class="answer-hint"><i class="fas fa-lightbulb"></i> الجواب السري: <span id="admin-a-text">...</span></div>
+            <div class="answer-hint"><i class="fas fa-lightbulb"></i> الجواب الصحيح: <span id="admin-a-text">...</span></div>
+            <button class="small-toggle" onclick="toggleOptionsVisibility()"><i class="fas fa-list-ul"></i> إظهار/إخفاء الاقتراحات للمتسابقين</button>
         </div>
-        
         <div class="control-buttons">
-            <button class="btn btn-info" onclick="showQuestionToGuests()"><i class="fas fa-eye"></i> عرض السؤال على المتسابقين</button>
-            <button class="btn btn-secondary" onclick="hideQuestionFromGuests()"><i class="fas fa-eye-slash"></i> إخفاء السؤال عن المتسابقين</button>
+            <button class="btn btn-info" onclick="showQuestionToGuests()"><i class="fas fa-eye"></i> عرض السؤال + الاقتراحات</button>
+            <button class="btn btn-secondary" onclick="hideQuestionFromGuests()"><i class="fas fa-eye-slash"></i> إخفاء السؤال والاقتراحات</button>
         </div>
-
         <div id="buzzer-alert" class="alert-buzzer hidden">
             <span><i class="fas fa-bell" style="color:#e67e22;"></i> <strong id="first-player-name">...</strong> ضغط أولاً! يحق له الإجابة.</span>
             <div style="display: flex; gap: 12px;">
@@ -392,13 +143,9 @@
                 <button class="btn btn-danger" style="width:auto; padding:8px 20px;" onclick="handleAnswer(false)"><i class="fas fa-times-circle"></i> خاطئة ❌</button>
             </div>
         </div>
-
         <button class="btn btn-warning" onclick="nextQuestion()"><i class="fas fa-forward-step"></i> تغيير السؤال + التالي</button>
         <h3 style="margin-top: 20px;"><i class="fas fa-ranking-star"></i> لوحة المتصدرين (المتسابقون فقط)</h3>
-        <table class="leaderboard">
-            <thead><tr><th>#</th><th>اللاعب</th><th>⭐ النقاط</th></tr></thead>
-            <tbody id="admin-list"></tbody>
-        </table>
+        <table class="leaderboard"><thead><tr><th>#</th><th>اللاعب</th><th>⭐ النقاط</th><th>إجراء</th></thead><tbody id="admin-list"></tbody></table>
     </div>
 
     <!-- واجهة المتسابق -->
@@ -411,10 +158,11 @@
             <div id="guest-question-container">
                 <div class="question-card">
                     <div class="question-text"><span id="guest-q-text">استعد للانطلاق...</span></div>
+                    <div id="guest-options-area" class="options-grid"></div>
                 </div>
             </div>
             <button id="buzzer-btn" class="buzzer-btn" onclick="pressBuzzer()"><i class="fas fa-hand-fist"></i> BUZZ</button>
-            <p id="msg-status" style="text-align:center; font-weight:600; margin:10px 0; color:#2c3e50;"><i class="fas fa-microphone-alt"></i> انتظر ظهور السؤال!</p>
+            <p id="msg-status" style="text-align:center; font-weight:600; margin:10px 0; color:#2c3e50;"><i class="fas fa-microphone-alt"></i> اضغط الجرس لتكون أول من يجيب!</p>
         </div>
         <div id="winner-screen" class="winner-screen hidden">
             <i class="fas fa-trophy" style="font-size: 3rem;"></i>
@@ -422,10 +170,7 @@
             <p>إنجاز عظيم يستحق الإشادة</p>
         </div>
         <h3><i class="fas fa-chart-simple"></i> الترتيب المباشر (المتسابقون)</h3>
-        <table class="leaderboard">
-            <thead><tr><th>#</th><th>اللاعب</th><th>النقاط</th></tr></thead>
-            <tbody id="guest-list"></tbody>
-        </table>
+        <table class="leaderboard"><thead><tr><th>#</th><th>اللاعب</th><th>النقاط</th></thead><tbody id="guest-list"></tbody></table>
     </div>
 </div>
 
@@ -443,525 +188,183 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // ===================== بنك الأسئلة - 10 مجالات كل مجال 50 سؤال =====================
-    // دالة لتوليد 50 سؤال لكل مجال بشكل تلقائي (مع تنوع)
-    function generateCategoryQuestions(baseName, questionsArray50) {
-        return questionsArray50;
+    // ===================== بنك الأسئلة مع خيارات منطقية =====================
+    function createQuestion(q, correct, opt2, opt3, opt4) {
+        let options = [correct, opt2, opt3, opt4];
+        for(let i = options.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [options[i], options[j]] = [options[j], options[i]]; }
+        return { q, a: correct, options };
     }
 
-    // المجال 1: ثقافة عامة (50 سؤال)
-    const generalQuestions = Array.from({length: 50}, (_, i) => {
-        const list = [
-            {q:"ما هي عاصمة مصر؟", a:"القاهرة"},{q:"ما هي عاصمة السعودية؟", a:"الرياض"},{q:"ما هي عاصمة الإمارات؟", a:"أبوظبي"},
-            {q:"ما هي عاصمة قطر؟", a:"الدوحة"},{q:"ما هي عاصمة الكويت؟", a:"الكويت"},{q:"ما هي عاصمة عمان؟", a:"مسقط"},
-            {q:"ما هي عاصمة البحرين؟", a:"المنامة"},{q:"ما هي عاصمة لبنان؟", a:"بيروت"},{q:"ما هي عاصمة الأردن؟", a:"عمان"},
-            {q:"ما هي عاصمة سوريا؟", a:"دمشق"},{q:"ما هي عاصمة العراق؟", a:"بغداد"},{q:"ما هي عاصمة اليمن؟", a:"صنعاء"},
-            {q:"ما هي عاصمة ليبيا؟", a:"طرابلس"},{q:"ما هي عاصمة تونس؟", a:"تونس"},{q:"ما هي عاصمة الجزائر؟", a:"الجزائر"},
-            {q:"ما هي عاصمة المغرب؟", a:"الرباط"},{q:"ما هي عاصمة موريتانيا؟", a:"نواكشوط"},{q:"ما هي عاصمة السودان؟", a:"الخرطوم"},
-            {q:"ما هي عاصمة الصومال؟", a:"مقديشو"},{q:"ما هي عاصمة جيبوتي؟", a:"جيبوتي"},{q:"ما هي عاصمة جزر القمر؟", a:"موروني"},
-            {q:"من مؤسس الدولة السعودية الحديثة؟", a:"عبدالعزيز آل سعود"},{q:"من هو مؤسس الأندلس؟", a:"طارق بن زياد"},{q:"ما هي أكبر دولة عربية مساحة؟", a:"الجزائر"},
-            {q:"ما هو أطول نهر في العالم؟", a:"النيل"},{q:"ما هو أعلى جبل في أفريقيا؟", a:"كيليمانجارو"},{q:"كم عدد ألوان قوس قزح؟", a:"7"},
-            {q:"ما هو الحيوان الذي يسمى سفينة الصحراء؟", a:"الجمل"},{q:"ما هو أثقل المعادن؟", a:"الأوزميوم"},{q:"ما هو أخف المعادن؟", a:"الليثيوم"},
-            {q:"من هو مؤسس علم الجبر؟", a:"الخوارزمي"},{q:"من هو مكتشف الدورة الدموية؟", a:"ابن النفيس"},{q:"من هو مخترع الميكروسكوب؟", a:"زاكرياس يانسن"},
-            {q:"ما هي أكبر جزيرة في العالم؟", a:"جرينلاند"},{q:"ما هي أصغر دولة في العالم؟", a:"الفاتيكان"},{q:"ما هو أسرع حيوان في العالم؟", a:"الفهد"},
-            {q:"ما هو أطول حيوان في العالم؟", a:"الزرافة"},{q:"كم عدد أسنان الإنسان البالغ؟", a:"32"},{q:"كم عدد عظام الجمجمة؟", a:"22"},
-            {q:"ما هو أطول سور في العالم؟", a:"سور الصين العظيم"},{q:"من هو أول من طاف حول الكعبة؟", a:"إبراهيم عليه السلام"},{q:"من هو أول مؤذن في الإسلام؟", a:"بلال بن رباح"},
-            {q:"ما هو أول مسجد وضع في الأرض؟", a:"المسجد الحرام"},{q:"من هو صاحب كتاب 'الأم'؟", a:"الشافعي"},{q:"من هو قائد معركة اليرموك؟", a:"خالد بن الوليد"},
-            {q:"ما هي السورة التي تسمى قلب القرآن؟", a:"يس"},{q:"من هو الصحابي الملقب بذي النورين؟", a:"عثمان بن عفان"},{q:"ما هو أول جبل وضع على الأرض؟", a:"أبو قبيس"},
-            {q:"من هو آخر الخلفاء الراشدين؟", a:"علي بن أبي طالب"},{q:"ما هي السورة التي ليس فيها بسم الله الرحمن الرحيم؟", a:"التوبة"}
-        ];
-        return list[i % list.length];
-    });
+    const generalQuestions = [
+        createQuestion("ما هي عاصمة مصر؟", "القاهرة", "الإسكندرية", "الجيزة", "الأقصر"),
+        createQuestion("ما هي عاصمة السعودية؟", "الرياض", "جدة", "مكة", "الدمام"),
+        createQuestion("ما هي عاصمة الإمارات؟", "أبوظبي", "دبي", "الشارقة", "عجمان"),
+        createQuestion("ما هي عاصمة قطر؟", "الدوحة", "الريان", "الوكرة", "الخور"),
+        createQuestion("ما هي عاصمة الكويت؟", "مدينة الكويت", "حولي", "الفروانية", "الجهراء"),
+        createQuestion("ما هي عاصمة عمان؟", "مسقط", "صلالة", "صحار", "نزوى"),
+        createQuestion("ما هي عاصمة لبنان؟", "بيروت", "طرابلس", "صيدا", "جبيل"),
+        createQuestion("ما هي عاصمة الأردن؟", "عمان", "الزرقاء", "إربد", "السلط"),
+        createQuestion("ما هي عاصمة العراق؟", "بغداد", "البصرة", "الموصل", "أربيل"),
+        createQuestion("ما هو أطول نهر في العالم؟", "النيل", "الأمازون", "اليانغتسي", "الميسيسيبي"),
+        createQuestion("ما هو أعلى جبل في أفريقيا؟", "كيليمانجارو", "جبل كينيا", "الروبنسون", "دراكنزبرج"),
+        createQuestion("كم عدد ألوان قوس قزح؟", "7", "6", "8", "5"),
+        createQuestion("ما هو الحيوان الذي يسمى سفينة الصحراء؟", "الجمل", "الحصان", "الأسد", "الفيل"),
+        createQuestion("من هو مؤسس علم الجبر؟", "الخوارزمي", "ابن سينا", "الرازي", "الفارابي"),
+        createQuestion("من هو مكتشف الدورة الدموية؟", "ابن النفيس", "جالينوس", "ابن سينا", "هارفي"),
+        createQuestion("ما هي أكبر جزيرة في العالم؟", "جرينلاند", "مدغشقر", "بورنيو", "سومطرة"),
+        createQuestion("ما هي أصغر دولة في العالم؟", "الفاتيكان", "موناكو", "سان مارينو", "ليختنشتاين"),
+        createQuestion("ما هو أسرع حيوان في العالم؟", "الفهد", "الأسد", "النمر", "الغزال"),
+    ];
+    
+    const islamQuestions = [
+        createQuestion("كم عدد أركان الإسلام؟", "5", "6", "7", "4"),
+        createQuestion("كم عدد أركان الإيمان؟", "6", "5", "7", "8"),
+        createQuestion("ما هي السورة التي تسمى عروس القرآن؟", "الرحمن", "يس", "الواقعة", "الملك"),
+        createQuestion("من هو النبي الذي لقب بأبي البشر؟", "آدم", "نوح", "إبراهيم", "محمد"),
+        createQuestion("من هو النبي الذي رأسه يقطر ماء؟", "أيوب", "يونس", "يوسف", "زكريا"),
+        createQuestion("من هو النبي الذي عاش 950 سنة؟", "نوح", "إدريس", "هود", "صالح"),
+        createQuestion("من هو النبي الذي كلمه الله تكليماً؟", "موسى", "عيسى", "إبراهيم", "محمد"),
+        createQuestion("من هو النبي الذي رفعه الله إليه؟", "إدريس", "عيسى", "إلياس", "محمد"),
+        createQuestion("من هو أول مؤذن في الإسلام؟", "بلال بن رباح", "عبدالله بن زيد", "عمرو بن العاص", "سعد بن معاذ"),
+        createQuestion("ما هي السورة التي تمنع دخول الفقر؟", "الواقعة", "الملك", "يس", "الرحمن"),
+    ];
+    
+    const scienceQuestions = [
+        createQuestion("ما هو العنصر الأكثر وفرة في الكون؟", "الهيدروجين", "الهيليوم", "الأكسجين", "الكربون"),
+        createQuestion("ما هو الغاز الذي نتنفسه؟", "الأكسجين", "النيتروجين", "ثاني أكسيد الكربون", "الهيدروجين"),
+        createQuestion("ما هي أقرب كوكب للشمس؟", "عطارد", "الزهرة", "الأرض", "المريخ"),
+        createQuestion("ما هو أكبر كوكب في المجموعة الشمسية؟", "المشتري", "زحل", "نبتون", "أورانوس"),
+        createQuestion("من هو مكتشف الجاذبية؟", "نيوتن", "أينشتاين", "جاليليو", "كوبرنيكوس"),
+        createQuestion("من هو واضع النظرية النسبية؟", "أينشتاين", "نيوتن", "بلانك", "بور"),
+        createQuestion("ما هو أكبر عضو في جسم الإنسان؟", "الجلد", "الكبد", "الدماغ", "القلب"),
+        createQuestion("كم عدد الخلايا العصبية في الدماغ؟", "100 مليار", "10 مليار", "500 مليار", "50 مليار"),
+        createQuestion("ما هي سرعة الضوء؟", "300000 كم/ث", "150000 كم/ث", "450000 كم/ث", "600000 كم/ث"),
+        createQuestion("من هو مخترع المصباح الكهربائي؟", "إديسون", "تيسلا", "فاراداي", "نيوتن"),
+    ];
+    
+    const geographyQuestions = [
+        createQuestion("ما هي عاصمة فرنسا؟", "باريس", "ليون", "مرسيليا", "بوردو"),
+        createQuestion("ما هي عاصمة ألمانيا؟", "برلين", "ميونخ", "فرانكفورت", "هامبورغ"),
+        createQuestion("ما هي عاصمة إيطاليا؟", "روما", "ميلانو", "فلورنسا", "نابولي"),
+        createQuestion("ما هي عاصمة بريطانيا؟", "لندن", "مانشستر", "ليفربول", "برمنغهام"),
+        createQuestion("ما هي أكبر دولة في العالم مساحة؟", "روسيا", "كندا", "الصين", "الولايات المتحدة"),
+        createQuestion("ما هي أصغر دولة في العالم مساحة؟", "الفاتيكان", "موناكو", "ناورو", "توفالو"),
+        createQuestion("ما هو أعلى جبل في العالم؟", "إيفرست", "كيه 2", "كانشينجونجا", "ماكالو"),
+        createQuestion("ما هي أكبر بحيرة في العالم؟", "بحر قزوين", "بحيرة سوبيريور", "بحيرة فكتوريا", "بحيرة تنجانيقا"),
+        createQuestion("ما هي أقدم مدينة في العالم؟", "دمشق", "أريحا", "بغداد", "القاهرة"),
+        createQuestion("ما هي أكثر دولة في العالم سكاناً؟", "الهند", "الصين", "الولايات المتحدة", "إندونيسيا"),
+    ];
+    
+    const sportsQuestions = [
+        createQuestion("كم عدد لاعبي كرة القدم؟", "11", "10", "12", "9"),
+        createQuestion("كم عدد لاعبي كرة السلة؟", "5", "6", "7", "4"),
+        createQuestion("من هو أفضل لاعب كرة قدم في العالم 2023؟", "ميسي", "رونالدو", "مبابي", "هالاند"),
+        createQuestion("من هو هداف كأس العالم التاريخي؟", "كلوزه", "رونالدو", "ميسي", "فونتين"),
+        createQuestion("من هو بطل كأس العالم 2022؟", "الأرجنتين", "فرنسا", "المغرب", "كرواتيا"),
+        createQuestion("من هو بطل دوري أبطال أوروبا 2023؟", "مانشستر سيتي", "ريال مدريد", "إنتر ميلان", "بايرن ميونخ"),
+        createQuestion("من هو أفضل لاعب كرة سلة في التاريخ؟", "مايكل جوردان", "ليبرون جيمس", "كوبي براينت", "لاري بيرد"),
+        createQuestion("من هو بطل كأس أمم أفريقيا 2022؟", "السنغال", "مصر", "المغرب", "الكاميرون"),
+        createQuestion("كم مرة فاز الأهلي بدوري أبطال أفريقيا؟", "10", "9", "11", "8"),
+        createQuestion("من هو هداف الدوري المصري التاريخي؟", "حسن الشاذلي", "محمد أبو تريكة", "حسام حسن", "محمود الخطيب"),
+    ];
 
-    // بناء قاعدة بيانات الأسئلة لكل مجال (50 سؤال لكل مجال)
+    function buildCategory(baseArr, targetCount=50) {
+        let result = [];
+        while(result.length < targetCount) result.push(...baseArr);
+        return result.slice(0, targetCount);
+    }
+    
     const questionsDB = {
-        general: generalQuestions,
-        islam: Array.from({length: 50}, (_, i) => {
-            const list = [
-                {q:"كم عدد أركان الإسلام؟", a:"5"},{q:"كم عدد أركان الإيمان؟", a:"6"},{q:"ما هي السورة التي تسمى عروس القرآن؟", a:"الرحمن"},
-                {q:"من هو النبي الذي لقب بأبي البشر؟", a:"آدم"},{q:"من هو النبي الذي رأسه يقطر ماء؟", a:"أيوب"},{q:"من هو النبي الذي كان يصوم الدهر؟", a:"داود"},
-                {q:"من هو النبي الذي عاش 950 سنة؟", a:"نوح"},{q:"من هو النبي الذي كلمه الله تكليماً؟", a:"موسى"},{q:"من هو النبي الذي رفعه الله إليه؟", a:"إدريس"},
-                {q:"من هو النبي الذي أوتي ملكاً عظيماً؟", a:"سليمان"},{q:"من هو النبي الذي أحيا الطير بإذن الله؟", a:"إبراهيم"},{q:"ما هي السورة التي تمنع دخول الفقر؟", a:"الواقعة"},
-                {q:"ما هي السورة التي تسمى سورة النساء الصغرى؟", a:"الطلاق"},{q:"من هي أم المؤمنين التي كانت بنت أبي بكر؟", a:"عائشة"},{q:"من هو الخليفة الذي فتح بيت المقدس؟", a:"عمر بن الخطاب"},
-                {q:"من هو قائد فتح الأندلس؟", a:"طارق بن زياد"},{q:"من هو مؤسس الدولة العباسية؟", a:"أبو العباس السفاح"},{q:"ما هي الغزوة التي جرح فيها النبي؟", a:"أحد"},
-                {q:"ما هي السورة التي نزلت كاملة في غزوة بني المصطلق؟", a:"المنافقون"},{q:"من هو الملقب بسيف الله المسلول؟", a:"خالد بن الوليد"},{q:"من هو الملقب بأسد الله؟", a:"حمزة بن عبد المطلب"},
-                {q:"كم عدد آيات سورة البقرة؟", a:"286"},{q:"ما هي أول صلاة صلاها النبي بعد البعثة؟", a:"الظهر"},{q:"من هو أول شهيد في الإسلام من الرجال؟", a:"الحارث بن أبي هالة"},
-                {q:"من هي أول شهيدة في الإسلام؟", a:"سمية بنت خياط"},{q:"ما هو اليوم الذي خلق الله فيه آدم؟", a:"الجمعة"},{q:"من هو كاتب الوحي؟", a:"زيد بن ثابت"},
-                {q:"ما هي السورة التي تسمى سنام القرآن؟", a:"البقرة"},{q:"من هو صاحب الغار مع النبي؟", a:"أبو بكر"},{q:"من هو الذي اهتز له عرش الرحمن؟", a:"سعد بن معاذ"},
-                {q:"كم عدد الأنبياء المذكورين في القرآن؟", a:"25"},{q:"من هو النبي الذي أرسل إلى قوم عاد؟", a:"هود"},{q:"من هو النبي الذي أرسل إلى ثمود؟", a:"صالح"},
-                {q:"من هو النبي الذي أرسل إلى مدين؟", a:"شعيب"},{q:"من هو النبي الذي دفنه إبليس؟", a:"هود"},{q:"من هو الملك الذي سخر له الريح؟", a:"سليمان"},
-                {q:"ما هو الحيوان الذي تكلم في القرآن؟", a:"النملة"},{q:"ما هي الطير الذي تكلمت مع سليمان؟", a:"الهدهد"},{q:"من هو الذي بنى السد؟", a:"ذو القرنين"},
-                {q:"كم عدد السور المكية؟", a:"86"},{q:"كم عدد السور المدنية؟", a:"28"},{q:"ما هي أطول آية في القرآن؟", a:"آية الدين"},{q:"من هو الصحابي الذي اهتز له العرش؟", a:"سعد بن معاذ"},
-                {q:"من هو الصحابي الذي غسله الملائكة؟", a:"حنظلة بن أبي عامر"},{q:"من هو أول من أسلم من الموالي؟", a:"زيد بن حارثة"},{q:"من هو أول من أسلم من الصبيان؟", a:"علي بن أبي طالب"},
-                {q:"من هو أول من أسلم من النساء؟", a:"خديجة"},{q:"من هو أول من أسلم من العبيد؟", a:"بلال"},{q:"ما هي المعجزة الخالدة للنبي؟", a:"القرآن"}
-            ];
-            return list[i % list.length];
-        }),
-        science: Array.from({length: 50}, (_, i) => {
-            const list = [
-                {q:"ما هو العنصر الأكثر وفرة في الكون؟", a:"الهيدروجين"},{q:"ما هو العنصر الأكثر وفرة في الأرض؟", a:"الحديد"},{q:"ما هو الغاز الذي نتنفسه؟", a:"الأكسجين"},
-                {q:"ما هو الغاز الذي يشكل 78% من الهواء؟", a:"النيتروجين"},{q:"ما هي أقرب كوكب للشمس؟", a:"عطارد"},{q:"ما هو أبعد كوكب في المجموعة الشمسية؟", a:"نبتون"},
-                {q:"ما هو أكبر كوكب في المجموعة الشمسية؟", a:"المشتري"},{q:"ما هو أصغر كوكب؟", a:"عطارد"},{q:"كم درجة حرارة سطح الشمس؟", a:"5500"},
-                {q:"ما هو أقرب نجم للأرض؟", a:"الشمس"},{q:"من هو مكتشف الجاذبية؟", a:"نيوتن"},{q:"من هو واضع النظرية النسبية؟", a:"أينشتاين"},
-                {q:"من هو مكتشف البنسلين؟", a:"فلمنغ"},{q:"من هو مكتشف لقاح الجدري؟", a:"جينر"},{q:"ما هو أكبر عضو في جسم الإنسان؟", a:"الجلد"},
-                {q:"ما هو أقوى عضلة في جسم الإنسان؟", a:"الفك"},{q:"كم عدد الخلايا العصبية في الدماغ؟", a:"100 مليار"},{q:"ما هي سرعة الضوء؟", a:"300000 كم/ث"},
-                {q:"ما هي وحدة قياس القوة؟", a:"نيوتن"},{q:"ما هي وحدة قياس الطاقة؟", a:"جول"},{q:"من هو مخترع المصباح الكهربائي؟", a:"إديسون"},
-                {q:"من هو مخترع الهاتف؟", a:"بل"},{q:"من هو مخترع الراديو؟", a:"ماركوني"},{q:"من هو مخترع التلفاز؟", a:"بيرد"},{q:"من هو مخترع الطائرة؟", a:"الأخوان رايت"},
-                {q:"من هو مخترع المحرك البخاري؟", a:"جيمس واط"},{q:"ما هو أسرع حيوان مائي؟", a:"السمك الشراعي"},{q:"ما هو أبطأ حيوان؟", a:"الكسلان"},
-                {q:"كم عدد قلوب الأخطبوط؟", a:"3"},{q:"كم عدد أرجل الحشرة؟", a:"6"},{q:"كم عدد أجنحة النحلة؟", a:"4"},{q:"ما هو أكبر حيوان في العالم؟", a:"الحوت الأزرق"},
-                {q:"ما هو أطول حيوان؟", a:"الزرافة"},{q:"ما هو أثقل حيوان بري؟", a:"الفيل"},{q:"ما هو أذكى حيوان؟", a:"الدلفين"},{q:"ما هو الحيوان الذي لا يشرب الماء؟", a:"الكنغر"},
-                {q:"ما هو الحيوان الذي يغير لونه؟", a:"الحرباء"},{q:"ما هي أطول سلسلة جبلية؟", a:"الأنديز"},{q:"ما هو أعمق نقطة في المحيط؟", a:"ماريانا"},
-                {q:"ما هو أطول نهر في العالم؟", a:"النيل"},{q:"ما هو أكبر بحر في العالم؟", a:"البحر المتوسط"},{q:"ما هي أكبر صحراء في العالم؟", a:"الصحراء الكبرى"},
-                {q:"ما هي أصغر قارة؟", a:"أستراليا"},{q:"ما هي أكبر قارة؟", a:"آسيا"},{q:"ما هو أبرد مكان على الأرض؟", a:"أنتاركتيكا"},{q:"ما هو أحر مكان على الأرض؟", a:"الصحراء الكبرى"}
-            ];
-            return list[i % list.length];
-        }),
-        geography: Array.from({length: 50}, (_, i) => {
-            const list = [
-                {q:"ما هي عاصمة فرنسا؟", a:"باريس"},{q:"ما هي عاصمة ألمانيا؟", a:"برلين"},{q:"ما هي عاصمة إيطاليا؟", a:"روما"},{q:"ما هي عاصمة بريطانيا؟", a:"لندن"},
-                {q:"ما هي عاصمة إسبانيا؟", a:"مدريد"},{q:"ما هي عاصمة البرتغال؟", a:"لشبونة"},{q:"ما هي عاصمة هولندا؟", a:"أمستردام"},{q:"ما هي عاصمة بلجيكا؟", a:"بروكسل"},
-                {q:"ما هي عاصمة النمسا؟", a:"فيينا"},{q:"ما هي عاصمة سويسرا؟", a:"برن"},{q:"ما هي عاصمة السويد؟", a:"ستوكهولم"},{q:"ما هي عاصمة النرويج؟", a:"أوسلو"},
-                {q:"ما هي عاصمة الدنمارك؟", a:"كوبنهاجن"},{q:"ما هي عاصمة فنلندا؟", a:"هلسنكي"},{q:"ما هي عاصمة روسيا؟", a:"موسكو"},{q:"ما هي عاصمة الصين؟", a:"بكين"},
-                {q:"ما هي عاصمة الهند؟", a:"نيودلهي"},{q:"ما هي عاصمة اليابان؟", a:"طوكيو"},{q:"ما هي عاصمة كوريا الجنوبية؟", a:"سيول"},{q:"ما هي عاصمة إندونيسيا؟", a:"جاكرتا"},
-                {q:"ما هي عاصمة البرازيل؟", a:"برازيليا"},{q:"ما هي عاصمة الأرجنتين؟", a:"بوينس آيرس"},{q:"ما هي عاصمة المكسيك؟", a:"مكسيكو سيتي"},{q:"ما هي عاصمة كندا؟", a:"أوتاوا"},
-                {q:"ما هي عاصمة الولايات المتحدة؟", a:"واشنطن"},{q:"ما هي عاصمة أستراليا؟", a:"كانبرا"},{q:"ما هي أكبر دولة في العالم مساحة؟", a:"روسيا"},
-                {q:"ما هي أصغر دولة في العالم مساحة؟", a:"الفاتيكان"},{q:"ما هي أكثر دولة في العالم سكاناً؟", a:"الصين"},{q:"ما هي أكثر دولة في العالم من حيث المساحة في أفريقيا؟", a:"الجزائر"},
-                {q:"ما هو أعلى جبل في العالم؟", a:"إيفرست"},{q:"ما هو أعمق نهر في العالم؟", a:"الكونغو"},{q:"ما هي أطول سلسلة جبلية في العالم؟", a:"الأنديز"},
-                {q:"ما هي أكبر بحيرة في العالم؟", a:"بحر قزوين"},{q:"ما هي أعمق بحيرة في العالم؟", a:"بايكال"},{q:"ما هو أطول وادي في العالم؟", a:"الجراند كانيون"},
-                {q:"ما هو أكبر خليج في العالم؟", a:"خليج المكسيك"},{q:"ما هو أكبر مضيق في العالم؟", a:"مضيق ملقا"},{q:"ما هي أكبر جزيرة في العالم؟", a:"جرينلاند"},
-                {q:"ما هي أصغر جزيرة مأهولة؟", a:"جزيرة بتكايرن"},{q:"ما هي أعلى شلال في العالم؟", a:"شلالات آنجل"},{q:"ما هو أطول كهف في العالم؟", a:"كهف ماموث"},
-                {q:"ما هي أكبر صحراء رملية؟", a:"الربع الخالي"},{q:"ما هي أكثر مدينة ازدحاماً؟", a:"طوكيو"},{q:"ما هي أقدم مدينة في العالم؟", a:"دمشق"}
-            ];
-            return list[i % list.length];
-        }),
-        sports: Array.from({length: 50}, (_, i) => {
-            const list = [
-                {q:"كم عدد لاعبي كرة القدم؟", a:"11"},{q:"كم عدد لاعبي كرة السلة؟", a:"5"},{q:"كم عدد لاعبي كرة الطائرة؟", a:"6"},{q:"كم عدد لاعبي كرة اليد؟", a:"7"},
-                {q:"من هو أفضل لاعب كرة قدم في العالم 2023؟", a:"ميسي"},{q:"من هو أفضل لاعب كرة قدم 2022؟", a:"بنزيما"},{q:"من هو هداف كأس العالم التاريخي؟", a:"كلوزه"},
-                {q:"من هو أكثر لاعب فاز بالكرة الذهبية؟", a:"ميسي"},{q:"من هو أكثر لاعب فاز بدوري أبطال أوروبا؟", a:"مودريتش"},{q:"من هو الهداف التاريخي لريال مدريد؟", a:"رونالدو"},
-                {q:"من هو الهداف التاريخي لبرشلونة؟", a:"ميسي"},{q:"من هو الهداف التاريخي للدوري الإنجليزي؟", a:"شيرر"},{q:"من هو الهداف التاريخي للدوري الإسباني؟", a:"ميسي"},
-                {q:"من هو الهداف التاريخي للدوري الإيطالي؟", a:"سيلفا"},{q:"من هو بطل كأس العالم 2018؟", a:"فرنسا"},{q:"من هو بطل كأس العالم 2022؟", a:"الأرجنتين"},
-                {q:"من هو بطل كأس أمم أفريقيا 2022؟", a:"السنغال"},{q:"من هو بطل كأس آسيا 2019؟", a:"قطر"},{q:"من هو بطل كوبا أمريكا 2021؟", a:"الأرجنتين"},
-                {q:"من هو بطل اليورو 2021؟", a:"إيطاليا"},{q:"من هو بطل دوري أبطال أوروبا 2023؟", a:"مانشستر سيتي"},{q:"من هو بطل الدوري الإنجليزي 2023؟", a:"مانشستر سيتي"},
-                {q:"من هو بطل الدوري الإسباني 2023؟", a:"برشلونة"},{q:"من هو بطل الدوري الإيطالي 2023؟", a:"نابولي"},{q:"من هو بطل الدوري الألماني 2023؟", a:"بايرن ميونخ"},
-                {q:"من هو بطل الدوري الفرنسي 2023؟", a:"باريس سان جيرمان"},{q:"من هو بطل كرة السلة NBA 2023؟", a:"دنفر ناغتس"},{q:"من هو أفضل لاعب كرة سلة في التاريخ؟", a:"مايكل جوردان"},
-                {q:"من هو بطل التنس ويمبلدون 2023؟", a:"ألكاراز"},{q:"من هو بطل الفورمولا 1 2023؟", a:"فيرستابين"},{q:"من هو بطل الملاكمة الثقيل؟", a:"أوسيك"},
-                {q:"من هو أفضل لاعب كرة قدم أفريقي 2023؟", a:"أوسيمين"},{q:"من هو أفضل حارس مرمى في العالم؟", a:"كورتوا"},{q:"من هو أفضل مدرب في العالم؟", a:"غوارديولا"},
-                {q:"كم مرة فاز الأهلي بدوري أبطال أفريقيا؟", a:"10"},{q:"كم مرة فاز الزمالك بدوري أبطال أفريقيا؟", a:"5"},{q:"من هو هداف الدوري المصري التاريخي؟", a:"حسن الشاذلي"},
-                {q:"من هو هداف كأس الأمم الأفريقية؟", a:"إيتو"},{q:"من هو أفضل لاعب أفريقي في التاريخ؟", a:"إيتو"},{q:"من هو بطل أولمبياد 2020؟", a:"الولايات المتحدة"},
-                {q:"من هو بطل أولمبياد 2016؟", a:"الولايات المتحدة"},{q:"من هو بطل كأس العالم للسيدات 2023؟", a:"إسبانيا"},{q:"من هو أفضل لاعب كرة قدم في التاريخ؟", a:"ميسي أو رونالدو"}
-            ];
-            return list[i % list.length];
-        }),
-        arts: Array.from({length: 50}, (_, i) => {
-            const list = [
-                {q:"من هو مؤلف كتاب 'الأمير'؟", a:"ميكافيللي"},{q:"من هو مؤلف 'مئة عام من العزلة'؟", a:"ماركيز"},{q:"من هو مؤلف 'الجريمة والعقاب'؟", a:"دوستويفسكي"},
-                {q:"من هو مؤلف 'الموت في البندقية'؟", a:"مان"},{q:"من هو مؤلف 'الحرب والسلام'؟", a:"تولستوي"},{q:"من هو مؤلف 'البؤساء'؟", a:"هوغو"},
-                {q:"من هو مؤلف 'أليس في بلاد العجائب'؟", a:"كارول"},{q:"من هو مؤلف 'شيرلوك هولمز'؟", a:"دويل"},{q:"من هو مؤلف 'أغنية الجليد والنار'؟", a:"مارتن"},
-                {q:"من هو مؤلف 'هاري بوتر'؟", a:"رولينغ"},{q:"من هو مؤلف 'الخيميائي'؟", a:"كويلو"},{q:"من هو مؤلف 'الأبله'؟", a:"دوستويفسكي"},
-                {q:"من هو مؤلف 'الإلياذة'؟", a:"هوميروس"},{q:"من هو مؤلف 'الأوديسة'؟", a:"هوميروس"},{q:"من هو مؤلف 'كوميديا الآلهة'؟", a:"دانتي"},
-                {q:"من هو مؤلف 'الملهاة الإلهية'؟", a:"دانتي"},{q:"من هو مؤلف 'دون كيشوت'؟", a:"ثربانتس"},{q:"من هو مؤلف 'روميو وجولييت'؟", a:"شكسبير"},
-                {q:"من هو مؤلف 'هاملت'؟", a:"شكسبير"},{q:"من هو مؤلف 'عطيل'؟", a:"شكسبير"},{q:"من هو مؤلف 'ملك لير'؟", a:"شكسبير"},
-                {q:"من هو مؤلف 'ماكبث'؟", a:"شكسبير"},{q:"من هو مؤلف 'الجندب'؟", a:"طه حسين"},{q:"من هو مؤلف 'الأيام'؟", a:"طه حسين"},
-                {q:"من هو مؤلف 'موسم الهجرة إلى الشمال'؟", a:"صالح"},{q:"من هو مؤلف 'ثلاثية الأندلس'؟", a:"رضوى عاشور"},{q:"من هو مؤلف 'عمارة يعقوبيان'؟", a:"أسواني"},
-                {q:"من هو مؤلف 'أولاد حارتنا'؟", a:"محفوظ"},{q:"من هو مؤلف 'الحرافيش'؟", a:"محفوظ"},{q:"من هو مؤلف 'زقاق المدق'؟", a:"محفوظ"},
-                {q:"من هو مؤلف 'الثلاثية'؟", a:"محفوظ"},{q:"من هو مؤلف 'اللص والكلاب'؟", a:"محفوظ"},{q:"من هو مؤلف 'الطريق'؟", a:"محفوظ"},
-                {q:"من هو مؤلف 'أفراح القبة'؟", a:"محفوظ"},{q:"من هو مؤلف 'ليالي ألف ليلة'؟", a:"محفوظ"},{q:"من هو مؤلف 'البيت الكبير'؟", a:"توفيق الحكيم"},
-                {q:"من هو مؤلف 'أهل الكهف'؟", a:"توفيق الحكيم"},{q:"من هو مؤلف 'الملك أوديب'؟", a:"توفيق الحكيم"},{q:"من هو مؤلف 'يوميات نائب في الأرياف'؟", a:"توفيق الحكيم"},
-                {q:"من هو مؤلف 'عودة الروح'؟", a:"توفيق الحكيم"},{q:"من هو مؤلف 'الشياطين'؟", a:"دوستويفسكي"},{q:"من هو مؤلف 'الإخوة كارامازوف'؟", a:"دوستويفسكي"},
-                {q:"من هو مؤلف 'الحلم'؟", a:"إميل زولا"},{q:"من هو مؤلف 'جرمينال'؟", a:"إميل زولا"},{q:"من هو مؤلف 'الغريب'؟", a:"كامو"},
-                {q:"من هو مؤلف 'الطاعون'؟", a:"كامو"},{q:"من هو مؤلف 'السقوط'؟", a:"كامو"},{q:"من هو مؤلف 'الإنسان يبحث عن معنى'؟", a:"فرانكل"}
-            ];
-            return list[i % list.length];
-        }),
-        history: Array.from({length: 50}, (_, i) => {
-            const list = [
-                {q:"من هو أول خليفة إسلامي؟", a:"أبو بكر الصديق"},{q:"من هو مؤسس الدولة الأموية؟", a:"معاوية بن أبي سفيان"},{q:"من هو مؤسس الدولة العباسية؟", a:"أبو العباس السفاح"},
-                {q:"من هو مؤسس الدولة العثمانية؟", a:"عثمان الأول"},{q:"من هو مؤسس الدولة الفاطمية؟", a:"عبيد الله المهدي"},{q:"من هو مؤسس الدولة الأيوبية؟", a:"صلاح الدين"},
-                {q:"من هو مؤسس الدولة المملوكية؟", a:"شجر الدر"},{q:"من هو مؤسس الدولة السعودية الأولى؟", a:"محمد بن سعود"},{q:"من هو مؤسس الدولة السعودية الثانية؟", a:"تركي بن عبدالله"},
-                {q:"من هو مؤسس الدولة السعودية الثالثة؟", a:"عبدالعزيز آل سعود"},{q:"من هو مؤسس الإمبراطورية الرومانية؟", a:"أغسطس"},{q:"من هو مؤسس الإمبراطورية الفارسية؟", a:"كورش الكبير"},
-                {q:"من هو مؤسس الإمبراطورية المقدونية؟", a:"الإسكندر الأكبر"},{q:"من هو مؤسس الإمبراطورية المغولية؟", a:"جنكيز خان"},{q:"من هو مؤسس الإمبراطورية البريطانية؟", a:"إليزابيث الأولى"},
-                {q:"من هو أول رئيس للولايات المتحدة؟", a:"واشنطن"},{q:"من هو أول رئيس لمصر؟", a:"محمد نجيب"},{q:"من هو قائد معركة القادسية؟", a:"سعد بن أبي وقاص"},
-                {q:"من هو قائد معركة اليرموك؟", a:"خالد بن الوليد"},{q:"من هو قائد معركة حطين؟", a:"صلاح الدين"},{q:"من هو قائد معركة عين جالوت؟", a:"قطز"},
-                {q:"من هو قائد معركة بلاط الشهداء؟", a:"عبد الرحمن الغافقي"},{q:"من هو قائد معركة وادي المخازن؟", a:"عبد الملك السعدي"},{q:"من هو قائد معركة ليبانتو؟", a:"دون خوان"},
-                {q:"من هو قائد معركة واترلو؟", a:"نابليون"},{q:"من هو قائد معركة ستالينغراد؟", a:"جوكوف"},{q:"من هو قائد معركة العلمين؟", a:"مونتغمري"},
-                {q:"من هو قائد معركة النورماندي؟", a:"أيزنهاور"},{q:"من هو قائد حرب أكتوبر؟", a:"السادات"},{q:"من هو قائد حرب 1948؟", a:"عبدالله التل"},
-                {q:"من هو قائد حرب 1967؟", a:"عبد الحكيم عامر"},{q:"من هو قائد فتح الأندلس؟", a:"طارق بن زياد"},{q:"من هو قائد فتح القسطنطينية؟", a:"محمد الفاتح"},
-                {q:"من هو قائد فتح عمورية؟", a:"المعتصم"},{q:"من هو قائد فتح صقلية؟", a:"أسد بن الفرات"},{q:"من هو قائد فتح بلاد السند؟", a:"محمد بن القاسم"},
-                {q:"من هو قائد فتح بخارى؟", a:"قتيبة بن مسلم"},{q:"من هو قائد فتح سمرقند؟", a:"قتيبة بن مسلم"},{q:"من هو قائد فتح الهند؟", a:"محمود الغزنوي"},
-                {q:"من هو قائد فتح الجزائر؟", a:"خير الدين بربروس"},{q:"من هو قائد فتح تونس؟", a:"عروج بربروس"},{q:"من هو قائد فتح طرابلس؟", a:"سنان باشا"},
-                {q:"من هو قائد فتح مالطا؟", a:"سليمان القانوني"},{q:"من هو قائد فتح رودس؟", a:"سليمان القانوني"},{q:"من هو قائد فتح بلغراد؟", a:"سليمان القانوني"},
-                {q:"من هو قائد فتح بغداد؟", a:"هولاكو"},{q:"من هو قائد فتح دمشق؟", a:"خالد بن الوليد"},{q:"من هو قائد فتح بيت المقدس؟", a:"عمر بن الخطاب"}
-            ];
-            return list[i % list.length];
-        }),
-        technology: Array.from({length: 50}, (_, i) => {
-            const list = [
-                {q:"من هو مؤسس مايكروسوفت؟", a:"بيل غيتس"},{q:"من هو مؤسس آبل؟", a:"ستيف جوبز"},{q:"من هو مؤسس جوجل؟", a:"لاري بيج"},{q:"من هو مؤسس فيسبوك؟", a:"مارك زوكربيرغ"},
-                {q:"من هو مؤسس أمازون؟", a:"جيف بيزوس"},{q:"من هو مؤسس تسلا؟", a:"إيلون ماسك"},{q:"من هو مؤسس تويتر؟", a:"جاك دورسي"},{q:"من هو مؤسس إنستغرام؟", a:"كيفن سيستروم"},
-                {q:"من هو مؤسس واتساب؟", a:"يان كوم"},{q:"من هو مؤسس لينكد إن؟", a:"ريد هوفمان"},{q:"من هو مؤسس أوبر؟", a:"ترافيس كالانيك"},{q:"من هو مؤسس نتفليكس؟", a:"ريد هاستينغز"},
-                {q:"من هو مؤسس سامسونغ؟", a:"لي بيونغ تشول"},{q:"من هو مؤسس هواوي؟", a:"رن تشنغ فاي"},{q:"من هو مؤسس شاومي؟", a:"لي جون"},{q:"من هو مخترع الإنترنت؟", a:"تيم بيرنرز لي"},
-                {q:"من هو مخترع الويب؟", a:"تيم بيرنرز لي"},{q:"من هو مخترع البريد الإلكتروني؟", a:"راي توملينسون"},{q:"من هو مخترع الواي فاي؟", a:"فيك هايز"},{q:"من هو مخترع البلوتوث؟", a:"إريكسون"},
-                {q:"من هو مخترع الهاتف الذكي؟", a:"آي بي إم"},{q:"من هو مخترع الحاسوب الشخصي؟", a:"آي بي إم"},{q:"من هو مخترع المعالج الدقيق؟", a:"إنتل"},{q:"من هو مخترع الذكاء الاصطناعي؟", a:"جون مكارثي"},
-                {q:"من هو مخترع الروبوت؟", a:"جورج ديفول"},{q:"من هو مخترع الطابعة ثلاثية الأبعاد؟", a:"تشاك هال"},{q:"من هو مخترع الكاميرا الرقمية؟", a:"ستيفن ساسون"},{q:"من هو مخترع الماسح الضوئي؟", a:"كوبي"},
-                {q:"من هو مخترع التابلت؟", a:"مايكروسوفت"},{q:"من هو مخترع الساعة الذكية؟", a:"سامسونغ"},{q:"من هو مخترع النظارات الذكية؟", a:"جوجل"},{q:"من هو مخترع السماعات اللاسلكية؟", a:"سامسونغ"},
-                {q:"من هو مخترع الشاحن اللاسلكي؟", a:"نيكولا تسلا"},{q:"من هو مخترع البطارية؟", a:"فولتا"},{q:"من هو مخترع الدينامو؟", a:"فاراداي"},{q:"من هو مخترع المحرك الكهربائي؟", a:"فاراداي"},
-                {q:"من هو مخترع المولد الكهربائي؟", a:"فاراداي"},{q:"من هو مخترع المحرك البخاري؟", a:"جيمس واط"},{q:"من هو مخترع السيارة؟", a:"بنز"},{q:"من هو مخترع الطائرة؟", a:"الأخوان رايت"},
-                {q:"من هو مخترع القطار؟", a:"ستيفنسون"},{q:"من هو مخترع القطار الكهربائي؟", a:"سيمنز"},{q:"من هو مخترع المترو؟", a:"بيرسون"},{q:"من هو مخترع السفينة البخارية؟", a:"فولتون"},
-                {q:"من هو مخترع الغواصة؟", a:"دريبل"},{q:"من هو مخترع الصاروخ؟", a:"غودارد"},{q:"من هو مخترع القمر الصناعي؟", a:"الاتحاد السوفيتي"},{q:"من هو مخترع محطة الفضاء؟", a:"روسيا"},
-                {q:"من هو مخترع الإنترنت الفضائي؟", a:"ستارلينك"},{q:"من هو مخترع الذكاء الاصطناعي التوليدي؟", a:"أوبن إيه آي"}
-            ];
-            return list[i % list.length];
-        }),
-        entertainment: Array.from({length: 50}, (_, i) => {
-            const list = [
-                {q:"من هو بطل فيلم 'الخلية'؟", a:"جينيفر لوبيز"},{q:"من هو بطل فيلم 'تايتانيك'؟", a:"دي كابريو"},{q:"من هو بطل فيلم 'العراب'؟", a:"براندو"},
-                {q:"من هو بطل فيلم 'فورست غامب'؟", a:"هانكس"},{q:"من هو بطل فيلم 'شخصيات'؟", a:"مات ديمون"},{q:"من هو بطل فيلم 'إنسبشن'؟", a:"دي كابريو"},
-                {q:"من هو بطل فيلم 'دارك نايت'؟", a:"بالي"},{q:"من هو بطل فيلم 'جوكر'؟", a:"فينيكس"},{q:"من هو بطل فيلم 'الملك ليو'؟", a:"الأسد سيمبا"},
-                {q:"من هو بطل مسلسل 'صراع العروش'؟", a:"بيتر دينكلاج"},{q:"من هو بطل مسلسل 'بريكينغ باد'؟", a:"برايان كرانستون"},{q:"من هو بطل مسلسل 'الموتى السائرون'؟", a:"أندرو لينكولن"},
-                {q:"من هو بطل مسلسل 'شيرلوك'؟", a:"بنديكت كامبرباتش"},{q:"من هو بطل مسلسل 'البيت'؟", a:"كيفين سبيسي"},{q:"من هو بطل مسلسل 'أصدقاء'؟", a:"جينيفر أنيستون"},
-                {q:"من هو بطل مسلسل 'المكتب'؟", a:"ستيف كارل"},{q:"من هو بطل مسلسل 'آل سيمبسون'؟", a:"هومر"},{q:"من هو بطل فيلم 'الصخرة'؟", a:"نيكولاس كيج"},{q:"من هو بطل فيلم 'السرعة'؟", a:"كيانو ريفز"},
-                {q:"من هو بطل فيلم 'ماتريكس'؟", a:"كيانو ريفز"},{q:"من هو بطل فيلم 'جون ويك'؟", a:"كيانو ريفز"},{q:"من هو بطل فيلم 'النجوم'؟", a:"توم كروز"},{q:"من هو بطل فيلم 'مهمة مستحيلة'؟", a:"توم كروز"},
-                {q:"من هو بطل فيلم 'توب غان'؟", a:"توم كروز"},{q:"من هو بطل فيلم 'أيام العمر'؟", a:"توم كروز"},{q:"من هو بطل فيلم 'الرجل العنكبوت'؟", a:"توبي ماغواير"},
-                {q:"من هو بطل فيلم 'الرجل الحديدي'؟", a:"روبرت داوني"},{q:"من هو بطل فيلم 'كابتن أمريكا'؟", a:"كريس إيفانز"},{q:"من هو بطل فيلم 'ثور'؟", a:"كريس هيمسورث"},
-                {q:"من هو بطل فيلم 'هالك'؟", a:"مارك رافالو"},{q:"من هو بطل فيلم 'بلاك ويدو'؟", a:"سكارليت جوهانسون"},{q:"من هو بطل فيلم 'المنتقمون'؟", a:"روبرت داوني"},
-                {q:"من هو بطل فيلم 'أفاتار'؟", a:"سام وورثينغتون"},{q:"من هو بطل فيلم 'بداية'؟", a:"ليوناردو دي كابريو"},{q:"من هو بطل فيلم 'غاتسبي'؟", a:"ليوناردو دي كابريو"},
-                {q:"من هو بطل فيلم 'الجزيرة'؟", a:"إيوان ماكجريجور"},{q:"من هو بطل فيلم 'الذئب'؟", a:"ليوناردو دي كابريو"},{q:"من هو بطل فيلم 'مارتي'؟", a:"ليوناردو دي كابريو"},
-                {q:"من هو بطل فيلم 'الطيار'؟", a:"ليوناردو دي كابريو"},{q:"من هو بطل فيلم 'الألماس الدموي'؟", a:"ليوناردو دي كابريو"},{q:"من هو بطل فيلم 'المحتالون'؟", a:"كريستيان بيل"},
-                {q:"من هو بطل فيلم 'آلة الحرب'؟", a:"براد بيت"},{q:"من هو بطل فيلم 'فايت كلوب'؟", a:"براد بيت"},{q:"من هو بطل فيلم 'سبعة'؟", a:"براد بيت"},
-                {q:"من هو بطل فيلم 'تروي'؟", a:"براد بيت"},{q:"من هو بطل فيلم 'السيرك'؟", a:"هيو جاكمان"},{q:"من هو بطل فيلم 'لوجان'؟", a:"هيو جاكمان"},
-                {q:"من هو بطل فيلم 'X-Men'؟", a:"هيو جاكمان"},{q:"من هو بطل فيلم 'الرجل الفولاذي'؟", a:"هنري كافيل"},{q:"من هو بطل فيلم 'المرأة المعجزة'؟", a:"غال غادوت"}
-            ];
-            return list[i % list.length];
-        }),
-        medicine: Array.from({length: 50}, (_, i) => {
-            const list = [
-                {q:"من هو مكتشف البنسلين؟", a:"ألكسندر فلمنغ"},{q:"من هو مكتشف لقاح الجدري؟", a:"إدوارد جينر"},{q:"من هو مكتشف لقاح شلل الأطفال؟", a:"جوناس سولك"},
-                {q:"من هو مكتشف لقاح الكوليرا؟", a:"لويس باستور"},{q:"من هو مكتشف لقاح داء الكلب؟", a:"لويس باستور"},{q:"من هو مكتشف الأنسولين؟", a:"فريدريك بانتنغ"},
-                {q:"من هو مكتشف فيروس الإيدز؟", a:"لوك مونتانييه"},{q:"من هو مكتشف فيروس كورونا؟", a:"يون Lai"},{q:"من هو مكتشف الجراثيم؟", a:"لويس باستور"},
-                {q:"من هو مكتشف البكتيريا؟", a:"أنتوني فان ليفينهوك"},{q:"من هو مكتشف الفطريات؟", a:"أنتوني فان ليفينهوك"},{q:"من هو مكتشف الفيروسات؟", a:"ديمتري إيفانوفسكي"},
-                {q:"من هو مكتشف الدورة الدموية؟", a:"وليام هارفي"},{q:"من هو مكتشف فصائل الدم؟", a:"كارل لاندشتاينر"},{q:"من هو مكتشف عامل ريسوس؟", a:"كارل لاندشتاينر"},
-                {q:"من هو مكتشف الهرمونات؟", a:"إرنست ستارلينغ"},{q:"من هو مكتشف الفيتامينات؟", a:"كازيمير فونك"},{q:"من هو مكتشف فيتامين سي؟", a:"ألبرت سينت جيورجي"},
-                {q:"من هو مكتشف فيتامين د؟", a:"إلمر ماكولوم"},{q:"من هو مكتشف فيتامين أ؟", a:"إلمر ماكولوم"},{q:"من هو مكتشف فيتامين ب؟", a:"كازيمير فونك"},
-                {q:"من هو مكتشف فيتامين هـ؟", a:"هربرت إيفانز"},{q:"من هو مكتشف فيتامين ك؟", a:"هنريك دام"},{q:"من هو مكتشف الأسبرين؟", a:"فيليكس هوفمان"},
-                {q:"من هو مكتشف المورفين؟", a:"فريدريش سيرتورنر"},{q:"من هو مكتشف الكوكايين؟", a:"ألبرت نيمان"},{q:"من هو مكتشف الباراسيتامول؟", a:"هارمون نورثروب"},
-                {q:"من هو مكتشف الإيبوبروفين؟", a:"ستيوارت آدامز"},{q:"من هو مكتشف النيوبرين؟", a:"جورج هيتشينغز"},{q:"من هو مكتشف الكلوروكين؟", a:"هانز أندرساغ"},
-                {q:"من هو مكتشف البنسلامين؟", a:"جون والش"},{q:"من هو مكتشف الستربتومايسين؟", a:"سلمان واكسمان"},{q:"من هو مكتشف التيتراسيكلين؟", a:"لويد كونوفر"},
-                {q:"من هو مكتشف الإريثروميسين؟", a:"أبيلاردو أغيلار"},{q:"من هو مكتشف الفانكومايسين؟", a:"إدموند كورنفيلد"},{q:"من هو مكتشف الميثيسيلين؟", a:"جي بي براون"},
-                {q:"من هو مكتشف الأموكسيسيلين؟", a:"بيتشام"},{q:"من هو مكتشف السيفالوسبورين؟", a:"جوزيبي بروتزو"},{q:"من هو مكتشف الآزيثرومايسين؟", a:"بليتش"},
-                {q:"من هو مكتشف الكلاريثروميسين؟", a:"تاكيدا"},{q:"من هو مكتشف السيبروفلوكساسين؟", a:"باير"},{q:"من هو مكتشف الليفوفلوكساسين؟", a:"دايتشي"},
-                {q:"من هو مكتشف المترونيدازول؟", a:"رونيه دوبو"},{q:"من هو مكتشف التينيدازول؟", a:"فايزر"},{q:"من هو مكتشف الأورنيدازول؟", a:"هوفمان لا روش"},
-                {q:"من هو مكتشف الأسيكلوفير؟", a:"جيرترود إليون"},{q:"من هو مكتشف الريبافيرين؟", a:"آي سي إن"},{q:"من هو مكتشف الزيدوفودين؟", a:"بروغ"},{q:"من هو مكتشف اللاميفودين؟", a:"غلاسكو"},{q:"من هو مكتشف التينوفوفير؟", a:"جيلياد"}
-            ];
-            return list[i % list.length];
-        }),
-        economy: Array.from({length: 50}, (_, i) => {
-            const list = [
-                {q:"من هو مؤسس علم الاقتصاد الحديث؟", a:"آدم سميث"},{q:"من هو صاحب كتاب 'ثروة الأمم'؟", a:"آدم سميث"},{q:"من هو صاحب نظرية اليد الخفية؟", a:"آدم سميث"},
-                {q:"من هو صاحب نظرية الميزة النسبية؟", a:"ديفيد ريكاردو"},{q:"من هو صاحب نظرية الميزة المطلقة؟", a:"آدم سميث"},{q:"من هو صاحب نظرية العرض والطلب؟", a:"ألفرد مارشال"},
-                {q:"من هو صاحب نظرية التوازن العام؟", a:"ليون والراس"},{q:"من هو صاحب نظرية الألعاب؟", a:"جون فون نيومان"},{q:"من هو صاحب نظرية التوقعات العقلانية؟", a:"روبرت لوكاس"},
-                {q:"من هو صاحب نظرية النمو الاقتصادي؟", a:"روبرت سولو"},{q:"من هو صاحب نظرية رأس المال البشري؟", a:"غاري بيكر"},{q:"من هو صاحب نظرية الأزمات المالية؟", a:"هايمان مينسكي"},
-                {q:"من هو صاحب نظرية الاقتصاد المؤسسي؟", a:"دوجلاس نورث"},{q:"من هو صاحب نظرية الاقتصاد السلوكي؟", a:"ريتشارد ثالر"},{q:"من هو صاحب نظرية الفقر؟", a:"أمارتيا سين"},
-                {q:"من هو صاحب نظرية العدالة؟", a:"جون رولز"},{q:"من هو صاحب نظرية الاختيار العام؟", a:"جيمس بوكانان"},{q:"من هو صاحب نظرية الحقوق الاقتصادية؟", a:"رونالد كوس"},
-                {q:"من هو صاحب نظرية الملكية؟", a:"هارولد ديمسيتز"},{q:"من هو صاحب نظرية الشركة؟", a:"رونالد كوس"},{q:"من هو صاحب نظرية الوكالة؟", a:"مايكل جنسن"},
-                {q:"من هو صاحب نظرية التمويل الحديث؟", a:"هاري ماركويتز"},{q:"من هو صاحب نظرية المحفظة الاستثمارية؟", a:"هاري ماركويتز"},{q:"من هو صاحب نظرية تسعير الأصول؟", a:"ويليام شارب"},
-                {q:"من هو صاحب نظرية الخيارات؟", a:"فischer بلاك"},{q:"من هو صاحب نظرية الانحدار العشوائي؟", a:"روبرت ميرتون"},{q:"من هو صاحب نظرية التكامل المالي؟", a:"يوجين فاما"},
-                {q:"من هو صاحب نظرية الأسواق الفعالة؟", a:"يوجين فاما"},{q:"من هو صاحب نظرية الشذوذ؟", a:"ريتشارد ثالر"},{q:"من هو صاحب نظرية التحيز؟", a:"دانيال كانيمان"},
-                {q:"من هو صاحب نظرية العقل؟", a:"دانيال كانيمان"},{q:"من هو صاحب نظرية الاحتمالات؟", a:"دانيال كانيمان"},{q:"من هو صاحب نظرية المخاطر؟", a:"دانيال كانيمان"},
-                {q:"من هو مؤسس البنك الدولي؟", a:"جون ماينارد كينز"},{q:"من هو مؤسس صندوق النقد الدولي؟", a:"هاري ديكستر وايت"},{q:"من هو مؤسس منظمة التجارة العالمية؟", a:"باسكال لامي"},
-                {q:"من هو مؤسس مجموعة العشرين؟", a:"بول مارتن"},{q:"من هو مؤسس مجموعة السبع؟", a:"فاليري جيسكار ديستان"},{q:"من هو مؤسس مجموعة الثماني؟", a:"هيلموت شميدت"},
-                {q:"من هو مؤسس اليورو؟", a:"روبرت مونديل"},{q:"من هو مؤسس الاتحاد الأوروبي؟", a:"جاك ديلور"},{q:"من هو مؤسس منظمة التعاون الاقتصادي؟", a:"روبرت مارجولين"},
-                {q:"من هو مؤسس البنك المركزي الأوروبي؟", a:"فيم دوسنبرغ"},{q:"من هو مؤسس الاحتياطي الفيدرالي؟", a:"بول واربورغ"},{q:"من هو أشهر مستثمر في التاريخ؟", a:"وارن بافيت"},
-                {q:"من هو أغنى رجل في التاريخ؟", a:"جون روكفلر"},{q:"من هو أغنى رجل في العالم حالياً؟", a:"إيلون ماسك"},{q:"من هو صاحب شركة بيركشاير هاثاواي؟", a:"وارن بافيت"},
-                {q:"من هو صاحب شركة بلاك روك؟", a:"لاري فنك"},{q:"من هو صاحب شركة فانغارد؟", a:"جون بوغل"},{q:"من هو صاحب نظرية المؤشرات؟", a:"جون بوغل"}
-            ];
-            return list[i % list.length];
-        })
+        general: buildCategory(generalQuestions, 50),
+        islam: buildCategory(islamQuestions, 50),
+        science: buildCategory(scienceQuestions, 50),
+        geography: buildCategory(geographyQuestions, 50),
+        sports: buildCategory(sportsQuestions, 50),
+        arts: buildCategory([createQuestion("من هو مؤلف 'الأمير'؟", "ميكافيللي", "أفلاطون", "أرسطو", "سقراط"), createQuestion("من هو مؤلف 'مئة عام من العزلة'؟", "ماركيز", "برجاس يوسا", "خوان رولفو", "ماريو فارغاس")], 50),
+        history: buildCategory([createQuestion("من هو أول خليفة إسلامي؟", "أبو بكر الصديق", "عمر بن الخطاب", "عثمان بن عفان", "علي بن أبي طالب"), createQuestion("من هو مؤسس الدولة الأموية؟", "معاوية بن أبي سفيان", "يزيد بن معاوية", "عبد الملك بن مروان", "الوليد بن عبد الملك")], 50),
+        technology: buildCategory([createQuestion("من هو مؤسس مايكروسوفت؟", "بيل غيتس", "ستيف جوبز", "مارك زوكربيرغ", "جيف بيزوس"), createQuestion("من هو مؤسس آبل؟", "ستيف جوبز", "بيل غيتس", "إيلون ماسك", "لاري بايج")], 50),
+        entertainment: buildCategory([createQuestion("من هو بطل فيلم 'تايتانيك'؟", "دي كابريو", "براد بيت", "توم كروز", "جوني ديب"), createQuestion("من هو بطل فيلم 'العراب'؟", "مارلون براندو", "آل باتشينو", "روبرت دي نيرو", "جيمس كاجني")], 50),
+        medicine: buildCategory([createQuestion("من هو مكتشف البنسلين؟", "ألكسندر فلمنغ", "لويس باستور", "روبرت كوخ", "جوناس سولك"), createQuestion("من هو مكتشف لقاح الجدري؟", "إدوارد جينر", "فلمنغ", "باستور", "كورنيل")], 50),
+        economy: buildCategory([createQuestion("من هو مؤسس علم الاقتصاد الحديث؟", "آدم سميث", "كارل ماركس", "جون كينز", "ديفيد ريكاردو"), createQuestion("من هو صاحب كتاب 'ثروة الأمم'؟", "آدم سميث", "ريكاردو", "ماركس", "كينز")], 50)
     };
+    questionsDB["all"] = buildCategory([...generalQuestions, ...islamQuestions, ...scienceQuestions, ...geographyQuestions, ...sportsQuestions], 200);
 
-    // دالة خلط عشوائي (Fisher-Yates)
-    function shuffleArray(arr) {
-        for (let i = arr.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-        return arr;
+    function shuffleArray(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+    function getQuestionsByCategory(category) { return shuffleArray([...(questionsDB[category] || questionsDB.general)]); }
+
+    let currentRoom = "", myName = "", winScore = 70, currentToastTimeout = null, isHost = false, currentQuestionObj = null;
+    function showFloatingMessage(msg, success=false) { if(currentToastTimeout) clearTimeout(currentToastTimeout); document.querySelectorAll('.toast-msg').forEach(e=>e.remove()); let toast = document.createElement('div'); toast.className = 'toast-msg'; toast.innerHTML = success ? `<i class="fas fa-bolt"></i> ${msg}` : msg; toast.style.background = success ? "#2ecc71" : "#e67e22"; document.body.appendChild(toast); currentToastTimeout = setTimeout(()=>toast.remove(), 2000); }
+    
+    function initAdmin() { let name = document.getElementById('user-name').value.trim()||"المضيف"; myName = name; isHost = true; currentRoom = Math.floor(1000+Math.random()*9000); winScore = parseInt(document.getElementById('win-limit').value); let defCat = "all"; let defQ = getQuestionsByCategory(defCat); db.ref(`rooms/${currentRoom}`).set({currentQuestionIndex:0, winLimit:winScore, firstPress:null, winner:null, createdAt:Date.now(), hostName:myName, isQuestionVisible:false, manualHideActive:true, currentCategory:defCat, questionsList:defQ, showOptions:true}); db.ref(`rooms/${currentRoom}/players/${myName}`).set({name:myName, score:0, isHost:true}); document.getElementById('admin-room-id').innerText = currentRoom; document.getElementById('goal-display').innerText = winScore; showView('admin-view'); startSync(); showFloatingMessage(`تم إنشاء الغرفة! الرقم: ${currentRoom}`, true); }
+    
+    function joinRoom() { let name = document.getElementById('user-name').value.trim(); if(!name) return showFloatingMessage("أدخل اسمك", false); myName = name; let roomCode = document.getElementById('room-input').value.trim(); if(!roomCode) return showFloatingMessage("رقم الغرفة مطلوب", false); currentRoom = roomCode; db.ref(`rooms/${currentRoom}`).once('value', snap=>{ if(!snap.exists()) return showFloatingMessage("الغرفة غير موجودة!", false); db.ref(`rooms/${currentRoom}/players/${myName}`).set({name:myName, score:0, isHost:false}); showView('guest-view'); document.getElementById('guest-room-display').innerText = currentRoom; startSync(); showFloatingMessage("انضممت إلى الحلبة!", true); }); }
+    
+    function showView(id) { ['setup-screen','admin-view','guest-view'].forEach(v=>document.getElementById(v).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
+    function changeCategory() { let newCat = document.getElementById('category-select-live').value; let newList = getQuestionsByCategory(newCat); db.ref(`rooms/${currentRoom}`).update({currentCategory:newCat, questionsList:newList, currentQuestionIndex:0}); showFloatingMessage(`تم تغيير المجال إلى ${newCat}`, true); }
+    function toggleOptionsVisibility() { db.ref(`rooms/${currentRoom}/showOptions`).once('value', snap=> db.ref(`rooms/${currentRoom}/showOptions`).set(!snap.val())); }
+    function showQuestionToGuests() { db.ref(`rooms/${currentRoom}`).update({isQuestionVisible:true, manualHideActive:false, showOptions:true}); showFloatingMessage("تم عرض السؤال والاقتراحات (للقراءة فقط)", true); }
+    function hideQuestionFromGuests() { db.ref(`rooms/${currentRoom}`).update({isQuestionVisible:false, manualHideActive:true}); showFloatingMessage("تم إخفاء السؤال", false); }
+    
+    function kickPlayer(playerName) {
+        if(!currentRoom || !isHost) return;
+        db.ref(`rooms/${currentRoom}/players/${playerName}`).remove().then(() => {
+            showFloatingMessage(`🚪 تم طرد اللاعب ${playerName} من الغرفة`, false);
+            // إذا كان المضيف يطرد نفسه (لا ينبغي) لكن منعاً للمشاكل
+            if(playerName === myName) window.location.reload();
+        });
     }
 
-    // دالة للحصول على أسئلة المجال مع خلط عشوائي
-    function getQuestionsByCategory(category) {
-        if(category === "all") {
-            let all = [];
-            for(let cat in questionsDB) {
-                all = all.concat([...questionsDB[cat]]);
-            }
-            return shuffleArray([...all]);
-        }
-        return shuffleArray([...(questionsDB[category] || questionsDB.general)]);
-    }
-
-    let currentRoom = "";
-    let myName = "";
-    let winScore = 70;
-    let currentToastTimeout = null;
-    let isHost = false;
-
-    function showFloatingMessage(message, isSuccess = false) {
-        if (currentToastTimeout) clearTimeout(currentToastTimeout);
-        const existingToast = document.querySelector('.toast-msg');
-        if(existingToast) existingToast.remove();
-        const toast = document.createElement('div');
-        toast.className = 'toast-msg';
-        toast.innerHTML = isSuccess ? `<i class="fas fa-bolt" style="color:#f9d423;"></i> ${message}` : `${message}`;
-        if(isSuccess) toast.style.background = "#2ecc71";
-        else toast.style.background = "#e67e22";
-        document.body.appendChild(toast);
-        currentToastTimeout = setTimeout(() => toast.remove(), 2000);
-    }
-
-    function notifyCorrectAnswer(playerName) {
-        if(document.getElementById('guest-view') && !document.getElementById('guest-view').classList.contains('hidden')) {
-            showFloatingMessage(`🔥 ${playerName || 'أنت'} أجبت إجابة صحيحة! +10 نقاط 💪`, true);
-        } else {
-            showFloatingMessage(`✔️ إجابة صحيحة للاعب ${playerName} +10 نقاط 🚀`, true);
-        }
-    }
-
-    function notifyWrongAnswer(playerName) {
-        if(document.getElementById('guest-view') && !document.getElementById('guest-view').classList.contains('hidden')) {
-            showFloatingMessage(`❌ إجابة خاطئة يا ${playerName || ''} -5 نقاط`, false);
-        } else {
-            showFloatingMessage(`⚠️ إجابة خاطئة للاعب ${playerName} -5 نقاط`, false);
-        }
-    }
-
-    function initAdmin() {
-        let rawName = document.getElementById('user-name').value.trim();
-        if(!rawName) rawName = "المضيف";
-        myName = rawName;
-        isHost = true;
+    function startSync() {
+        db.ref(`rooms/${currentRoom}/winLimit`).on('value', snap=>{ winScore = snap.val()||70; if(document.getElementById('goal-display')) document.getElementById('goal-display').innerText = winScore; if(document.getElementById('guest-goal-display')) document.getElementById('guest-goal-display').innerText = winScore; });
+        let qList = []; db.ref(`rooms/${currentRoom}/questionsList`).on('value', snap=>{ if(snap.exists()) qList = snap.val(); });
+        db.ref(`rooms/${currentRoom}/currentQuestionIndex`).on('value', snap=>{ let idx = snap.val()||0; if(qList.length) { currentQuestionObj = qList[idx % qList.length]; if(currentQuestionObj) { if(document.getElementById('admin-q-text')) document.getElementById('admin-q-text').innerText = currentQuestionObj.q; if(document.getElementById('admin-a-text')) document.getElementById('admin-a-text').innerText = currentQuestionObj.a; } } });
         
-        currentRoom = Math.floor(1000 + Math.random() * 9000);
-        winScore = parseInt(document.getElementById('win-limit').value);
+        db.ref(`rooms/${currentRoom}`).on('value', snapshot=>{ 
+            let data = snapshot.val(); if(!data) return; 
+            let visible = !data.manualHideActive && data.isQuestionVisible; 
+            let showOpt = data.showOptions !== false; 
+            let guestQ = document.getElementById('guest-q-text'); 
+            let guestOpts = document.getElementById('guest-options-area'); 
+            if(guestQ && currentQuestionObj) { 
+                if(!visible) { guestQ.innerText = "🔒 السؤال مخفي... استعد"; guestOpts.innerHTML = ""; } 
+                else { 
+                    guestQ.innerText = currentQuestionObj.q; 
+                    if(showOpt && currentQuestionObj.options) {
+                        // عرض الخيارات ولكن بشكل غير قابل للنقر (للقراءة فقط)
+                        guestOpts.innerHTML = currentQuestionObj.options.map(opt => `<div class="option-btn disabled-opt"><i class="fas fa-ban"></i> ${opt}</div>`).join('');
+                    } else guestOpts.innerHTML = `<div class="answer-hint">الاقتراحات مخفية حالياً</div>`; 
+                } 
+            } 
+        });
         
-        const defaultCategory = "all";
-        const defaultQuestions = getQuestionsByCategory(defaultCategory);
+        db.ref(`rooms/${currentRoom}/firstPress`).on('value', snap=>{ let fp = snap.val(); if(fp) { document.getElementById('buzzer-alert')?.classList.remove('hidden'); if(document.getElementById('first-player-name')) document.getElementById('first-player-name').innerText = fp; if(document.getElementById('msg-status')) document.getElementById('msg-status').innerHTML = `<i class="fas fa-bell"></i> ⚡ ${fp} ضغط أولاً! انتظر تقييم المضيف.`; document.getElementById('buzzer-btn')?.setAttribute('disabled','disabled'); } else { document.getElementById('buzzer-alert')?.classList.add('hidden'); if(document.getElementById('msg-status')) document.getElementById('msg-status').innerHTML = `<i class="fas fa-fist-raised"></i> اضغط الجرس لتكون أول من يجيب!`; document.getElementById('buzzer-btn')?.removeAttribute('disabled'); } });
         
-        const roomRef = db.ref(`rooms/${currentRoom}`);
-        roomRef.set({
-            currentQuestionIndex: 0,
-            winLimit: winScore,
-            firstPress: null,
-            winner: null,
-            createdAt: Date.now(),
-            hostName: myName,
-            isQuestionVisible: false,
-            manualHideActive: true,
-            currentCategory: defaultCategory,
-            questionsList: defaultQuestions
-        });
-        db.ref(`rooms/${currentRoom}/players/${myName}`).set({ name: myName, score: 0, isHost: true });
-        document.getElementById('admin-room-id').innerText = currentRoom;
-        document.getElementById('goal-display').innerText = winScore;
-        showView('admin-view');
-        startSync();
-        showFloatingMessage(`تم إنشاء الغرفة بنجاح! الرقم: ${currentRoom}`, true);
-    }
-
-    function joinRoom() {
-        let rawName = document.getElementById('user-name').value.trim();
-        if(!rawName) return showFloatingMessage("⚠️ أدخل اسمك أولاً", false);
-        myName = rawName;
-        isHost = false;
-        let roomCode = document.getElementById('room-input').value.trim();
-        if(!roomCode) return showFloatingMessage("📛 رقم الغرفة مطلوب", false);
-        currentRoom = roomCode;
-        db.ref(`rooms/${currentRoom}`).once('value', (snap) => {
-            if(!snap.exists()) {
-                showFloatingMessage("الغرفة غير موجودة! تأكد من الرقم", false);
-                return;
+        db.ref(`rooms/${currentRoom}/players`).on('value', snap=>{ 
+            let players = snap.val()||{}; 
+            let filtered = Object.values(players).filter(p=> !p.isHost && p.name !== players.hostName); 
+            filtered.sort((a,b)=>b.score - a.score); 
+            let adminHtml="", guestHtml="", r=1; 
+            for(let p of filtered) {
+                adminHtml += `<tr><td>${r++}</td><td><i class="fas fa-user-astronaut"></i> ${p.name}</td><td style="font-weight:bold;color:#f39c12;">${p.score}</td>
+                <td><button class="kick-btn" onclick="kickPlayer('${p.name.replace(/'/g, "\\'")}')"><i class="fas fa-user-slash"></i> طرد</button></td></tr>`;
             }
-            db.ref(`rooms/${currentRoom}/players/${myName}`).set({ name: myName, score: 0, isHost: false });
-            showView('guest-view');
-            document.getElementById('guest-room-display').innerText = currentRoom;
-            startSync();
-            showFloatingMessage("انضممت إلى الحلبة! استعد", true);
-        }).catch(()=> showFloatingMessage("خطأ في الاتصال", false));
+            r=1; for(let p of filtered) guestHtml += `<tr><td>${r++}</td><td><i class="fas fa-user"></i> ${p.name}</td><td>🏅 ${p.score}</td></tr>`; 
+            document.getElementById('admin-list').innerHTML = adminHtml || '<tr><td colspan="4">لا يوجد متسابقون بعد</td></tr>'; 
+            document.getElementById('guest-list').innerHTML = guestHtml || '<tr><td colspan="3">لا يوجد متسابقون بعد</td></tr>'; 
+            for(let p of filtered) if(p.score >= winScore) db.ref(`rooms/${currentRoom}/winner`).set(p.name); 
+        });
+        
+        db.ref(`rooms/${currentRoom}/winner`).on('value', snap=>{ let w = snap.val(); if(w) { document.getElementById('game-content').classList.add('hidden'); document.getElementById('winner-screen').classList.remove('hidden'); document.getElementById('winner-name').innerText = w; if(document.getElementById('buzzer-btn')) document.getElementById('buzzer-btn').disabled = true; showFloatingMessage(`🏆 البطل ${w} فاز بالمسابقة!`, true); } else if(document.getElementById('game-content')?.classList.contains('hidden')) { document.getElementById('game-content').classList.remove('hidden'); document.getElementById('winner-screen').classList.add('hidden'); } });
     }
-
-    function showView(viewId) {
-        document.getElementById('setup-screen').classList.add('hidden');
-        document.getElementById('admin-view').classList.add('hidden');
-        document.getElementById('guest-view').classList.add('hidden');
-        document.getElementById(viewId).classList.remove('hidden');
+    
+    function pressBuzzer() { if(currentRoom) db.ref(`rooms/${currentRoom}/firstPress`).transaction(cur => cur === null ? myName : cur); }
+    function nextQuestion() { db.ref(`rooms/${currentRoom}/currentQuestionIndex`).transaction(idx=>(idx||0)+1); db.ref(`rooms/${currentRoom}/firstPress`).set(null); showFloatingMessage("السؤال التالي!", true); }
+    
+    function handleAnswer(correct) { 
+        db.ref(`rooms/${currentRoom}/firstPress`).once('value', snap=>{ let p = snap.val(); if(!p) return showFloatingMessage("لا يوجد لاعب ضغط!", false); if(correct) { db.ref(`rooms/${currentRoom}/players/${p}/score`).transaction(s=>(s||0)+10); showFloatingMessage(`✔️ إجابة صحيحة للاعب ${p} +10 نقاط`, true); nextQuestion(); } else { db.ref(`rooms/${currentRoom}/players/${p}/score`).transaction(s=>(s||0)-5); showFloatingMessage(`❌ إجابة خاطئة للاعب ${p} -5 نقاط`, false); db.ref(`rooms/${currentRoom}/firstPress`).set(null); } }); 
     }
-
-    function changeCategory() {
-        if(!currentRoom) return;
-        const newCategory = document.getElementById('category-select-live').value;
-        const newQuestionsList = getQuestionsByCategory(newCategory);
-        db.ref(`rooms/${currentRoom}`).update({
-            currentCategory: newCategory,
-            questionsList: newQuestionsList,
-            currentQuestionIndex: 0
-        });
-        showFloatingMessage(`🔄 تم تغيير المجال إلى ${newCategory} (أسئلة عشوائية جديدة)`, true);
-    }
-
-    function showQuestionToGuests() {
-        if(!currentRoom) return;
-        db.ref(`rooms/${currentRoom}`).update({
-            isQuestionVisible: true,
-            manualHideActive: false
-        });
-        showFloatingMessage("✅ تم عرض السؤال للمتسابقين", true);
-    }
-
-    function hideQuestionFromGuests() {
-        if(!currentRoom) return;
-        db.ref(`rooms/${currentRoom}`).update({
-            isQuestionVisible: false,
-            manualHideActive: true
-        });
-        const guestQElement = document.getElementById('guest-q-text');
-        if(guestQElement) guestQElement.innerText = "🔒 السؤال مخفي... استعد 🔒";
-        showFloatingMessage("🔒 تم إخفاء السؤال عن المتسابقين", false);
-    }
-
-    function startSync() { /* نفس الكود الأصلي لكن مع دعم الأسئلة العشوائية */
-        if(!currentRoom) return;
-        db.ref(`rooms/${currentRoom}/winLimit`).on('value', (snap) => {
-            let val = snap.val();
-            if(val) winScore = val;
-            if(document.getElementById('goal-display')) document.getElementById('goal-display').innerText = winScore;
-            if(document.getElementById('guest-goal-display')) document.getElementById('guest-goal-display').innerText = winScore;
-        });
-        let localQuestionsList = [];
-        db.ref(`rooms/${currentRoom}/questionsList`).on('value', (snap) => {
-            if(snap.exists()) localQuestionsList = snap.val();
-        });
-        db.ref(`rooms/${currentRoom}/currentQuestionIndex`).on('value', (snap) => {
-            let idx = snap.val() || 0;
-            if(localQuestionsList.length > 0) {
-                let qData = localQuestionsList[idx % localQuestionsList.length];
-                if(qData) {
-                    if(document.getElementById('admin-q-text')) document.getElementById('admin-q-text').innerText = qData.q;
-                    if(document.getElementById('admin-a-text')) document.getElementById('admin-a-text').innerText = qData.a;
-                }
-            }
-        });
-        db.ref(`rooms/${currentRoom}`).on('value', (snapshot) => {
-            const data = snapshot.val();
-            if(!data) return;
-            const isManualHide = data.manualHideActive === true;
-            const isVisibleFromFlag = data.isQuestionVisible === true;
-            let finalVisibility = false;
-            if(isManualHide) finalVisibility = false;
-            else finalVisibility = isVisibleFromFlag;
-            const guestQElement = document.getElementById('guest-q-text');
-            if(guestQElement) {
-                if(!finalVisibility) guestQElement.innerText = "🔒 السؤال مخفي... استعد 🔒";
-                else {
-                    db.ref(`rooms/${currentRoom}/currentQuestionIndex`).once('value', (idxSnap) => {
-                        let idx = idxSnap.val() || 0;
-                        if(localQuestionsList.length > 0) {
-                            let qData = localQuestionsList[idx % localQuestionsList.length];
-                            if(qData) guestQElement.innerText = qData.q;
-                            else guestQElement.innerText = "⏳ جاري تحميل السؤال...";
-                        }
-                    });
-                }
-            }
-        });
-        db.ref(`rooms/${currentRoom}/firstPress`).on('value', (snap) => {
-            const firstPlayer = snap.val();
-            if(firstPlayer) {
-                if(document.getElementById('buzzer-alert')) document.getElementById('buzzer-alert').classList.remove('hidden');
-                if(document.getElementById('first-player-name')) document.getElementById('first-player-name').innerText = firstPlayer;
-                if(document.getElementById('msg-status')) document.getElementById('msg-status').innerHTML = `<i class="fas fa-bell"></i> ⚡ ${firstPlayer} ضغط أولاً! انتظر قرار المضيف.`;
-                if(document.getElementById('buzzer-btn')) document.getElementById('buzzer-btn').disabled = true;
-            } else {
-                if(document.getElementById('buzzer-alert')) document.getElementById('buzzer-alert').classList.add('hidden');
-                if(document.getElementById('msg-status')) document.getElementById('msg-status').innerHTML = `<i class="fas fa-fist-raised"></i> اضغط الجرس بسرعة لتكون الأول!`;
-                if(document.getElementById('buzzer-btn')) document.getElementById('buzzer-btn').disabled = false;
-            }
-        });
-        db.ref(`rooms/${currentRoom}/players`).on('value', (snap) => {
-            const players = snap.val() || {};
-            db.ref(`rooms/${currentRoom}/hostName`).once('value', (hostSnap) => {
-                const hostNameFromRoom = hostSnap.val();
-                let playersArray = Object.values(players);
-                let filteredPlayers = playersArray.filter(p => {
-                    if(p.isHost === true) return false;
-                    if(hostNameFromRoom && p.name === hostNameFromRoom) return false;
-                    return true;
-                });
-                let sorted = filteredPlayers.sort((a,b) => b.score - a.score);
-                let adminHtml = "", guestHtml = "";
-                let rank = 1;
-                for(let p of sorted) {
-                    adminHtml += `<tr><td>${rank++}</td><td><i class="fas fa-user-astronaut"></i> ${p.name}</td><td style="font-weight:bold;color:#f39c12;">${p.score}</td></tr>`;
-                }
-                rank = 1;
-                for(let p of sorted) guestHtml += `<tr><td>${rank++}</td><td><i class="fas fa-user"></i> ${p.name}</td><td>🏅 ${p.score}</td></tr>`;
-                if(document.getElementById('admin-list')) document.getElementById('admin-list').innerHTML = adminHtml || '<tr><td colspan="3">لا يوجد متسابقون بعد</td></tr>';
-                if(document.getElementById('guest-list')) document.getElementById('guest-list').innerHTML = guestHtml || '<tr><td colspan="3">لا يوجد متسابقون بعد</td></tr>';
-                for(let p of sorted) if(p.score >= winScore) { db.ref(`rooms/${currentRoom}/winner`).set(p.name); break; }
-            });
-        });
-        db.ref(`rooms/${currentRoom}/winner`).on('value', (snap) => {
-            const winnerName = snap.val();
-            if(winnerName) {
-                if(document.getElementById('game-content')) document.getElementById('game-content').classList.add('hidden');
-                if(document.getElementById('winner-screen')) document.getElementById('winner-screen').classList.remove('hidden');
-                if(document.getElementById('winner-name')) document.getElementById('winner-name').innerText = winnerName;
-                if(document.getElementById('buzzer-btn')) document.getElementById('buzzer-btn').disabled = true;
-                showFloatingMessage(`🏆 تتويج البطل ${winnerName} فاز بالمسابقة 🎉`, true);
-            } else {
-                if(document.getElementById('game-content') && document.getElementById('game-content').classList.contains('hidden')) {
-                    document.getElementById('game-content').classList.remove('hidden');
-                    if(document.getElementById('winner-screen')) document.getElementById('winner-screen').classList.add('hidden');
-                }
-            }
-        });
-    }
-
-    function pressBuzzer() {
-        if(!currentRoom) return;
-        db.ref(`rooms/${currentRoom}/firstPress`).transaction((current) => current === null ? myName : current);
-    }
-
-    function nextQuestion() {
-        if(!currentRoom) return;
-        db.ref(`rooms/${currentRoom}/currentQuestionIndex`).transaction(idx => (idx || 0) + 1);
-        db.ref(`rooms/${currentRoom}/firstPress`).set(null);
-        showFloatingMessage("⏩ تم تغيير السؤال، استعدوا!", true);
-    }
-
-    function handleAnswer(correct) {
-        db.ref(`rooms/${currentRoom}/firstPress`).once('value', (snap) => {
-            const playerWhoPressed = snap.val();
-            if(!playerWhoPressed) { showFloatingMessage("لا يوجد لاعب ضغط أولاً!", false); return; }
-            if(correct) {
-                db.ref(`rooms/${currentRoom}/players/${playerWhoPressed}/score`).transaction(s => (s || 0) + 10);
-                notifyCorrectAnswer(playerWhoPressed);
-                nextQuestion();
-            } else {
-                db.ref(`rooms/${currentRoom}/players/${playerWhoPressed}/score`).transaction(s => (s || 0) - 5);
-                notifyWrongAnswer(playerWhoPressed);
-                db.ref(`rooms/${currentRoom}/firstPress`).set(null);
-            }
-        });
-    }
-
-    window.initAdmin = initAdmin;
-    window.joinRoom = joinRoom;
-    window.pressBuzzer = pressBuzzer;
-    window.nextQuestion = nextQuestion;
-    window.handleAnswer = handleAnswer;
-    window.showQuestionToGuests = showQuestionToGuests;
-    window.hideQuestionFromGuests = hideQuestionFromGuests;
-    window.changeCategory = changeCategory;
+    
+    window.initAdmin = initAdmin; window.joinRoom = joinRoom; window.pressBuzzer = pressBuzzer; window.nextQuestion = nextQuestion; window.handleAnswer = handleAnswer; window.showQuestionToGuests = showQuestionToGuests; window.hideQuestionFromGuests = hideQuestionFromGuests; window.changeCategory = changeCategory; window.toggleOptionsVisibility = toggleOptionsVisibility; window.kickPlayer = kickPlayer;
 </script>
 </body>
 </html>
