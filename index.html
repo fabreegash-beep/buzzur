@@ -37,7 +37,7 @@
         .input-group label { display: block; font-weight: 600; margin-bottom: 6px; color: #1f3b43; font-size: 0.9rem; }
         input, select { width: 100%; padding: 14px 18px; border: 2px solid #e0eef2; border-radius: 28px; font-size: 1rem; font-family: 'Cairo', sans-serif; background: white; outline: none; }
         input:focus, select:focus { border-color: #4a90e2; box-shadow: 0 0 0 3px rgba(74,144,226,0.2); }
-        .btn { padding: 12px 18px; border: none; border-radius: 40px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Cairo', sans-serif; transition: 0.2s; }
+        .btn { padding: 14px 22px; border: none; border-radius: 40px; font-weight: 700; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; font-family: 'Cairo', sans-serif; transition: 0.2s; }
         .btn-primary { background: linear-gradient(95deg, #2c7da0, #1f5e7a); color: white; box-shadow: 0 5px 12px rgba(0,0,0,0.2); }
         .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.02); }
         .btn-success { background: linear-gradient(95deg, #2ecc71, #27ae60); color: white; }
@@ -46,36 +46,34 @@
         .btn-info { background: linear-gradient(95deg, #3498db, #2980b9); color: white; }
         .btn-secondary { background: linear-gradient(95deg, #95a5a6, #7f8c8d); color: white; }
         .btn-dark { background: linear-gradient(95deg, #2c3e50, #1a252f); color: white; }
-        .btn-sm { padding: 8px 14px; font-size: 0.8rem; }
         .question-card { background: linear-gradient(125deg, #0f2c3b, #1b4e62); padding: 24px; border-radius: 38px; color: white; text-align: center; box-shadow: 0 15px 25px rgba(0,0,0,0.3); margin: 20px 0; }
-        .question-text { font-size: 1.5rem; font-weight: 700; line-height: 1.4; }
-        .answer-hint { background: rgba(0,0,0,0.3); border-radius: 60px; display: inline-block; padding: 6px 18px; font-size: 0.85rem; margin-top: 12px; }
+        .question-text { font-size: 1.7rem; font-weight: 700; line-height: 1.4; }
+        .answer-hint { background: rgba(0,0,0,0.3); border-radius: 60px; display: inline-block; padding: 6px 18px; font-size: 0.9rem; margin-top: 12px; }
         .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0 15px; }
-        .option-btn { background: #2c3e50; border: 2px solid #f1c40f; border-radius: 50px; padding: 10px; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.85rem; color: white; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; opacity: 0.9; }
+        .option-btn { background: #2c3e50; border: 2px solid #f1c40f; border-radius: 50px; padding: 12px; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.95rem; color: white; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; opacity: 0.9; }
         .option-btn.disabled-opt { cursor: default; background: #1a2a36; border-color: #7f8c8d; opacity: 0.7; }
-        .buzzer-btn { width: 150px; height: 150px; background: radial-gradient(circle at 30% 20%, #ff4d4d, #b91c1c); border: none; border-radius: 50%; font-size: 26px; font-weight: 800; color: white; cursor: pointer; box-shadow: 0 12px 0 0 #7a2e2e; transition: 0.08s linear; margin: 15px auto; display: block; font-family: monospace; }
+        .buzzer-btn { width: 170px; height: 170px; background: radial-gradient(circle at 30% 20%, #ff4d4d, #b91c1c); border: none; border-radius: 50%; font-size: 28px; font-weight: 800; color: white; cursor: pointer; box-shadow: 0 12px 0 0 #7a2e2e; transition: 0.08s linear; margin: 15px auto; display: block; font-family: monospace; }
         .buzzer-btn:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 6px 0 0 #7a2e2e; }
         .buzzer-btn:disabled { background: #6c757d; box-shadow: 0 8px 0 #3a3f44; cursor: not-allowed; opacity: 0.6; }
         .alert-buzzer { background: #fff8e7; border-right: 8px solid #f1c40f; padding: 18px; border-radius: 28px; margin: 15px 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-        .control-buttons { display: flex; gap: 10px; margin: 15px 0; flex-wrap: wrap; }
-        .control-buttons .btn { flex: 1; min-width: 100px; }
+        .control-buttons { display: flex; gap: 12px; margin: 15px 0; flex-wrap: wrap; }
+        .control-buttons .btn { flex: 1; min-width: 120px; }
         .category-row { display: flex; gap: 12px; margin: 15px 0; align-items: center; flex-wrap: wrap; }
         .category-row select { flex: 2; min-width: 150px; margin: 0; }
-        .category-row .btn { flex: 1; min-width: 110px; margin: 0; }
+        .category-row .btn { flex: 1; min-width: 120px; margin: 0; }
         .leaderboard { width: 100%; border-collapse: collapse; background: #fef9e8; border-radius: 28px; overflow: hidden; margin: 15px 0; }
-        .leaderboard th, .leaderboard td { padding: 10px 12px; text-align: center; border-bottom: 1px solid #ffe6b3; }
+        .leaderboard th, .leaderboard td { padding: 12px 16px; text-align: center; border-bottom: 1px solid #ffe6b3; }
         .leaderboard th { background: #ffdfaa; color: #4a2c00; }
         .winner-screen { background: linear-gradient(145deg, #f9e45b, #ffc107); padding: 25px; border-radius: 45px; text-align: center; color: #2c3e2f; font-weight: 800; margin-top: 20px; }
         .toast-msg { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2c3e50; color: white; padding: 12px 24px; border-radius: 60px; font-weight: bold; z-index: 1000; animation: fadeUp 0.3s ease; display: flex; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         @keyframes fadeUp { from { opacity: 0; transform: translateX(-50%) translateY(20px);} to { opacity: 1; transform: translateX(-50%) translateY(0);} }
         .hidden { display: none; }
-        .room-badge { background: #1e2a3a; color: #ffd966; padding: 6px 16px; border-radius: 100px; font-size: 0.8rem; font-weight: bold; }
+        .room-badge { background: #1e2a3a; color: #ffd966; padding: 8px 18px; border-radius: 100px; font-size: 0.9rem; font-weight: bold; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         hr { margin: 20px 0; border-color: #d4e6f1; }
-        .action-buttons-group { display: flex; gap: 12px; margin: 15px 0; flex-wrap: wrap; justify-content: center; }
-        .kick-btn { background: #c0392b; border: none; border-radius: 30px; padding: 5px 12px; color: white; font-weight: bold; cursor: pointer; margin-right: 8px; font-size: 0.75rem; transition: 0.2s; }
-        .kick-btn:hover { background: #e74c3c; transform: scale(1.02); }
-        .small-icon { font-size: 0.8rem; }
+        .small-toggle { background: #2c7da0; border: none; border-radius: 40px; padding: 8px 18px; color: white; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .kick-btn { background: #c0392b; border: none; border-radius: 30px; padding: 4px 12px; color: white; font-weight: bold; cursor: pointer; margin-right: 8px; font-size: 0.8rem; }
+        .kick-btn:hover { background: #e74c3c; }
     </style>
 </head>
 <body>
@@ -127,26 +125,22 @@
                 <option value="medicine">💊 طب وصحة</option>
                 <option value="economy">📈 اقتصاد وأعمال</option>
             </select>
-            <button class="btn btn-info btn-sm" onclick="changeCategory()"><i class="fas fa-exchange-alt"></i> تغيير المجال</button>
+            <button class="btn btn-info" onclick="changeCategory()"><i class="fas fa-exchange-alt"></i> تغيير المجال الآن</button>
         </div>
         <div class="question-card">
             <div class="question-text"><span id="admin-q-text">تحميل السؤال...</span></div>
             <div class="answer-hint"><i class="fas fa-lightbulb"></i> الجواب الصحيح: <span id="admin-a-text">...</span></div>
-            <div class="action-buttons-group">
-                <button class="btn btn-info btn-sm" onclick="showQuestionOnly()"><i class="fas fa-eye"></i> عرض السؤال</button>
-                <button class="btn btn-warning btn-sm" onclick="toggleOptionsVisibility()"><i class="fas fa-list-ul"></i> إظهار/إخفاء الاقتراحات</button>
-            </div>
+            <button class="small-toggle" onclick="toggleOptionsVisibility()"><i class="fas fa-list-ul"></i> إظهار/إخفاء الاقتراحات للمتسابقين</button>
         </div>
         <div class="control-buttons">
-            <button class="btn btn-secondary btn-sm" onclick="hideQuestionFromGuests()"><i class="fas fa-eye-slash"></i> إخفاء الكل</button>
-            <button class="btn btn-success btn-sm" onclick="showFullQuestionWithOptions()"><i class="fas fa-clipboard-list"></i> عرض السؤال + الاقتراحات</button>
+            <button class="btn btn-info" onclick="showQuestionToGuests()"><i class="fas fa-eye"></i> عرض السؤال + الاقتراحات</button>
+            <button class="btn btn-secondary" onclick="hideQuestionFromGuests()"><i class="fas fa-eye-slash"></i> إخفاء السؤال والاقتراحات</button>
         </div>
         <div id="buzzer-alert" class="alert-buzzer hidden">
             <span><i class="fas fa-bell" style="color:#e67e22;"></i> <strong id="first-player-name">...</strong> ضغط أولاً! يحق له الإجابة.</span>
-            <div style="display: flex; gap: 10px;">
-                <button class="btn btn-success btn-sm" style="width:auto; padding:6px 16px;" onclick="handleAnswer(true)"><i class="fas fa-check-circle"></i> صحيحة ✅</button>
-                <button class="btn btn-danger btn-sm" style="width:auto; padding:6px 16px;" onclick="handleAnswer(false)"><i class="fas fa-times-circle"></i> خاطئة ❌</button>
-                <button class="btn btn-secondary btn-sm" style="width:auto; padding:6px 16px;" onclick="skipBuzzer()"><i class="fas fa-step-forward"></i> تخطي</button>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-success" style="width:auto; padding:8px 20px;" onclick="handleAnswer(true)"><i class="fas fa-check-circle"></i> صحيحة ✅</button>
+                <button class="btn btn-danger" style="width:auto; padding:8px 20px;" onclick="handleAnswer(false)"><i class="fas fa-times-circle"></i> خاطئة ❌</button>
             </div>
         </div>
         <button class="btn btn-warning" onclick="nextQuestion()"><i class="fas fa-forward-step"></i> تغيير السؤال + التالي</button>
@@ -194,7 +188,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // ===================== بنك الأسئلة =====================
+    // ===================== بنك الأسئلة مع خيارات منطقية =====================
     function createQuestion(q, correct, opt2, opt3, opt4) {
         let options = [correct, opt2, opt3, opt4];
         for(let i = options.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [options[i], options[j]] = [options[j], options[i]]; }
@@ -202,42 +196,144 @@
     }
 
     const generalQuestions = [
-        createQuestion("ما هي عاصمة مصر؟", "القاهرة", "الإسكندرية", "الجيزة", "الأقصر"),
-        createQuestion("ما هي عاصمة السعودية؟", "الرياض", "جدة", "مكة", "الدمام"),
-        createQuestion("ما هو أطول نهر في العالم؟", "النيل", "الأمازون", "اليانغتسي", "الميسيسيبي"),
-        createQuestion("ما هو أعلى جبل في أفريقيا؟", "كيليمانجارو", "جبل كينيا", "الروبنسون", "دراكنزبرج"),
-        createQuestion("من هو مؤسس علم الجبر؟", "الخوارزمي", "ابن سينا", "الرازي", "الفارابي"),
-        createQuestion("ما هي أكبر جزيرة في العالم؟", "جرينلاند", "مدغشقر", "بورنيو", "سومطرة"),
-    ];
+createQuestion("ما هي عاصمة الجزائر؟","الجزائر","وهران","قسنطينة","عنابة"),
+createQuestion("ما هي عاصمة فرنسا؟","باريس","ليون","مارسيليا","نيس"),
+createQuestion("ما هي عاصمة إيطاليا؟","روما","ميلانو","نابولي","تورينو"),
+createQuestion("ما هي عاصمة ألمانيا؟","برلين","ميونخ","فرانكفورت","هامبورغ"),
+createQuestion("ما هي عاصمة إسبانيا؟","مدريد","برشلونة","فالنسيا","إشبيلية"),
+createQuestion("ما هي عاصمة تركيا؟","أنقرة","إسطنبول","إزمير","بورصة"),
+createQuestion("ما هي عاصمة اليابان؟","طوكيو","أوساكا","كيوتو","هيروشيما"),
+createQuestion("ما هي عاصمة الصين؟","بكين","شنغهاي","هونغ كونغ","ووهان"),
+createQuestion("ما هي عاصمة الهند؟","نيودلهي","مومباي","كالكوتا","تشيناي"),
+createQuestion("ما هي عاصمة كندا؟","أوتاوا","تورونتو","مونتريال","فانكوفر"),
+createQuestion("ما هي عاصمة البرازيل؟","برازيليا","ريو","ساو باولو","سلفادور"),
+createQuestion("ما هي عاصمة المغرب؟","الرباط","الدار البيضاء","فاس","مراكش"),
+createQuestion("ما هي عاصمة تونس؟","تونس","سوسة","صفاقس","بنزرت"),
+createQuestion("ما هي عاصمة ليبيا؟","طرابلس","بنغازي","مصراتة","سبها"),
+createQuestion("ما هي عاصمة السودان؟","الخرطوم","أم درمان","كسلا","بورتسودان"),
+createQuestion("ما هي عاصمة روسيا؟","موسكو","سانت بطرسبرغ","قازان","سوتشي"),
+createQuestion("ما هي عاصمة السويد؟","ستوكهولم","مالمو","أوبسالا","غوتنبرغ"),
+createQuestion("ما هي عاصمة النرويج؟","أوسلو","بيرغن","تروندهايم","ستافنجر"),
+createQuestion("ما هي عاصمة فنلندا؟","هلسنكي","تامبيري","توركو","أولو"),
+createQuestion("ما هي عاصمة هولندا؟","أمستردام","روتردام","لاهاي","أوترخت"),
+
+createQuestion("ما هو أكبر محيط؟","المحيط الهادئ","الأطلسي","الهندي","المتجمد"),
+createQuestion("ما هو أطول نهر؟","النيل","الأمازون","اليانغتسي","الميسيسيبي"),
+createQuestion("ما هو أعلى جبل؟","إيفرست","كيليمانجارو","الألب","الأنديز"),
+createQuestion("ما هو أكبر قارة؟","آسيا","أفريقيا","أوروبا","أمريكا"),
+createQuestion("كم عدد القارات؟","7","6","5","8"),
+createQuestion("كم عدد أيام السنة؟","365","366","360","364"),
+createQuestion("كم عدد حروف العربية؟","28","26","29","30"),
+createQuestion("ما هو أكبر حيوان؟","الحوت الأزرق","الفيل","الزرافة","القرش"),
+createQuestion("ما هو أسرع حيوان؟","الفهد","الأسد","النمر","الغزال"),
+createQuestion("ما هو أطول حيوان؟","الزرافة","الفيل","الحصان","الجمل"),
+
+createQuestion("ما هو الحيوان الذي يسمى سفينة الصحراء؟","الجمل","الحصان","الأسد","الفيل"),
+createQuestion("ما هو الحيوان ملك الغابة؟","الأسد","النمر","الفيل","الدب"),
+createQuestion("ما هو الحيوان الأبطأ؟","السلحفاة","الحلزون","الدب","الفيل"),
+createQuestion("ما هو الحيوان الأذكى؟","الدلفين","القرد","الكلب","الفيل"),
+createQuestion("ما هو الحيوان الذي يغير لونه؟","الحرباء","الأسد","الكلب","الفيل"),
+createQuestion("ما هو الحيوان الذي له 8 أرجل؟","العنكبوت","النملة","الدودة","السلحفاة"),
+createQuestion("ما هو الحيوان الذي يبيض؟","الدجاجة","البقرة","الخروف","الحصان"),
+createQuestion("ما هو الحيوان الذي يعيش أطول؟","السلحفاة","الفيل","الحوت","الكلب"),
+createQuestion("ما هو أكبر طائر؟","النعامة","النسر","البطريق","الدجاج"),
+createQuestion("ما هو أسرع طائر؟","الصقر","النسر","الحمام","البطريق"),
+
+createQuestion("ما هو الكوكب الأحمر؟","المريخ","الزهرة","عطارد","زحل"),
+createQuestion("ما هو أكبر كوكب؟","المشتري","زحل","الأرض","نبتون"),
+createQuestion("ما هو أصغر كوكب؟","عطارد","المريخ","الزهرة","نبتون"),
+createQuestion("ما هو أقرب كوكب للشمس؟","عطارد","الزهرة","الأرض","المريخ"),
+createQuestion("ما هو أكثر كوكب حرارة؟","الزهرة","المريخ","عطارد","الأرض"),
+createQuestion("ما هو الكوكب ذو الحلقات؟","زحل","المريخ","الأرض","عطارد"),
+createQuestion("ما هو لون الشمس؟","أصفر","أحمر","أزرق","أخضر"),
+createQuestion("ما هو لون السماء؟","أزرق","أحمر","أخضر","أصفر"),
+createQuestion("ما هو لون الدم؟","أحمر","أزرق","أخضر","أصفر"),
+createQuestion("ما هو الغاز الذي نتنفسه؟","الأكسجين","الهيدروجين","النيتروجين","الكربون"),
+
+createQuestion("كم عدد الأسنان؟","32","28","30","34"),
+createQuestion("ما هو أكبر عضو؟","الجلد","القلب","الكبد","الرئة"),
+createQuestion("ما هو أطول عظم؟","عظم الفخذ","الذراع","الجمجمة","العمود الفقري"),
+createQuestion("ما هو الجهاز الذي يقيس الحرارة؟","الترمومتر","البارومتر","الأميتر","الفولتميتر"),
+createQuestion("ما هو الجهاز الذي يقيس الضغط؟","البارومتر","الترمومتر","الأميتر","الفولتميتر"),
+createQuestion("ما هو أسرع سمكة؟","أبو شراع","القرش","التونة","السلمون"),
+createQuestion("ما هو أكبر بحر؟","بحر الفلبين","المتوسط","الأحمر","العرب"),
+createQuestion("ما هو أكبر صحراء؟","الصحراء الكبرى","جوبي","أتاكاما","كالاهاري"),
+createQuestion("ما هو أطول سور؟","سور الصين","برلين","روما","الأندلس"),
+createQuestion("ما هو أسرع قطار؟","القطار الياباني","TGV","ICE","مترو"),
+];
+    
     const islamQuestions = [
         createQuestion("كم عدد أركان الإسلام؟", "5", "6", "7", "4"),
         createQuestion("كم عدد أركان الإيمان؟", "6", "5", "7", "8"),
         createQuestion("ما هي السورة التي تسمى عروس القرآن؟", "الرحمن", "يس", "الواقعة", "الملك"),
         createQuestion("من هو النبي الذي لقب بأبي البشر؟", "آدم", "نوح", "إبراهيم", "محمد"),
+        createQuestion("من هو النبي الذي رأسه يقطر ماء؟", "أيوب", "يونس", "يوسف", "زكريا"),
+        createQuestion("من هو النبي الذي عاش 950 سنة؟", "نوح", "إدريس", "هود", "صالح"),
+        createQuestion("من هو النبي الذي كلمه الله تكليماً؟", "موسى", "عيسى", "إبراهيم", "محمد"),
+        createQuestion("من هو النبي الذي رفعه الله إليه؟", "إدريس", "عيسى", "إلياس", "محمد"),
+        createQuestion("من هو أول مؤذن في الإسلام؟", "بلال بن رباح", "عبدالله بن زيد", "عمرو بن العاص", "سعد بن معاذ"),
+        createQuestion("ما هي السورة التي تمنع دخول الفقر؟", "الواقعة", "الملك", "يس", "الرحمن"),
     ];
+    
     const scienceQuestions = [
         createQuestion("ما هو العنصر الأكثر وفرة في الكون؟", "الهيدروجين", "الهيليوم", "الأكسجين", "الكربون"),
+        createQuestion("ما هو الغاز الذي نتنفسه؟", "الأكسجين", "النيتروجين", "ثاني أكسيد الكربون", "الهيدروجين"),
         createQuestion("ما هي أقرب كوكب للشمس؟", "عطارد", "الزهرة", "الأرض", "المريخ"),
+        createQuestion("ما هو أكبر كوكب في المجموعة الشمسية؟", "المشتري", "زحل", "نبتون", "أورانوس"),
         createQuestion("من هو مكتشف الجاذبية؟", "نيوتن", "أينشتاين", "جاليليو", "كوبرنيكوس"),
+        createQuestion("من هو واضع النظرية النسبية؟", "أينشتاين", "نيوتن", "بلانك", "بور"),
+        createQuestion("ما هو أكبر عضو في جسم الإنسان؟", "الجلد", "الكبد", "الدماغ", "القلب"),
+        createQuestion("كم عدد الخلايا العصبية في الدماغ؟", "100 مليار", "10 مليار", "500 مليار", "50 مليار"),
+        createQuestion("ما هي سرعة الضوء؟", "300000 كم/ث", "150000 كم/ث", "450000 كم/ث", "600000 كم/ث"),
+        createQuestion("من هو مخترع المصباح الكهربائي؟", "إديسون", "تيسلا", "فاراداي", "نيوتن"),
     ];
-    const geographyQuestions = [ createQuestion("ما هي عاصمة فرنسا؟", "باريس", "ليون", "مرسيليا", "بوردو"), createQuestion("ما هي أكبر دولة في العالم مساحة؟", "روسيا", "كندا", "الصين", "الولايات المتحدة") ];
-    const sportsQuestions = [ createQuestion("كم عدد لاعبي كرة القدم؟", "11", "10", "12", "9"), createQuestion("من هو بطل كأس العالم 2022؟", "الأرجنتين", "فرنسا", "المغرب", "كرواتيا") ];
+    
+    const geographyQuestions = [
+        createQuestion("ما هي عاصمة فرنسا؟", "باريس", "ليون", "مرسيليا", "بوردو"),
+        createQuestion("ما هي عاصمة ألمانيا؟", "برلين", "ميونخ", "فرانكفورت", "هامبورغ"),
+        createQuestion("ما هي عاصمة إيطاليا؟", "روما", "ميلانو", "فلورنسا", "نابولي"),
+        createQuestion("ما هي عاصمة بريطانيا؟", "لندن", "مانشستر", "ليفربول", "برمنغهام"),
+        createQuestion("ما هي أكبر دولة في العالم مساحة؟", "روسيا", "كندا", "الصين", "الولايات المتحدة"),
+        createQuestion("ما هي أصغر دولة في العالم مساحة؟", "الفاتيكان", "موناكو", "ناورو", "توفالو"),
+        createQuestion("ما هو أعلى جبل في العالم؟", "إيفرست", "كيه 2", "كانشينجونجا", "ماكالو"),
+        createQuestion("ما هي أكبر بحيرة في العالم؟", "بحر قزوين", "بحيرة سوبيريور", "بحيرة فكتوريا", "بحيرة تنجانيقا"),
+        createQuestion("ما هي أقدم مدينة في العالم؟", "دمشق", "أريحا", "بغداد", "القاهرة"),
+        createQuestion("ما هي أكثر دولة في العالم سكاناً؟", "الهند", "الصين", "الولايات المتحدة", "إندونيسيا"),
+    ];
+    
+    const sportsQuestions = [
+        createQuestion("كم عدد لاعبي كرة القدم؟", "11", "10", "12", "9"),
+        createQuestion("كم عدد لاعبي كرة السلة؟", "5", "6", "7", "4"),
+        createQuestion("من هو أفضل لاعب كرة قدم في العالم 2023؟", "ميسي", "رونالدو", "مبابي", "هالاند"),
+        createQuestion("من هو هداف كأس العالم التاريخي؟", "كلوزه", "رونالدو", "ميسي", "فونتين"),
+        createQuestion("من هو بطل كأس العالم 2022؟", "الأرجنتين", "فرنسا", "المغرب", "كرواتيا"),
+        createQuestion("من هو بطل دوري أبطال أوروبا 2023؟", "مانشستر سيتي", "ريال مدريد", "إنتر ميلان", "بايرن ميونخ"),
+        createQuestion("من هو أفضل لاعب كرة سلة في التاريخ؟", "مايكل جوردان", "ليبرون جيمس", "كوبي براينت", "لاري بيرد"),
+        createQuestion("من هو بطل كأس أمم أفريقيا 2022؟", "السنغال", "مصر", "المغرب", "الكاميرون"),
+        createQuestion("كم مرة فاز الأهلي بدوري أبطال أفريقيا؟", "10", "9", "11", "8"),
+        createQuestion("من هو هداف الدوري المصري التاريخي؟", "حسن الشاذلي", "محمد أبو تريكة", "حسام حسن", "محمود الخطيب"),
+    ];
 
-    function buildCategory(baseArr, targetCount=40) { let result = []; while(result.length < targetCount) result.push(...baseArr); return result.slice(0, targetCount); }
+    function buildCategory(baseArr, targetCount=50) {
+        let result = [];
+        while(result.length < targetCount) result.push(...baseArr);
+        return result.slice(0, targetCount);
+    }
+    
     const questionsDB = {
-        general: buildCategory(generalQuestions, 40),
-        islam: buildCategory(islamQuestions, 40),
-        science: buildCategory(scienceQuestions, 40),
-        geography: buildCategory(geographyQuestions, 40),
-        sports: buildCategory(sportsQuestions, 40),
-        arts: buildCategory([createQuestion("من هو مؤلف 'الأمير'؟", "ميكافيللي", "أفلاطون", "أرسطو", "سقراط")], 40),
-        history: buildCategory([createQuestion("من هو أول خليفة إسلامي؟", "أبو بكر الصديق", "عمر", "عثمان", "علي")], 40),
-        technology: buildCategory([createQuestion("من هو مؤسس مايكروسوفت؟", "بيل غيتس", "ستيف جوبز", "مارك", "جيف")], 40),
-        entertainment: buildCategory([createQuestion("من هو بطل فيلم 'تايتانيك'؟", "دي كابريو", "براد بيت", "توم كروز", "جوني ديب")], 40),
-        medicine: buildCategory([createQuestion("من هو مكتشف البنسلين؟", "ألكسندر فلمنغ", "باستور", "كوخ", "جينر")], 40),
-        economy: buildCategory([createQuestion("من هو مؤسس علم الاقتصاد الحديث؟", "آدم سميث", "ماركس", "كينز", "ريكاردو")], 40)
+        general: buildCategory(generalQuestions, 50),
+        islam: buildCategory(islamQuestions, 50),
+        science: buildCategory(scienceQuestions, 50),
+        geography: buildCategory(geographyQuestions, 50),
+        sports: buildCategory(sportsQuestions, 50),
+        arts: buildCategory([createQuestion("من هو مؤلف 'الأمير'؟", "ميكافيللي", "أفلاطون", "أرسطو", "سقراط"), createQuestion("من هو مؤلف 'مئة عام من العزلة'؟", "ماركيز", "برجاس يوسا", "خوان رولفو", "ماريو فارغاس")], 50),
+        history: buildCategory([createQuestion("من هو أول خليفة إسلامي؟", "أبو بكر الصديق", "عمر بن الخطاب", "عثمان بن عفان", "علي بن أبي طالب"), createQuestion("من هو مؤسس الدولة الأموية؟", "معاوية بن أبي سفيان", "يزيد بن معاوية", "عبد الملك بن مروان", "الوليد بن عبد الملك")], 50),
+        technology: buildCategory([createQuestion("من هو مؤسس مايكروسوفت؟", "بيل غيتس", "ستيف جوبز", "مارك زوكربيرغ", "جيف بيزوس"), createQuestion("من هو مؤسس آبل؟", "ستيف جوبز", "بيل غيتس", "إيلون ماسك", "لاري بايج")], 50),
+        entertainment: buildCategory([createQuestion("من هو بطل فيلم 'تايتانيك'؟", "دي كابريو", "براد بيت", "توم كروز", "جوني ديب"), createQuestion("من هو بطل فيلم 'العراب'؟", "مارلون براندو", "آل باتشينو", "روبرت دي نيرو", "جيمس كاجني")], 50),
+        medicine: buildCategory([createQuestion("من هو مكتشف البنسلين؟", "ألكسندر فلمنغ", "لويس باستور", "روبرت كوخ", "جوناس سولك"), createQuestion("من هو مكتشف لقاح الجدري؟", "إدوارد جينر", "فلمنغ", "باستور", "كورنيل")], 50),
+        economy: buildCategory([createQuestion("من هو مؤسس علم الاقتصاد الحديث؟", "آدم سميث", "كارل ماركس", "جون كينز", "ديفيد ريكاردو"), createQuestion("من هو صاحب كتاب 'ثروة الأمم'؟", "آدم سميث", "ريكاردو", "ماركس", "كينز")], 50)
     };
-    questionsDB["all"] = buildCategory([...generalQuestions, ...islamQuestions, ...scienceQuestions, ...geographyQuestions, ...sportsQuestions], 100);
+    questionsDB["all"] = buildCategory([...generalQuestions, ...islamQuestions, ...scienceQuestions, ...geographyQuestions, ...sportsQuestions], 200);
 
     function shuffleArray(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
     function getQuestionsByCategory(category) { return shuffleArray([...(questionsDB[category] || questionsDB.general)]); }
@@ -245,68 +341,28 @@
     let currentRoom = "", myName = "", winScore = 70, currentToastTimeout = null, isHost = false, currentQuestionObj = null;
     function showFloatingMessage(msg, success=false) { if(currentToastTimeout) clearTimeout(currentToastTimeout); document.querySelectorAll('.toast-msg').forEach(e=>e.remove()); let toast = document.createElement('div'); toast.className = 'toast-msg'; toast.innerHTML = success ? `<i class="fas fa-bolt"></i> ${msg}` : msg; toast.style.background = success ? "#2ecc71" : "#e67e22"; document.body.appendChild(toast); currentToastTimeout = setTimeout(()=>toast.remove(), 2000); }
     
-    function initAdmin() { 
-        let name = document.getElementById('user-name').value.trim()||"المضيف"; 
-        myName = name; isHost = true; 
-        currentRoom = Math.floor(1000+Math.random()*9000); 
-        winScore = parseInt(document.getElementById('win-limit').value); 
-        let defCat = "all"; 
-        let defQ = getQuestionsByCategory(defCat); 
-        db.ref(`rooms/${currentRoom}`).set({currentQuestionIndex:0, winLimit:winScore, firstPress:null, winner:null, createdAt:Date.now(), hostName:myName, isQuestionVisible:false, manualHideActive:true, currentCategory:defCat, questionsList:defQ, showOptions:true});
-        db.ref(`rooms/${currentRoom}/players/${myName}`).set({name:myName, score:0, isHost:true}); 
-        document.getElementById('admin-room-id').innerText = currentRoom; 
-        document.getElementById('goal-display').innerText = winScore; 
-        showView('admin-view'); 
-        startSync(); 
-        showFloatingMessage(`تم إنشاء الغرفة! الرقم: ${currentRoom}`, true); 
-    }
+    function initAdmin() { let name = document.getElementById('user-name').value.trim()||"المضيف"; myName = name; isHost = true; currentRoom = Math.floor(1000+Math.random()*9000); winScore = parseInt(document.getElementById('win-limit').value); let defCat = "all"; let defQ = getQuestionsByCategory(defCat); db.ref(`rooms/${currentRoom}`).set({currentQuestionIndex:0, winLimit:winScore, firstPress:null, winner:null, createdAt:Date.now(), hostName:myName, isQuestionVisible:false, manualHideActive:true, currentCategory:defCat, questionsList:defQ, showOptions:true}); db.ref(`rooms/${currentRoom}/players/${myName}`).set({name:myName, score:0, isHost:true}); document.getElementById('admin-room-id').innerText = currentRoom; document.getElementById('goal-display').innerText = winScore; showView('admin-view'); startSync(); showFloatingMessage(`تم إنشاء الغرفة! الرقم: ${currentRoom}`, true); }
     
-    function joinRoom() { 
-        let name = document.getElementById('user-name').value.trim(); 
-        if(!name) return showFloatingMessage("أدخل اسمك", false); 
-        myName = name; 
-        let roomCode = document.getElementById('room-input').value.trim(); 
-        if(!roomCode) return showFloatingMessage("رقم الغرفة مطلوب", false); 
-        currentRoom = roomCode; 
-        db.ref(`rooms/${currentRoom}`).once('value', snap=>{ 
-            if(!snap.exists()) return showFloatingMessage("الغرفة غير موجودة!", false); 
-            db.ref(`rooms/${currentRoom}/players/${myName}`).set({name:myName, score:0, isHost:false}); 
-            showView('guest-view'); 
-            document.getElementById('guest-room-display').innerText = currentRoom; 
-            startSync(); 
-            showFloatingMessage("انضممت إلى الحلبة!", true); 
-        }); 
-    }
+    function joinRoom() { let name = document.getElementById('user-name').value.trim(); if(!name) return showFloatingMessage("أدخل اسمك", false); myName = name; let roomCode = document.getElementById('room-input').value.trim(); if(!roomCode) return showFloatingMessage("رقم الغرفة مطلوب", false); currentRoom = roomCode; db.ref(`rooms/${currentRoom}`).once('value', snap=>{ if(!snap.exists()) return showFloatingMessage("الغرفة غير موجودة!", false); db.ref(`rooms/${currentRoom}/players/${myName}`).set({name:myName, score:0, isHost:false}); showView('guest-view'); document.getElementById('guest-room-display').innerText = currentRoom; startSync(); showFloatingMessage("انضممت إلى الحلبة!", true); }); }
     
     function showView(id) { ['setup-screen','admin-view','guest-view'].forEach(v=>document.getElementById(v).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
     function changeCategory() { let newCat = document.getElementById('category-select-live').value; let newList = getQuestionsByCategory(newCat); db.ref(`rooms/${currentRoom}`).update({currentCategory:newCat, questionsList:newList, currentQuestionIndex:0}); showFloatingMessage(`تم تغيير المجال إلى ${newCat}`, true); }
-    function toggleOptionsVisibility() { db.ref(`rooms/${currentRoom}/showOptions`).once('value', snap=> db.ref(`rooms/${currentRoom}/showOptions`).set(!snap.val())); showFloatingMessage("تبديل عرض الاقتراحات", true); }
-    function showQuestionOnly() { db.ref(`rooms/${currentRoom}`).update({isQuestionVisible:true, manualHideActive:false}); showFloatingMessage("تم عرض السؤال فقط (بدون الاقتراحات)", true); }
-    function showFullQuestionWithOptions() { db.ref(`rooms/${currentRoom}`).update({isQuestionVisible:true, manualHideActive:false, showOptions:true}); showFloatingMessage("تم عرض السؤال + الاقتراحات", true); }
-    function hideQuestionFromGuests() { db.ref(`rooms/${currentRoom}`).update({isQuestionVisible:false, manualHideActive:true}); showFloatingMessage("تم إخفاء السؤال والاقتراحات", false); }
+    function toggleOptionsVisibility() { db.ref(`rooms/${currentRoom}/showOptions`).once('value', snap=> db.ref(`rooms/${currentRoom}/showOptions`).set(!snap.val())); }
+    function showQuestionToGuests() { db.ref(`rooms/${currentRoom}`).update({isQuestionVisible:true, manualHideActive:false, showOptions:true}); showFloatingMessage("تم عرض السؤال والاقتراحات (للقراءة فقط)", true); }
+    function hideQuestionFromGuests() { db.ref(`rooms/${currentRoom}`).update({isQuestionVisible:false, manualHideActive:true}); showFloatingMessage("تم إخفاء السؤال", false); }
     
-    // طرد نهائي: حذف اللاعب من قاعدة البيانات وفرض خروج فوري من جانبه عن طريق إعادة تحميل الصفحة أو كتم البيانات
     function kickPlayer(playerName) {
         if(!currentRoom || !isHost) return;
-        // حذف اللاعب من قائمة اللاعبين نهائياً
         db.ref(`rooms/${currentRoom}/players/${playerName}`).remove().then(() => {
-            showFloatingMessage(`🚪 تم طرد اللاعب ${playerName} نهائياً من الغرفة`, false);
-            // إضافة إشارة للاعب المطرود بأنه تم إقصاؤه (سيتم التعامل معها في sync ليعيد توجيهه)
-            db.ref(`rooms/${currentRoom}/kicked/${playerName}`).set(true);
+            showFloatingMessage(`🚪 تم طرد اللاعب ${playerName} من الغرفة`, false);
+            // إذا كان المضيف يطرد نفسه (لا ينبغي) لكن منعاً للمشاكل
+            if(playerName === myName) window.location.reload();
         });
     }
 
-    // تخطي الضغط: يمسح أول ضاغط دون تغيير نقاط ويسمح بضغط جديد
-    function skipBuzzer() {
-        db.ref(`rooms/${currentRoom}/firstPress`).set(null);
-        showFloatingMessage("⏩ تم تخطي الإجابة، يمكن للاعبين الضغط مجدداً", true);
-    }
-    
     function startSync() {
         db.ref(`rooms/${currentRoom}/winLimit`).on('value', snap=>{ winScore = snap.val()||70; if(document.getElementById('goal-display')) document.getElementById('goal-display').innerText = winScore; if(document.getElementById('guest-goal-display')) document.getElementById('guest-goal-display').innerText = winScore; });
-        
-        let qList = []; 
-        db.ref(`rooms/${currentRoom}/questionsList`).on('value', snap=>{ if(snap.exists()) qList = snap.val(); });
+        let qList = []; db.ref(`rooms/${currentRoom}/questionsList`).on('value', snap=>{ if(snap.exists()) qList = snap.val(); });
         db.ref(`rooms/${currentRoom}/currentQuestionIndex`).on('value', snap=>{ let idx = snap.val()||0; if(qList.length) { currentQuestionObj = qList[idx % qList.length]; if(currentQuestionObj) { if(document.getElementById('admin-q-text')) document.getElementById('admin-q-text').innerText = currentQuestionObj.q; if(document.getElementById('admin-a-text')) document.getElementById('admin-a-text').innerText = currentQuestionObj.a; } } });
         
         db.ref(`rooms/${currentRoom}`).on('value', snapshot=>{ 
@@ -320,15 +376,11 @@
                 else { 
                     guestQ.innerText = currentQuestionObj.q; 
                     if(showOpt && currentQuestionObj.options) {
+                        // عرض الخيارات ولكن بشكل غير قابل للنقر (للقراءة فقط)
                         guestOpts.innerHTML = currentQuestionObj.options.map(opt => `<div class="option-btn disabled-opt"><i class="fas fa-ban"></i> ${opt}</div>`).join('');
                     } else guestOpts.innerHTML = `<div class="answer-hint">الاقتراحات مخفية حالياً</div>`; 
                 } 
             } 
-            // التحقق من وجود الطرد: إذا كان اسمي موجوداً في قائمة المطرودين، يتم إخراجي
-            if(data.kicked && data.kicked[myName]) {
-                showFloatingMessage("⚠️ لقد تم طردك من الغرفة بواسطة المضيف!", false);
-                setTimeout(()=>{ window.location.reload(); }, 1500);
-            }
         });
         
         db.ref(`rooms/${currentRoom}/firstPress`).on('value', snap=>{ let fp = snap.val(); if(fp) { document.getElementById('buzzer-alert')?.classList.remove('hidden'); if(document.getElementById('first-player-name')) document.getElementById('first-player-name').innerText = fp; if(document.getElementById('msg-status')) document.getElementById('msg-status').innerHTML = `<i class="fas fa-bell"></i> ⚡ ${fp} ضغط أولاً! انتظر تقييم المضيف.`; document.getElementById('buzzer-btn')?.setAttribute('disabled','disabled'); } else { document.getElementById('buzzer-alert')?.classList.add('hidden'); if(document.getElementById('msg-status')) document.getElementById('msg-status').innerHTML = `<i class="fas fa-fist-raised"></i> اضغط الجرس لتكون أول من يجيب!`; document.getElementById('buzzer-btn')?.removeAttribute('disabled'); } });
@@ -340,7 +392,7 @@
             let adminHtml="", guestHtml="", r=1; 
             for(let p of filtered) {
                 adminHtml += `<tr><td>${r++}</td><td><i class="fas fa-user-astronaut"></i> ${p.name}</td><td style="font-weight:bold;color:#f39c12;">${p.score}</td>
-                <td><button class="kick-btn" onclick="kickPlayer('${p.name.replace(/'/g, "\\'")}')"><i class="fas fa-user-slash"></i> طرد نهائي</button></td></tr>`;
+                <td><button class="kick-btn" onclick="kickPlayer('${p.name.replace(/'/g, "\\'")}')"><i class="fas fa-user-slash"></i> طرد</button></td></tr>`;
             }
             r=1; for(let p of filtered) guestHtml += `<tr><td>${r++}</td><td><i class="fas fa-user"></i> ${p.name}</td><td>🏅 ${p.score}</td></tr>`; 
             document.getElementById('admin-list').innerHTML = adminHtml || '<tr><td colspan="4">لا يوجد متسابقون بعد</td></tr>'; 
@@ -358,10 +410,7 @@
         db.ref(`rooms/${currentRoom}/firstPress`).once('value', snap=>{ let p = snap.val(); if(!p) return showFloatingMessage("لا يوجد لاعب ضغط!", false); if(correct) { db.ref(`rooms/${currentRoom}/players/${p}/score`).transaction(s=>(s||0)+10); showFloatingMessage(`✔️ إجابة صحيحة للاعب ${p} +10 نقاط`, true); nextQuestion(); } else { db.ref(`rooms/${currentRoom}/players/${p}/score`).transaction(s=>(s||0)-5); showFloatingMessage(`❌ إجابة خاطئة للاعب ${p} -5 نقاط`, false); db.ref(`rooms/${currentRoom}/firstPress`).set(null); } }); 
     }
     
-    window.initAdmin = initAdmin; window.joinRoom = joinRoom; window.pressBuzzer = pressBuzzer; window.nextQuestion = nextQuestion; window.handleAnswer = handleAnswer; 
-    window.showQuestionOnly = showQuestionOnly; window.showFullQuestionWithOptions = showFullQuestionWithOptions; 
-    window.hideQuestionFromGuests = hideQuestionFromGuests; window.changeCategory = changeCategory; window.toggleOptionsVisibility = toggleOptionsVisibility; 
-    window.kickPlayer = kickPlayer; window.skipBuzzer = skipBuzzer;
+    window.initAdmin = initAdmin; window.joinRoom = joinRoom; window.pressBuzzer = pressBuzzer; window.nextQuestion = nextQuestion; window.handleAnswer = handleAnswer; window.showQuestionToGuests = showQuestionToGuests; window.hideQuestionFromGuests = hideQuestionFromGuests; window.changeCategory = changeCategory; window.toggleOptionsVisibility = toggleOptionsVisibility; window.kickPlayer = kickPlayer;
 </script>
 </body>
 </html>
