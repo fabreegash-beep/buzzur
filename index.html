@@ -3,557 +3,1686 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>النخبة آرينا | مسابقة المعرفة التفاعلية (إدارة كاملة)</title>
+    <title>🌌 COSMIC QUIZ WARS | مستويات المعرفة الكونية</title>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <!-- Google Fonts & Font Awesome -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: 'Cairo', sans-serif;
-            background: linear-gradient(145deg, #0b2b3b 0%, #1a4a5f 100%);
+            font-family: 'Cairo', 'Orbitron', sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0a0f1e, #03060c);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            position: relative;
+            overflow-x: hidden;
         }
-        .app-container {
-            max-width: 750px;
+        
+        @keyframes starsFloat {
+            0% { transform: translateY(0px) translateX(0px); opacity: 1; }
+            50% { transform: translateY(-20px) translateX(10px); opacity: 0.5; }
+            100% { transform: translateY(0px) translateX(0px); opacity: 1; }
+        }
+        
+        .stars-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(2px);
-            border-radius: 48px;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2);
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: starsFloat 3s ease-in-out infinite;
+        }
+        
+        .app-container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            width: 100%;
+            background: rgba(10, 20, 40, 0.9);
+            backdrop-filter: blur(15px);
+            border-radius: 40px;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             overflow: hidden;
         }
+        
         .panel { padding: 30px 28px; }
-        h1, h2 { font-weight: 800; background: linear-gradient(135deg, #1e2a3a, #0f2c39); -webkit-background-clip: text; background-clip: text; color: transparent; display: inline-block; margin-bottom: 15px; }
-        h1 i, h2 i { color: #f39c12; margin-left: 12px; }
-        .input-group { margin-bottom: 20px; text-align: right; }
-        .input-group label { display: block; font-weight: 600; margin-bottom: 6px; color: #1f3b43; font-size: 0.9rem; }
-        input, select { width: 100%; padding: 14px 18px; border: 2px solid #e0eef2; border-radius: 28px; font-size: 1rem; font-family: 'Cairo', sans-serif; background: white; outline: none; }
-        input:focus, select:focus { border-color: #4a90e2; box-shadow: 0 0 0 3px rgba(74,144,226,0.2); }
-        .btn { padding: 12px 18px; border: none; border-radius: 40px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Cairo', sans-serif; transition: 0.2s; }
-        .btn-primary { background: linear-gradient(95deg, #2c7da0, #1f5e7a); color: white; box-shadow: 0 5px 12px rgba(0,0,0,0.2); }
-        .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.02); }
-        .btn-success { background: linear-gradient(95deg, #2ecc71, #27ae60); color: white; }
-        .btn-danger { background: linear-gradient(95deg, #e74c3c, #c0392b); color: white; }
-        .btn-warning { background: linear-gradient(95deg, #f39c12, #e67e22); color: white; }
-        .btn-info { background: linear-gradient(95deg, #3498db, #2980b9); color: white; }
-        .btn-secondary { background: linear-gradient(95deg, #95a5a6, #7f8c8d); color: white; }
-        .btn-dark { background: linear-gradient(95deg, #2c3e50, #1a252f); color: white; }
-        .btn-sm { padding: 8px 14px; font-size: 0.8rem; }
-        .question-card { background: linear-gradient(125deg, #0f2c3b, #1b4e62); padding: 24px; border-radius: 38px; color: white; text-align: center; box-shadow: 0 15px 25px rgba(0,0,0,0.3); margin: 20px 0; }
-        .question-text { font-size: 1.5rem; font-weight: 700; line-height: 1.4; }
-        .answer-hint { background: rgba(0,0,0,0.3); border-radius: 60px; display: inline-block; padding: 6px 18px; font-size: 0.85rem; margin-top: 12px; }
-        .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0 15px; }
-        .option-btn { background: #2c3e50; border: 2px solid #f1c40f; border-radius: 50px; padding: 10px; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.85rem; color: white; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; opacity: 0.9; }
-        .option-btn.disabled-opt { cursor: default; background: #1a2a36; border-color: #7f8c8d; opacity: 0.7; }
-        .buzzer-btn { width: 150px; height: 150px; background: radial-gradient(circle at 30% 20%, #ff4d4d, #b91c1c); border: none; border-radius: 50%; font-size: 26px; font-weight: 800; color: white; cursor: pointer; box-shadow: 0 12px 0 0 #7a2e2e; transition: 0.08s linear; margin: 15px auto; display: block; font-family: monospace; }
-        .buzzer-btn:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 6px 0 0 #7a2e2e; }
-        .buzzer-btn:disabled { background: #6c757d; box-shadow: 0 8px 0 #3a3f44; cursor: not-allowed; opacity: 0.6; }
-        .alert-buzzer { background: #fff8e7; border-right: 8px solid #f1c40f; padding: 18px; border-radius: 28px; margin: 15px 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-        .control-buttons { display: flex; gap: 10px; margin: 15px 0; flex-wrap: wrap; }
-        .control-buttons .btn { flex: 1; min-width: 100px; }
-        .category-row { display: flex; gap: 12px; margin: 15px 0; align-items: center; flex-wrap: wrap; }
-        .category-row select { flex: 2; min-width: 150px; margin: 0; }
-        .category-row .btn { flex: 1; min-width: 110px; margin: 0; }
-        .leaderboard { width: 100%; border-collapse: collapse; background: #fef9e8; border-radius: 28px; overflow: hidden; margin: 15px 0; }
-        .leaderboard th, .leaderboard td { padding: 10px 12px; text-align: center; border-bottom: 1px solid #ffe6b3; }
-        .leaderboard th { background: #ffdfaa; color: #4a2c00; }
-        .winner-screen { background: linear-gradient(145deg, #f9e45b, #ffc107); padding: 25px; border-radius: 45px; text-align: center; color: #2c3e2f; font-weight: 800; margin-top: 20px; }
-        .toast-msg { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2c3e50; color: white; padding: 12px 24px; border-radius: 60px; font-weight: bold; z-index: 1000; animation: fadeUp 0.3s ease; display: flex; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        @keyframes fadeUp { from { opacity: 0; transform: translateX(-50%) translateY(20px);} to { opacity: 1; transform: translateX(-50%) translateY(0);} }
-        .hidden { display: none; }
-        .room-badge { background: #1e2a3a; color: #ffd966; padding: 6px 16px; border-radius: 100px; font-size: 0.8rem; font-weight: bold; }
+        
+        h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #0ff, #f0f, #ff0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; color: #0ff; font-weight: 600; margin-bottom: 8px; }
+        
+        input, select {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(0, 20, 30, 0.9);
+            border: 2px solid #0ff;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-family: 'Cairo', sans-serif;
+            color: #0ff;
+            outline: none;
+        }
+        
+        input:focus, select:focus { box-shadow: 0 0 15px rgba(0,255,255,0.5); border-color: #f0f; }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Orbitron', monospace;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        
+        .btn-primary { background: linear-gradient(95deg, #0ff, #0a8); color: #000; box-shadow: 0 0 15px rgba(0,255,255,0.3); }
+        .btn-success { background: linear-gradient(95deg, #0f0, #0a0); color: #000; }
+        .btn-danger { background: linear-gradient(95deg, #f00, #a00); color: #fff; }
+        .btn-warning { background: linear-gradient(95deg, #ff0, #fa0); color: #000; }
+        .btn-info { background: linear-gradient(95deg, #0ff, #0a8); color: #000; }
+        .btn-secondary { background: linear-gradient(95deg, #888, #666); color: #fff; }
+        
+        .difficulty-buttons {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+        
+        .difficulty-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid;
+            border-radius: 20px;
+            background: rgba(0,0,0,0.5);
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+        }
+        
+        .difficulty-btn.easy { border-color: #0f0; color: #0f0; }
+        .difficulty-btn.easy.active, .difficulty-btn.easy:hover { background: #0f0; color: #000; box-shadow: 0 0 20px #0f0; }
+        .difficulty-btn.medium { border-color: #ff0; color: #ff0; }
+        .difficulty-btn.medium.active, .difficulty-btn.medium:hover { background: #ff0; color: #000; box-shadow: 0 0 20px #ff0; }
+        .difficulty-btn.hard { border-color: #f00; color: #f00; }
+        .difficulty-btn.hard.active, .difficulty-btn.hard:hover { background: #f00; color: #fff; box-shadow: 0 0 20px #f00; }
+        
+        .question-card {
+            background: linear-gradient(145deg, #0a1525, #010a15);
+            border: 2px solid #0ff;
+            border-radius: 24px;
+            padding: 25px;
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .question-text { font-size: 1.4rem; font-weight: 700; color: #0ff; line-height: 1.4; }
+        .answer-hint { background: rgba(0,255,255,0.1); border-radius: 40px; display: inline-block; padding: 6px 18px; margin-top: 12px; color: #ff0; }
+        .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0; }
+        .option-btn { background: #0a1525; border: 1px solid #0ff; border-radius: 15px; padding: 10px; color: #0ff; text-align: center; }
+        
+        .buzzer-btn {
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle at 30% 25%, #ff3366, #990033);
+            border: 3px solid #ff0;
+            border-radius: 50%;
+            font-size: 24px;
+            font-weight: 900;
+            color: #ff0;
+            cursor: pointer;
+            box-shadow: 0 12px 0 0 #660022;
+            transition: 0.05s linear;
+            margin: 15px auto;
+            display: block;
+            font-family: 'Orbitron', monospace;
+        }
+        
+        .buzzer-btn:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 6px 0 0 #660022; }
+        .buzzer-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .alert-buzzer {
+            background: rgba(0,0,0,0.8);
+            border-right: 6px solid #ff0;
+            padding: 15px;
+            border-radius: 20px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .leaderboard {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 20, 30, 0.8);
+            border-radius: 16px;
+            overflow: hidden;
+            margin: 15px 0;
+            border: 1px solid #0ff;
+        }
+        
+        .leaderboard th, .leaderboard td { padding: 10px; text-align: center; color: #0ff; border-bottom: 1px solid rgba(0,255,255,0.2); }
+        .leaderboard th { background: rgba(0,255,255,0.15); color: #ff0; }
+        
+        .winner-screen {
+            background: linear-gradient(145deg, #0a1525, #000);
+            border: 3px solid #ff0;
+            border-radius: 32px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .room-badge { background: rgba(0,255,255,0.15); border: 1px solid #0ff; padding: 6px 16px; border-radius: 40px; color: #0ff; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        hr { margin: 20px 0; border-color: #d4e6f1; }
-        .action-buttons-group { display: flex; gap: 12px; margin: 15px 0; flex-wrap: wrap; justify-content: center; }
-        .kick-btn { background: #c0392b; border: none; border-radius: 30px; padding: 5px 12px; color: white; font-weight: bold; cursor: pointer; margin-right: 8px; font-size: 0.75rem; transition: 0.2s; }
-        .kick-btn:hover { background: #e74c3c; transform: scale(1.02); }
-        .small-icon { font-size: 0.8rem; }
+        .hidden { display: none; }
+        .kick-btn { background: #ff3366; border: none; border-radius: 8px; padding: 4px 10px; color: #fff; cursor: pointer; }
+        .toast-msg { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0a1525; border: 2px solid #0ff; color: #0ff; padding: 12px 24px; border-radius: 40px; z-index: 1000; }
+        
+        .level-easy { background: #0f0; color: #000; }
+        .level-medium { background: #ff0; color: #000; }
+        .level-hard { background: #f00; color: #fff; }
+        
+        hr { margin: 20px 0; border-color: rgba(0,255,255,0.3); }
     </style>
 </head>
 <body>
-<div class="app-container">
-    <!-- شاشة الإعداد -->
-    <div id="setup-screen" class="panel">
-        <h1><i class="fas fa-crown"></i> النخبة آرينا</h1>
-        <div class="input-group">
-            <label><i class="fas fa-user"></i> اسمك التنافسي</label>
-            <input type="text" id="user-name" placeholder="مثلاً: الأسطورة X" autocomplete="off">
-        </div>
-        <div id="admin-options">
+    <div class="stars-bg" id="stars"></div>
+    
+    <div class="app-container">
+        <div id="setup-screen" class="panel">
+            <h1><i class="fas fa-globe-asia"></i> COSMIC QUIZ WARS <i class="fas fa-meteor"></i></h1>
             <div class="input-group">
-                <label><i class="fas fa-trophy"></i> هدف الفوز (النقاط)</label>
-                <select id="win-limit">
-                    <option value="50">🏆 50 نقطة</option>
-                    <option value="70" selected>🔥 70 نقطة</option>
-                    <option value="100">👑 100 نقطة</option>
-                </select>
+                <label><i class="fas fa-user-astronaut"></i> اسم المحارب</label>
+                <input type="text" id="user-name" placeholder="مثال: نجم المجرة" autocomplete="off">
             </div>
-            <button class="btn btn-primary" onclick="initAdmin()"><i class="fas fa-door-open"></i> إنشاء غرفة وبدء المسابقة</button>
+            <div id="admin-options">
+                <div class="input-group">
+                    <label><i class="fas fa-trophy"></i> هدف الفوز</label>
+                    <select id="win-limit">
+                        <option value="50">50 نقطة</option>
+                        <option value="70" selected>70 نقطة</option>
+                        <option value="100">100 نقطة</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="initAdmin()"><i class="fas fa-rocket"></i> إنشاء ساحة الحرب</button>
+            </div>
+            <hr>
+            <div class="input-group">
+                <label><i class="fas fa-key"></i> رمز المعركة</label>
+                <input type="number" id="room-input" placeholder="أدخل الرقم السري">
+            </div>
+            <button class="btn btn-primary" style="background: linear-gradient(95deg, #f0f, #a0a);" onclick="joinRoom()"><i class="fas fa-users"></i> انضم كمتسابق</button>
         </div>
-        <hr>
-        <div class="input-group">
-            <label><i class="fas fa-key"></i> رقم الغرفة للانضمام</label>
-            <input type="number" id="room-input" placeholder="مثال: 1234">
-        </div>
-        <button class="btn btn-primary" style="background: #2e7d64;" onclick="joinRoom()"><i class="fas fa-users"></i> انضمام كمتسابق</button>
-    </div>
 
-    <!-- واجهة المضيف -->
-    <div id="admin-view" class="panel hidden">
-        <div class="flex-between">
-            <div class="room-badge"><i class="fas fa-hashtag"></i> غرفة: <span id="admin-room-id">---</span></div>
-            <div class="room-badge"><i class="fas fa-bullseye"></i> الهدف: <span id="goal-display">--</span></div>
-        </div>
-        <div class="category-row">
-            <select id="category-select-live">
-                <option value="all">🌍 مختلط (جميع المجالات)</option>
-                <option value="general">📚 ثقافة عامة</option>
-                <option value="islam">🕌 دين إسلامي</option>
-                <option value="science">🔬 علوم</option>
-                <option value="geography">🗺️ جغرافيا وتاريخ</option>
-                <option value="sports">⚽ رياضة</option>
-                <option value="arts">🎨 فنون وأدب</option>
-                <option value="history">🏛️ تاريخ وحضارات</option>
-                <option value="technology">💻 تكنولوجيا وذكاء اصطناعي</option>
-                <option value="entertainment">🎬 ترفيه وأفلام</option>
-                <option value="medicine">💊 طب وصحة</option>
-                <option value="economy">📈 اقتصاد وأعمال</option>
-            </select>
-            <button class="btn btn-info btn-sm" onclick="changeCategory()"><i class="fas fa-exchange-alt"></i> تغيير المجال</button>
-        </div>
-        <div class="question-card">
-            <div class="question-text"><span id="admin-q-text">تحميل السؤال...</span></div>
-            <div class="answer-hint"><i class="fas fa-lightbulb"></i> الجواب الصحيح: <span id="admin-a-text">...</span></div>
-            <div class="action-buttons-group">
-                <button class="btn btn-info btn-sm" onclick="showQuestionOnly()"><i class="fas fa-eye"></i> عرض السؤال</button>
-                <button class="btn btn-warning btn-sm" onclick="toggleOptionsVisibility()"><i class="fas fa-list-ul"></i> إظهار/إخفاء الاقتراحات</button>
+        <div id="admin-view" class="panel hidden">
+            <div class="flex-between">
+                <div class="room-badge"><i class="fas fa-hashtag"></i> ساحة: <span id="admin-room-id">---</span></div>
+                <div class="room-badge"><i class="fas fa-flag-checkered"></i> الهدف: <span id="goal-display">--</span></div>
             </div>
-        </div>
-        <div class="control-buttons">
-            <button class="btn btn-secondary btn-sm" onclick="hideQuestionFromGuests()"><i class="fas fa-eye-slash"></i> إخفاء الكل</button>
-            <button class="btn btn-success btn-sm" onclick="showFullQuestionWithOptions()"><i class="fas fa-clipboard-list"></i> عرض السؤال + الاقتراحات</button>
-        </div>
-        <div id="buzzer-alert" class="alert-buzzer hidden">
-            <span><i class="fas fa-bell" style="color:#e67e22;"></i> <strong id="first-player-name">...</strong> ضغط أولاً! يحق له الإجابة.</span>
-            <div style="display: flex; gap: 10px;">
-                <button class="btn btn-success btn-sm" style="width:auto; padding:6px 16px;" onclick="handleAnswer(true)"><i class="fas fa-check-circle"></i> صحيحة ✅</button>
-                <button class="btn btn-danger btn-sm" style="width:auto; padding:6px 16px;" onclick="handleAnswer(false)"><i class="fas fa-times-circle"></i> خاطئة ❌</button>
-                <button class="btn btn-secondary btn-sm" style="width:auto; padding:6px 16px;" onclick="skipBuzzer()"><i class="fas fa-step-forward"></i> تخطي</button>
-            </div>
-        </div>
-        <button class="btn btn-warning" onclick="nextQuestion()"><i class="fas fa-forward-step"></i> تغيير السؤال + التالي</button>
-        <h3 style="margin-top: 20px;"><i class="fas fa-ranking-star"></i> لوحة المتصدرين (المتسابقون فقط)</h3>
-        <table class="leaderboard"><thead><tr><th>#</th><th>اللاعب</th><th>⭐ النقاط</th><th>إجراء</th></thead><tbody id="admin-list"></tbody></table>
-    </div>
-
-    <!-- واجهة المتسابق -->
-    <div id="guest-view" class="panel hidden">
-        <div class="flex-between">
-            <div class="room-badge"><i class="fas fa-door-open"></i> غرفة: <span id="guest-room-display"></span></div>
-            <div class="room-badge"><i class="fas fa-flag-checkered"></i> الهدف: <span id="guest-goal-display">--</span></div>
-        </div>
-        <div id="game-content">
-            <div id="guest-question-container">
-                <div class="question-card">
-                    <div class="question-text"><span id="guest-q-text">استعد للانطلاق...</span></div>
-                    <div id="guest-options-area" class="options-grid"></div>
+            
+            <div class="difficulty-buttons">
+                <div class="difficulty-btn easy" onclick="setDifficulty('easy')">
+                    <i class="fas fa-seedling"></i> سهل
+                </div>
+                <div class="difficulty-btn medium active" onclick="setDifficulty('medium')">
+                    <i class="fas fa-chart-line"></i> متوسط
+                </div>
+                <div class="difficulty-btn hard" onclick="setDifficulty('hard')">
+                    <i class="fas fa-dragon"></i> صعب
                 </div>
             </div>
-            <button id="buzzer-btn" class="buzzer-btn" onclick="pressBuzzer()"><i class="fas fa-hand-fist"></i> BUZZ</button>
-            <p id="msg-status" style="text-align:center; font-weight:600; margin:10px 0; color:#2c3e50;"><i class="fas fa-microphone-alt"></i> اضغط الجرس لتكون أول من يجيب!</p>
+            
+            <div class="category-row" style="display: flex; gap: 10px; margin: 15px 0;">
+                <select id="category-select-live" style="flex: 2;">
+                    <option value="general">📚 ثقافة عامة</option>
+                    <option value="islam">🕌 إسلاميات</option>
+                    <option value="science">🔬 علوم</option>
+                    <option value="geography">🗺️ جغرافيا</option>
+                    <option value="sports">⚽ رياضة</option>
+                    <option value="arts">🎨 فنون</option>
+                    <option value="history">🏛️ تاريخ</option>
+                    <option value="technology">💻 تكنولوجيا</option>
+                    <option value="entertainment">🎬 ترفيه</option>
+                    <option value="medicine">💊 طب</option>
+                    <option value="economy">📈 اقتصاد</option>
+                </select>
+                <button class="btn btn-info" onclick="loadQuestionByDifficultyAndCategory()"><i class="fas fa-sync-alt"></i> تحميل سؤال</button>
+            </div>
+            
+            <div class="question-card">
+                <div class="question-text"><span id="admin-q-text">اختر المستوى والمجال ثم اضغط تحميل</span></div>
+                <div class="answer-hint"><i class="fas fa-microchip"></i> الإجابة: <span id="admin-a-text">...</span></div>
+                <div style="display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap; justify-content: center;">
+                    <button class="btn btn-info btn-sm" onclick="showQuestionOnly()"><i class="fas fa-eye"></i> عرض السؤال</button>
+                    <button class="btn btn-warning btn-sm" onclick="toggleOptionsVisibility()"><i class="fas fa-list"></i> إظهار/إخفاء الاقتراحات</button>
+                    <button class="btn btn-secondary btn-sm" onclick="hideQuestionFromGuests()"><i class="fas fa-eye-slash"></i> إخفاء الكل</button>
+                    <button class="btn btn-success btn-sm" onclick="showFullQuestionWithOptions()"><i class="fas fa-clipboard-list"></i> عرض كامل</button>
+                </div>
+            </div>
+            
+            <div id="buzzer-alert" class="alert-buzzer hidden">
+                <span><i class="fas fa-bell" style="color:#ff0;"></i> <strong id="first-player-name">...</strong> ضغط أولاً!</span>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-success btn-sm" onclick="handleAnswer(true)">✅ صحيحة</button>
+                    <button class="btn btn-danger btn-sm" onclick="handleAnswer(false)">❌ خاطئة</button>
+                    <button class="btn btn-secondary btn-sm" onclick="skipBuzzer()">⏩ تخطي</button>
+                </div>
+            </div>
+            
+            <button class="btn btn-warning" onclick="nextQuestion()"><i class="fas fa-forward-step"></i> السؤال التالي</button>
+            
+            <h3 style="margin-top: 20px; color: #ff0;"><i class="fas fa-trophy"></i> ترتيب المحاربين</h3>
+            <table class="leaderboard">
+                <thead><tr><th>#</th><th>اللاعب</th><th>⭐ النقاط</th><th>إجراء</th></tr></thead>
+                <tbody id="admin-list"></tbody>
+            </table>
         </div>
-        <div id="winner-screen" class="winner-screen hidden">
-            <i class="fas fa-trophy" style="font-size: 3rem;"></i>
-            <h2>الفائز هو <span id="winner-name"></span>! 🎉</h2>
-            <p>إنجاز عظيم يستحق الإشادة</p>
+
+        <div id="guest-view" class="panel hidden">
+            <div class="flex-between">
+                <div class="room-badge"><i class="fas fa-door-open"></i> ساحة: <span id="guest-room-display"></span></div>
+                <div class="room-badge"><i class="fas fa-flag-checkered"></i> الهدف: <span id="guest-goal-display">--</span></div>
+            </div>
+            <div id="game-content">
+                <div class="question-card">
+                    <div class="question-text"><span id="guest-q-text">🌟 انتظر إشارة البدء... 🌟</span></div>
+                    <div id="guest-options-area" class="options-grid"></div>
+                </div>
+                
+                <button id="buzzer-btn" class="buzzer-btn" onclick="pressBuzzer()">
+                    <i class="fas fa-fist-raised"></i> BUZZ
+                </button>
+                <div id="msg-status" style="text-align: center; color: #ffd93d; margin: 10px 0;">
+                    <i class="fas fa-microphone-alt"></i> اضغط الزر لتكون الأول!
+                </div>
+            </div>
+            <div id="winner-screen" class="winner-screen hidden">
+                <i class="fas fa-crown" style="font-size: 3rem; color:#ff0;"></i>
+                <h2 style="color:#ff0;">البطل هو <span id="winner-name"></span>!</h2>
+            </div>
+            <h3 style="color:#ff0;"><i class="fas fa-ranking-star"></i> ترتيب المقاتلين</h3>
+            <table class="leaderboard">
+                <thead><tr><th>#</th><th>اللاعب</th><th>النقاط</th></tr></thead>
+                <tbody id="guest-list"></tbody>
+            </table>
         </div>
-        <h3><i class="fas fa-chart-simple"></i> الترتيب المباشر (المتسابقون)</h3>
-        <table class="leaderboard"><thead><tr><th>#</th><th>اللاعب</th><th>النقاط</th></thead><tbody id="guest-list"></tbody></table>
     </div>
-</div>
 
-<script>
-    // Firebase Config
-    const firebaseConfig = {
-        apiKey: "AIzaSyCTKYD680Jdbl0azC9RTtuKZBaLX2uU_Ck",
-        authDomain: "my-online-store-34f34.firebaseapp.com",
-        databaseURL: "https://my-online-store-34f34-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "my-online-store-34f34",
-        storageBucket: "my-online-store-34f34.firebasestorage.app",
-        messagingSenderId: "288655549705",
-        appId: "1:288655549705:web:06901ce4ac1a50eebe1fd8"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    <script>
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 5 + 's';
+                star.style.animationDuration = 2 + Math.random() * 4 + 's';
+                star.style.opacity = 0.5 + Math.random() * 0.5;
+                starsContainer.appendChild(star);
+            }
+        }
+        createStars();
 
-    // ===================== بنك الأسئلة =====================
-    function createQuestion(q, correct, opt2, opt3, opt4) {
-        let options = [correct, opt2, opt3, opt4];
-        for(let i = options.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [options[i], options[j]] = [options[j], options[i]]; }
-        return { q, a: correct, options };
-    }
+        const firebaseConfig = {
+            apiKey: "AIzaSyCTKYD680Jdbl0azC9RTtuKZBaLX2uU_Ck",
+            authDomain: "my-online-store-34f34.firebaseapp.com",
+            databaseURL: "https://my-online-store-34f34-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "my-online-store-34f34",
+            storageBucket: "my-online-store-34f34.firebasestorage.app",
+            messagingSenderId: "288655549705",
+            appId: "1:288655549705:web:06901ce4ac1a50eebe1fd8"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-   const generalQuestions = [
-    createQuestion("ما هو أطول نهر في العالم؟", "النيل", "الأمازون", "اليانغتسي", "الميسيسيبي"),
-    createQuestion("ما هو أعلى جبل في أفريقيا؟", "كيليمانجارو", "جبل كينيا", "الروبنسون", "دراكنزبرج"),
-    createQuestion("من هو مؤسس علم الجبر؟", "الخوارزمي", "ابن سينا", "الرازي", "الفارابي"),
-    createQuestion("ما هي أكبر جزيرة في العالم؟", "جرينلاند", "مدغشقر", "بورنيو", "سومطرة"),
-    createQuestion("ما هو أكبر محيط في العالم؟", "المحيط الهادئ", "المحيط الأطلسي", "المحيط الهندي", "المحيط المتجمد الشمالي"),
-    createQuestion("من هو مؤلف كتاب 'المقدمة'؟", "ابن خلدون", "الطبري", "ابن كثير", "الجاحظ"),
-    createQuestion("ما هو أسرع حيوان بري في العالم؟", "الفهد", "الأسد", "النمر", "الغزال"),
-    createQuestion("من هو النبي الذي ابتلعه الحوت؟", "يونس", "موسى", "إبراهيم", "نوح"),
-    createQuestion("ما هو أكبر صحراء في العالم؟", "الصحراء الكبرى", "صحراء الربع الخالي", "صحراء غوبي", "صحراء كالاهاري"),
-    createQuestion("من هو مخترع المصباح الكهربائي؟", "توماس إديسون", "نيكولا تيسلا", "ألبرت أينشتاين", "غراهام بل"),
-    createQuestion("ما هو أثقل معدن طبيعي؟", "الأوزميوم", "الذهب", "البلاتين", "الحديد"),
-    createQuestion("من هو الصحابي الملقب بـ 'أسد الله'؟", "حمزة بن عبد المطلب", "علي بن أبي طالب", "خالد بن الوليد", "عمر بن الخطاب"),
-    createQuestion("ما هي أقصر سورة في القرآن الكريم؟", "سورة الكوثر", "سورة الإخلاص", "سورة الفلق", "سورة الناس"),
-    createQuestion("من هو مؤسس الدولة العثمانية؟", "عثمان الأول", "أورخان غازي", "محمد الفاتح", "سليم الأول"),
-    createQuestion("ما هو أكبر حيوان في العالم؟", "الحوت الأزرق", "الفيل الأفريقي", "الزرافة", "القرش الحوتي"),
-    createQuestion("من هو الذي لقب بـ 'عميد الأدب العربي'؟", "طه حسين", "عباس محمود العقاد", "توفيق الحكيم", "نجيب محفوظ"),
-    createQuestion("ما هي أعلى قمة جبلية في العالم؟", "إيفرست", "كيه تو", "كانشينجونجا", "لوتسي"),
-    createQuestion("من هو قائد معركة اليرموك؟", "خالد بن الوليد", "سعد بن أبي وقاص", "أبو عبيدة عامر بن الجراح", "عمر بن الخطاب"),
-    createQuestion("ما هو الغاز الأكثر وفرة في الغلاف الجوي للأرض؟", "النيتروجين", "الأكسجين", "ثاني أكسيد الكربون", "الأرجون"),
-    createQuestion("من هو مكتشف نظرية الجاذبية؟", "إسحاق نيوتن", "ألبرت أينشتاين", "جاليليو جاليلي", "نيكولا تيسلا"),
-    createQuestion("ما هو أعمق نقطة في المحيطات؟", "خندق ماريانا", "خندق بورتوريكو", "خندق اليابان", "خندق الفلبين"),
-    createQuestion("من هو الملقب بـ 'شيخ المحققين'؟", "ابن سينا", "الغزالي", "الفارابي", "الرازي"),
-    createQuestion("ما هي أطول سلسلة جبال في العالم؟", "جبال الأنديز", "جبال الهيمالايا", "جبال الروكي", "جبال الألب"),
-    createQuestion("من هو أول من كتب السيرة النبوية؟", "ابن إسحاق", "الطبري", "ابن هشام", "الواقدي"),
-    createQuestion("ما هو أسرع طائر في العالم؟", "العقاب الذهبي", "الصقر الحر", "النسر الأصلع", "الهامور"),
-    createQuestion("من هو أول خليفة في الإسلام؟", "أبو بكر الصديق", "عمر بن الخطاب", "عثمان بن عفان", "علي بن أبي طالب"),
-    createQuestion("ما هو أطول حيوان بري؟", "الزرافة", "الفيل", "النمر", "الأسد"),
-    createQuestion("من هو صاحب كتاب 'الأغاني'؟", "أبو الفرج الأصفهاني", "الجاحظ", "ابن قتيبة", "المسعودي"),
-    createQuestion("ما هي أكبر بحيرة في العالم؟", "بحر قزوين", "بحيرة سوبيريور", "بحيرة فيكتوريا", "بحيرة هورون"),
-    createQuestion("من هو مؤسس علم المصريات الحديث؟", "شامبليون", "كارتر", "بتري", "لوبسوس"),
-    createQuestion("ما هو أكبر قارة في العالم؟", "آسيا", "أفريقيا", "أمريكا الشمالية", "أمريكا الجنوبية"),
-    createQuestion("من هو أول من استخدم الصفر في الرياضيات؟", "الخوارزمي", "ابن الهيثم", "البيروني", "عمر الخيام"),
-    createQuestion("ما هي أقدم حضارة في العالم؟", "حضارة سومر", "الحضارة المصرية القديمة", "حضارة وادي السند", "الحضارة الصينية"),
-    createQuestion("من هو أشهر أطباء المسلمين في العصور الوسطى؟", "ابن سينا", "الرازي", "ابن النفيس", "الزهراوي"),
-    createQuestion("ما هو أبرد مكان مأهول في العالم؟", "أويمياكون", "فيرخويانسك", "نوريلسك", "بارو"),
-    createQuestion("من هو مؤسس علم الاجتماع؟", "ابن خلدون", "أوغست كونت", "إميل دوركهايم", "ماكس فيبر"),
-    createQuestion("ما هو أكثر العناصر شيوعًا في الكون؟", "الهيدروجين", "الهيليوم", "الأكسجين", "الكربون"),
-    createQuestion("من هو أول من فكر في فكرة الطيران؟", "عباس بن فرناس", "ليوناردو دا فينشي", "الأخوان رايت", "جورج كايلي"),
-    createQuestion("ما هو أكثر المعادن توصيلًا للكهرباء؟", "الفضة", "النحاس", "الذهب", "الألومنيوم"),
-    createQuestion("من هو صاحب معركة القادسية؟", "سعد بن أبي وقاص", "خالد بن الوليد", "المثنى بن حارثة", "أبو عبيدة"),
-    createQuestion("ما هو أكبر طائر في العالم؟", "النعامة", "الكنغر", "النسر", "الصقر"),
-    createQuestion("من هو مكتشف قانون الضغط الجوي؟", "بليز باسكال", "تورشيللي", "جاليليو", "نيوتن"),
-    createQuestion("ما هي أصغر دولة في العالم من حيث المساحة؟", "الفاتيكان", "موناكو", "ناورو", "توفالو"),
-    createQuestion("من هو مؤسس علم العروض؟", "الخليل بن أحمد الفراهيدي", "سيبويه", "الأصمعي", "أبو الأسود الدؤلي"),
-    createQuestion("ما هو أخف غاز في العالم؟", "الهيدروجين", "الهيليوم", "النيون", "الأكسجين"),
-    createQuestion("من هو صاحب نظرية التطور؟", "تشارلز داروين", "جريجور مندل", "لويس باستور", "ألفريد والاس"),
-    createQuestion("ما هي أكبر منصة صخرية في العالم؟", "أولورو", "جبل طارق", "صخرة الملح", "جبل الفيل"),
-    createQuestion("من هو مؤسس البكتريولوجيا؟", "لويس باستور", "روبرت كوخ", "إدوارد جينر", "جوزف ليستر"),
-    createQuestion("ما هو أسرع قطار في العالم؟", "قطار شنغهاي المغناطيسي", "TGV", "شينكانسن", "آيس"),
-    createQuestion("من هو أول من زرع الكلى في العالم؟", "جوزيف موراي", "كريستيان برنارد", "أليكسيس كاريل", "توماس ستارزل"),
-    createQuestion("ما هو أثقل عنصر طبيعي؟", "اليورانيوم", "البلوتونيوم", "الراديوم", "الثوريوم"),
-    createQuestion("من هو مكتشف الأشعة السينية؟", "فيلهلم رونتجن", "ماري كوري", "هنري بيكريل", "إرنست رذرفورد"),
-    createQuestion("ما هي أعمق بئر في العالم؟", "بئر كولا", "بئر برنت", "بئر تامبو", "بئر زيلاوي"),
-    createQuestion("من هو صاحب كتاب 'الجمهرة في اللغة'؟", "ابن دريد", "الجوهري", "الفيومي", "الزجاجي"),
-    createQuestion("ما هو أكبر سد في العالم؟", "سد الخوانق الثلاثة", "سد أسوان", "سد إيتايبو", "سد جراند كولي"),
-    createQuestion("من هو مؤسس علم النفس الحديث؟", "سيغموند فرويد", "كارل يونغ", "ألفريد أدلر", "وليام جيمس"),
-    createQuestion("ما هي أسرع سمكة في العالم؟", "سمكة التونة", "سمكة المارلين", "سمكة السيف", "القرش الأبيض"),
-    createQuestion("من هو أول من اكتشف الدورة الدموية الصغرى؟", "ابن النفيس", "ويليام هارفي", "جالينوس", "ابن سينا"),
-    createQuestion("ما هو أطول عمر لحيوان؟", "سلحفاة غالاباغوس", "الحوت المقوس الرأس", "سمكة الكوي", "الفيل الأفريقي"),
-    createQuestion("من هو مكتشف البنسلين؟", "ألكسندر فليمنج", "إرنست تشين", "هاورد فلوري", "روبرت كوخ"),
-    createQuestion("ما هو أكبر بركان في العالم؟", "مونا لوا", "تامبورا", "كراكاتوا", "فيزوف"),
-    createQuestion("من هو صاحب كتاب 'الكافي'؟", "محمد بن يعقوب الكليني", "البخاري", "مسلم", "الترمذي"),
-    createQuestion("ما هو أطول جدار بحري في العالم؟", "سور الصين العظيم", "سور هادريان", "الجدار الأطلسي", "سور برلين"),
-    createQuestion("من هو أول من مشى على سطح القمر؟", "نيل أرمسترونج", "باز ألدرين", "مايكل كولينز", "يوري جاجارين"),
-    createQuestion("ما هو أكبر ملعب في العالم؟", "ملعب رونغرادو", "كامب نو", "ملعب ويمبلي", "ملعب ملبورن"),
-    createQuestion("من هو مخترع التلغراف؟", "صمويل مورس", "غراهام بل", "توماس إديسون", "نيكولا تيسلا"),
-    createQuestion("ما هو أطول أنبوب في العالم؟", "نفق القناة", "نفق سيكان", "نفق لوتشبرغ", "نفق غوتهارد"),
-    createQuestion("من هو مؤسس علم الأخلاق؟", "أرسطو", "أفلاطون", "سقراط", "أبيقور"),
-    createQuestion("ما هو أكبر جسر في العالم؟", "جسر دانيانغ-كونشان", "جسر أكاشي كايكيو", "جسر الخوانق الثلاثة", "جسر ميلو"),
-    createQuestion("من هو أول من استخدم التخدير في الجراحة؟", "ابن سينا", "الزهراوي", "ابن النفيس", "الرازي"),
-    createQuestion("ما هو أقدم نوع من الزواحف؟", "السلحفاة", "التمساح", "السحلية", "الأفعى"),
-    createQuestion("من هو صاحب كتاب 'الحاوي' في الطب؟", "الرازي", "ابن سينا", "ابن النفيس", "الزهراوي"),
-    createQuestion("ما هو أكثر الحيوانات ذكاءً؟", "الدolphin", "الشمبانزي", "الفيل", "الغراب"),
-    createQuestion("من هو مؤسس علم الكيمياء الحديث؟", "جابر بن حيان", "أنطوان لافوازييه", "روبرت بويل", "ديمتري مندليف"),
-    createQuestion("ما هو أطول نفق في العالم؟", "نفق غوتهارد الأساسي", "نفق سيكان", "نفق القناة", "نفق لوتشبرغ"),
-    createQuestion("من هو أول من صنع المنظار الفلكي؟", "جاليليو جاليلي", "يوهانس كيبلر", "نيوتن", "كوبرنيكوس"),
-    createQuestion("ما هي أكبر شلالات في العالم؟", "شلالات أنجل", "شلالات فيكتوريا", "شلالات نياجرا", "شلالات إجوازو"),
-    createQuestion("من هو صاحب كتاب 'الشفاء'؟", "ابن سينا", "الرازي", "الفارابي", "الغزالي"),
-    createQuestion("ما هو أكثر المعادن صلابة؟", "الألماس", "الكوراندوم", "التوباز", "الكوارتز"),
-    createQuestion("من هو أول من وضع خريطة العالم؟", "الإدريسي", "بطليموس", "مارينوس", "أراتوستينس"),
-    createQuestion("ما هو أقدم دين في العالم؟", "الهندوسية", "البوذية", "اليهودية", "الزرادشتية"),
-    createQuestion("من هو مكتشف خلايا الدم الحمراء؟", "يان سوامردام", "أنتوني فان ليفينهوك", "روبرت هوك", "مارسيلو مالبيغي"),
-    createQuestion("ما هو أكبر ميناء في العالم؟", "ميناء شنغهاي", "ميناء سنغافورة", "ميناء روتردام", "ميناء نينغبو"),
-    createQuestion("من هو مؤسس علم المناعة؟", "إدوارد جينر", "لويس باستور", "بول إرليخ", "إميل فون بهرنغ"),
-    createQuestion("ما هي أقدم جامعة في العالم؟", "جامعة القرويين", "جامعة الأزهر", "جامعة بولونيا", "جامعة أكسفورد"),
-    createQuestion("من هو أول من اكتشف الفيتامينات؟", "كازيمير فونك", "كريستيان أيكمان", "فريدريك هوبكنز", "ألبرت زجنتجي"),
-    createQuestion("ما هو أكبر متحف في العالم؟", "اللوفر", "المتحف البريطاني", "المتحف المصري الكبير", "متحف المتروبوليتان"),
-    createQuestion("من هو صاحب كتاب 'معجم البلدان'؟", "ياقوت الحموي", "الحميري", "البكري", "الإصطخري"),
-    createQuestion("ما هو أسرع نموذج لصاروخ في العالم؟", "ساتورن V", "فالكون الثقيل", "سويوز", "أريان"),
-    createQuestion("من هو أول من فسر قانون الوراثة؟", "جريجور مندل", "تشارلز داروين", "هوغو دي فريس", "توماس مورغان"),
-    createQuestion("ما هي أكبر حديقة حيوان في العالم؟", "حديقة برلين للحيوان", "حديقة سان دييغو", "حديقة لندن", "حديقة موسكو"),
-    createQuestion("من هو مؤسس علم الجيولوجيا؟", "ابن سينا", "البيروني", "داروين", "لايل"),
-    createQuestion("ما هو أكبر مطار في العالم؟", "مطار الملك خالد", "مطار دبي", "مطار هيثرو", "مطار بكين"),
-    createQuestion("من هو صاحب كتاب 'المناظر' في البصريات؟", "ابن الهيثم", "الكندي", "الفارابي", "الرازي"),
-    createQuestion("ما هو أطول عظمة في جسم الإنسان؟", "عظمة الفخذ", "عظمة الساق", "عظمة الحوض", "العمود الفقري"),
-    createQuestion("من هو أول من استخدم القلم الجاف؟", "لازلو بيرو", "جون لود", "لويس واترمان", "ميلتون رينولدز"),
-    createQuestion("ما هو أكبر كائن حي في العالم؟", "فطر أرميلاريا", "الحوت الأزرق", "شجرة سيكويا", "شعاب مرجانية"),
-    createQuestion("من هو مكتشف أشعة جاما؟", "بول فيلارد", "هنري بيكريل", "ماري كوري", "إرنست رذرفورد"),
-    createQuestion("ما هي أقدم لغة مكتوبة في العالم؟", "السومرية", "المصرية القديمة", "الصينية", "السنسكريتية"),
-    createQuestion("من هو مؤسس علم التفسير؟", "ابن جرير الطبري", "ابن كثير", "السيوطي", "القرطبي")
-];
-    const islamQuestions = [
-        createQuestion("كم عدد أركان الإسلام؟", "5", "6", "7", "4"),
-        createQuestion("كم عدد أركان الإيمان؟", "6", "5", "7", "8"),
-        createQuestion("ما هي السورة التي تسمى عروس القرآن؟", "الرحمن", "يس", "الواقعة", "الملك"),
-        createQuestion("من هو النبي الذي لقب بأبي البشر؟", "آدم", "نوح", "إبراهيم", "محمد"),
-    ];
-    const scienceQuestions = [
-    createQuestion("ما هو العنصر الأكثر وفرة في الكون؟", "الهيدروجين", "الهيليوم", "الأكسجين", "الكربون"),
-    createQuestion("ما هي أقرب كوكب للشمس؟", "عطارد", "الزهرة", "الأرض", "المريخ"),
-    createQuestion("من هو مكتشف الجاذبية؟", "نيوتن", "أينشتاين", "جاليليو", "كوبرنيكوس"),
-    createQuestion("ما هو أكبر كوكب في المجموعة الشمسية؟", "المشتري", "زحل", "نبتون", "أورانوس"),
-    createQuestion("ما هو أسرع كوكب في الدوران حول الشمس؟", "عطارد", "الزهرة", "الأرض", "المريخ"),
-    createQuestion("من هو مكتشف النواة الذرية؟", "رذرفورد", "بور", "طومسون", "شروودنجر"),
-    createQuestion("ما هو الغاز الذي تستخدمه النباتات في البناء الضوئي؟", "ثاني أكسيد الكربون", "الأكسجين", "النيتروجين", "الهيدروجين"),
-    createQuestion("ما هي أصغر وحدة في المادة؟", "الذرة", "الجزيء", "الإلكترون", "البروتون"),
-    createQuestion("من هو مؤسس علم الوراثة؟", "مندل", "داروين", "باستور", "كوخ"),
-    createQuestion("ما هو أقرب نجم إلى الأرض بعد الشمس؟", "بروكسيما سنتوري", "سيريوس", "النجم القطبي", "الدبران"),
-    createQuestion("ما هي سرعة الضوء في الفراغ؟", "300 ألف كم/ث", "150 ألف كم/ث", "450 ألف كم/ث", "600 ألف كم/ث"),
-    createQuestion("من هو مكتشف الإلكترون؟", "طومسون", "رذرفورد", "نيوتن", "جاليليو"),
-    createQuestion("ما هو أكثر العناصر الموصلة للكهرباء؟", "الفضة", "النحاس", "الذهب", "الألومنيوم"),
-    createQuestion("ما هو أقسى معدن طبيعي؟", "الألماس", "الذهب", "الحديد", "البلاتين"),
-    createQuestion("من هو مكتشف البنسلين؟", "فلمنج", "باستور", "كوخ", "جينر"),
-    createQuestion("ما هو أطول حيوان ثديي في العالم؟", "الحوت الأزرق", "الفيل", "الزرافة", "الفقمة"),
-    createQuestion("ما هو أقوى حمض طبيعي؟", "حمض الكبريتيك", "حمض الهيدروكلوريك", "حمض النتريك", "حمض الخليك"),
-    createQuestion("من هو مكتشف الأشعة السينية؟", "رونتجن", "بيكريل", "كوري", "رذرفورد"),
-    createQuestion("ما هي أكبر غدة في جسم الإنسان؟", "الكبد", "البنكرياس", "الغدة الدرقية", "الغدة النخامية"),
-    createQuestion("ما هو أكثر البروتينات وفرة في جسم الإنسان؟", "الكولاجين", "الهيموجلوبين", "الأنسولين", "الألبومين"),
-    createQuestion("من هو مكتشف الدورة الدموية الكبرى؟", "ويليام هارفي", "ابن النفيس", "جالينوس", "ابن سينا"),
-    createQuestion("ما هو العضو المسؤول عن تنقية الدم في الجسم؟", "الكلى", "الكبد", "القلب", "الطحال"),
-    createQuestion("ما هو أسرع حيوان بحري؟", "سمكة السيف", "سمكة المارلين", "التونة", "القرش الأبيض"),
-    createQuestion("من هو مكتشف الحمض النووي DNA؟", "واتسون وكريك", "مندل", "داروين", "باستور"),
-    createQuestion("ما هو أعمق نقطة في المحيطات؟", "خندق ماريانا", "خندق بورتوريكو", "خندق تونجا", "خندق الفلبين"),
-    createQuestion("ما هو أكبر بركان في العالم؟", "مونا لوا", "فيزوف", "كراكاتوا", "تامبورا"),
-    createQuestion("من هو مؤسس علم الكيمياء الحديث؟", "جابر بن حيان", "لافوازييه", "بويل", "مندليف"),
-    createQuestion("ما هو العنصر الأساسي في صناعة الزجاج؟", "السيليكا", "الكالسيوم", "الصوديوم", "البوتاسيوم"),
-    createQuestion("ما هو أكثر الغازات وجودًا في الغلاف الجوي؟", "النيتروجين", "الأكسجين", "الأرجون", "ثاني أكسيد الكربون"),
-    createQuestion("من هو مكتشف قوانين الحركة الثلاثة؟", "نيوتن", "أينشتاين", "جاليليو", "كبلر"),
-    createQuestion("ما هو أصغر عظمة في جسم الإنسان؟", "الركاب", "المطرقة", "السندان", "الزورقي"),
-    createQuestion("ما هو أكبر عضو في جسم الإنسان؟", "الجلد", "الكبد", "الرئتين", "القلب"),
-    createQuestion("من هو مكتشف نظرية النسبية؟", "أينشتاين", "نيوتن", "بلانك", "بور"),
-    createQuestion("ما هو أكثر المعادن خفة؟", "الليثيوم", "المغنيسيوم", "الألومنيوم", "البوتاسيوم"),
-    createQuestion("ما هو أبطأ كوكب في الدوران حول نفسه؟", "الزهرة", "عطارد", "المشتري", "زحل"),
-    createQuestion("من هو مكتشف البكتيريا؟", "ليفينهوك", "باستور", "كوخ", "جينر"),
-    createQuestion("ما هو أكبر حيوان طائر في العالم؟", "النسر", "الصقر", "البومة", "اللقلق"),
-    createQuestion("ما هو العنصر الكيميائي الذي يرمز له بـ Fe؟", "الحديد", "الذهب", "الفضة", "النحاس"),
-    createQuestion("ما هو أقدم نوع من الزواحف على وجه الأرض؟", "السلحفاة", "التمساح", "السحلية", "الأفعى"),
-    createQuestion("من هو مكتشف قانون الطفو؟", "أرخميدس", "نيوتن", "جاليليو", "باسكال"),
-    createQuestion("ما هو أكثر حاسة تطورًا عند الكلاب؟", "الشم", "السمع", "البصر", "التذوق"),
-    createQuestion("ما هو الكوكب الأكثر حرارة في المجموعة الشمسية؟", "الزهرة", "عطارد", "المشتري", "المريخ"),
-    createQuestion("من هو مكتشف الأوكسجين؟", "بريستلي", "لافوازييه", "شيل", "كافنديش"),
-    createQuestion("ما هو أصغر طائر في العالم؟", "الطنان", "العصفور", "البادجي", "الكناري"),
-    createQuestion("ما هو أكبر نجم معروف في الكون؟", "UY Scuti", "الشعرى اليمانية", "منكب الجوزاء", "النجم القطبي"),
-    createQuestion("من هو مكتشف الموجات الكهرومغناطيسية؟", "هيرتز", "ماكسويل", "فاراداي", "أوم"),
-    createQuestion("ما هو أطول عمرًا من الحيوانات؟", "سلحفاة غالاباغوس", "الحوت الأزرق", "الفيل", "القرش"),
-    createQuestion("ما هو أسرع إنسان آلي في العالم؟", "أطلس", "أسيمو", "بيبر", "نابو"),
-    createQuestion("من هو مكتشف الخلايا؟", "روبرت هوك", "ليفينهوك", "براون", "شلايدن"),
-    createQuestion("ما هو أثقل كوكب في المجموعة الشمسية؟", "المشتري", "زحل", "نبتون", "أورانوس")
-];
-    const geographyQuestions = [ createQuestion("ما هي عاصمة فرنسا؟", "باريس", "ليون", "مرسيليا", "بوردو"), createQuestion("ما هي أكبر دولة في العالم مساحة؟", "روسيا", "كندا", "الصين", "الولايات المتحدة") ];
-    const sportsQuestions = [
-    createQuestion("كم عدد لاعبي كرة القدم؟", "11", "10", "12", "9"),
-    createQuestion("من هو بطل كأس العالم 2022؟", "الأرجنتين", "فرنسا", "المغرب", "كرواتيا"),
-    createQuestion("من هو اللاعب الفائز بجائزة الكرة الذهبية 2023؟", "ليونيل ميسي", "كيليان مبابي", "إرلينج هالاند", "كريم بنزيما"),
-    createQuestion("كم عدد أندية الدوري الإنجليزي الممتاز؟", "20", "18", "22", "24"),
-    createQuestion("من هو الهداف التاريخي لدوري أبطال أوروبا؟", "كريستيانو رونالدو", "ليونيل ميسي", "روبرت ليفاندوفسكي", "كريم بنزيما"),
-    createQuestion("من هو بطل كأس أمم أفريقيا 2024؟", "ساحل العاج", "نيجيريا", "المغرب", "مصر"),
-    createQuestion("كم عدد الكرات الذهبية التي فاز بها ليونيل ميسي؟", "8", "7", "6", "5"),
-    createQuestion("من هو بطل كأس العالم 2018؟", "فرنسا", "كرواتيا", "بلجيكا", "إنجلترا"),
-    createQuestion("كم مرة فاز المنتخب البرازيلي بكأس العالم؟", "5", "4", "6", "3"),
-    createQuestion("من هو أفضل هداف في تاريخ كأس العالم؟", "ميروسلاف كلوزه", "رونالدو", "ليونيل ميسي", "بيليه"),
-    createQuestion("من هو بطل الدوري الإسباني 2023-2024؟", "ريال مدريد", "برشلونة", "أتلتيكو مدريد", "جيرونا"),
-    createQuestion("كم عدد حلقات مصارعة الأولمبياد؟", "اليونان", "روما", "مصر", "بلاد الرافدين"),
-    createQuestion("من هو بطل كأس الأمم الأوروبية 2020؟", "إيطاليا", "إنجلترا", "فرنسا", "إسبانيا"),
-    createQuestion("كم عدد الفرق المشاركة في كأس العالم؟", "32", "24", "48", "36"),
-    createQuestion("من هو أفضل لاعب كرة قدم في القرن العشرين؟", "بيليه", "دييغو مارادونا", "يوهان كرويف", "فرانتس بيكنباور"),
-    createQuestion("من هو بطل الدوري الإنجليزي 2023-2024؟", "مانشستر سيتي", "أرسنال", "ليفربول", "تشيلسي"),
-    createQuestion("كم عدد الأهداف التي سجلها كريستيانو رونالدو في مسيرته؟", "أكثر من 800", "أكثر من 700", "أكثر من 900", "أكثر من 600"),
-    createQuestion("من هو بطل كأس العالم 2014؟", "ألمانيا", "الأرجنتين", "هولندا", "البرازيل"),
-    createQuestion("كم عدد الكؤوس التي فاز بها ريال مدريد في دوري أبطال أوروبا؟", "14", "13", "15", "12"),
-    createQuestion("من هو أفضل حارس مرمى في تاريخ كأس العالم؟", "ليف ياشين", "مانويل نوير", "جيانلويجي بوفون", "إيكر كاسياس"),
-    createQuestion("من هو بطل كأس آسيا 2023؟", "قطر", "الأردن", "كوريا الجنوبية", "اليابان"),
-    createQuestion("كم عدد مباريات كرة السلة؟", "5", "4", "6", "7"),
-    createQuestion("من هو أفضل لاعب كرة سلة في التاريخ؟", "مايكل جوردان", "ليبرون جيمس", "كوبي براينت", "كاري إيم"),
-    createQuestion("من هو بطل كأس العالم لكرة السلة 2023؟", "ألمانيا", "صربيا", "الولايات المتحدة", "كندا"),
-    createQuestion("كم عدد مجموعات فورمولا 1؟", "10", "12", "8", "15"),
-    createQuestion("من هو بطل الفورمولا 1 2023؟", "ماكس فيرستابين", "لويس هاميلتون", "سيرجيو بيريز", "فرناندو ألونسو"),
-    createQuestion("من هو بطل التنس في بطولة ويمبلدون 2023؟", "كارلوس ألكاراز", "نوفاك ديوكوفيتش", "دانييل ميدفيديف", "رافاييل نادال"),
-    createQuestion("كم عدد مجموعات الجولف؟", "18", "9", "27", "36"),
-    createQuestion("من هو بطل كأس العالم للرجبي 2023؟", "جنوب أفريقيا", "نيوزيلندا", "إنجلترا", "فرنسا"),
-    createQuestion("كم عدد لاعبي كرة اليد؟", "7", "6", "8", "5"),
-    createQuestion("من هو بطل كأس العالم لكرة اليد 2023؟", "الدنمارك", "فرنسا", "إسبانيا", "السويد"),
-    createQuestion("كم عدد لاعبي كرة الطائرة؟", "6", "5", "7", "4"),
-    createQuestion("من هو بطل كأس العالم لكرة الطائرة 2022؟", "إيطاليا", "بولندا", "البرازيل", "فرنسا"),
-    createQuestion("كم عدد لاعبي كرة الماء؟", "7", "6", "8", "5"),
-    createQuestion("من هو بطل أولمبياد طوكيو 2020 في كرة القدم؟", "البرازيل", "إسبانيا", "المكسيك", "اليابان"),
-    createQuestion("كم مرة فاز نادي ريال مدريد بكأس العالم للأندية؟", "5", "4", "6", "3"),
-    createQuestion("من هو أفضل هداف في تاريخ الدوري الإنجليزي؟", "آلان شيرر", "واين روني", "هاري كين", "سيرجيو أغويرو"),
-    createQuestion("كم عدد مباريات الملاكمة الأولمبية؟", "3 دقائق", "2 دقائق", "4 دقائق", "5 دقائق"),
-    createQuestion("من هو بطل الملاكمة الثقيل العالمي 2023؟", "تايسون فيوري", "ألكسندر أوسيك", "أنتوني جوشوا", "ديونتي وايلدر"),
-    createQuestion("كم عدد لاعبي كرة القاعدة؟", "9", "8", "10", "7"),
-    createQuestion("من هو بطل العالم للجمباز 2023؟", "الولايات المتحدة", "الصين", "روسيا", "اليابان"),
-    createQuestion("كم عدد عدائي الماراثون؟", "42.195 كم", "40 كم", "45 كم", "50 كم"),
-    createQuestion("من هو صاحب الرقم القياسي في سباق 100 متر؟", "يوسين بولت", "تيرانس ترامب", "آندريه دي جراس", "كريستيان كولمان"),
-    createQuestion("كم عدد سباحي السباحة الأولمبية؟", "8 ممرات", "6 ممرات", "10 ممرات", "12 ممرة"),
-    createQuestion("من هو بطل العالم للسباحة 2023؟", "الولايات المتحدة", "أستراليا", "الصين", "بريطانيا"),
-    createQuestion("كم عدد متسابقي التزلج على الجليد؟", "6 متسابقين", "4 متسابقين", "8 متسابقين", "10 متسابقين"),
-    createQuestion("من هو بطل كأس العالم للتزلج 2023؟", "النرويج", "ألمانيا", "النمسا", "السويد"),
-    createQuestion("كم عدد لاعبي الهوكي على الجليد؟", "6", "5", "7", "4"),
-    createQuestion("من هو بطل كأس العالم للهوكي 2023؟", "كندا", "الولايات المتحدة", "فنلندا", "السويد"),
-    createQuestion("كم عدد لاعبي الكريكيت؟", "11", "10", "12", "9")
-];
-
-    function buildCategory(baseArr, targetCount=40) { let result = []; while(result.length < targetCount) result.push(...baseArr); return result.slice(0, targetCount); }
-    const questionsDB = {
-        general: buildCategory(generalQuestions, 40),
-        islam: buildCategory(islamQuestions, 40),
-        science: buildCategory(scienceQuestions, 40),
-        geography: buildCategory(geographyQuestions, 40),
-        sports: buildCategory(sportsQuestions, 40),
-        arts: buildCategory([createQuestion("من هو مؤلف 'الأمير'؟", "ميكافيللي", "أفلاطون", "أرسطو", "سقراط")], 40),
-        history: buildCategory([createQuestion("من هو أول خليفة إسلامي؟", "أبو بكر الصديق", "عمر", "عثمان", "علي")], 40),
-        technology: buildCategory([createQuestion("من هو مؤسس مايكروسوفت؟", "بيل غيتس", "ستيف جوبز", "مارك", "جيف")], 40),
-        entertainment: buildCategory([createQuestion("من هو بطل فيلم 'تايتانيك'؟", "دي كابريو", "براد بيت", "توم كروز", "جوني ديب")], 40),
-        medicine: buildCategory([createQuestion("من هو مكتشف البنسلين؟", "ألكسندر فلمنغ", "باستور", "كوخ", "جينر")], 40),
-        economy: buildCategory([createQuestion("من هو مؤسس علم الاقتصاد الحديث؟", "آدم سميث", "ماركس", "كينز", "ريكاردو")], 40)
-    };
-    questionsDB["all"] = buildCategory([...generalQuestions, ...islamQuestions, ...scienceQuestions, ...geographyQuestions, ...sportsQuestions], 100);
-
-    function shuffleArray(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
-    function getQuestionsByCategory(category) { return shuffleArray([...(questionsDB[category] || questionsDB.general)]); }
-
-    let currentRoom = "", myName = "", winScore = 70, currentToastTimeout = null, isHost = false, currentQuestionObj = null;
-    function showFloatingMessage(msg, success=false) { if(currentToastTimeout) clearTimeout(currentToastTimeout); document.querySelectorAll('.toast-msg').forEach(e=>e.remove()); let toast = document.createElement('div'); toast.className = 'toast-msg'; toast.innerHTML = success ? `<i class="fas fa-bolt"></i> ${msg}` : msg; toast.style.background = success ? "#2ecc71" : "#e67e22"; document.body.appendChild(toast); currentToastTimeout = setTimeout(()=>toast.remove(), 2000); }
-    
-    function initAdmin() { 
-        let name = document.getElementById('user-name').value.trim()||"المضيف"; 
-        myName = name; isHost = true; 
-        currentRoom = Math.floor(1000+Math.random()*9000); 
-        winScore = parseInt(document.getElementById('win-limit').value); 
-        let defCat = "all"; 
-        let defQ = getQuestionsByCategory(defCat); 
-        db.ref(`rooms/${currentRoom}`).set({currentQuestionIndex:0, winLimit:winScore, firstPress:null, winner:null, createdAt:Date.now(), hostName:myName, isQuestionVisible:false, manualHideActive:true, currentCategory:defCat, questionsList:defQ, showOptions:true});
-        db.ref(`rooms/${currentRoom}/players/${myName}`).set({name:myName, score:0, isHost:true}); 
-        document.getElementById('admin-room-id').innerText = currentRoom; 
-        document.getElementById('goal-display').innerText = winScore; 
-        showView('admin-view'); 
-        startSync(); 
-        showFloatingMessage(`تم إنشاء الغرفة! الرقم: ${currentRoom}`, true); 
-    }
-    
-    function joinRoom() { 
-        let name = document.getElementById('user-name').value.trim(); 
-        if(!name) return showFloatingMessage("أدخل اسمك", false); 
-        myName = name; 
-        let roomCode = document.getElementById('room-input').value.trim(); 
-        if(!roomCode) return showFloatingMessage("رقم الغرفة مطلوب", false); 
-        currentRoom = roomCode; 
-        db.ref(`rooms/${currentRoom}`).once('value', snap=>{ 
-            if(!snap.exists()) return showFloatingMessage("الغرفة غير موجودة!", false); 
-            db.ref(`rooms/${currentRoom}/players/${myName}`).set({name:myName, score:0, isHost:false}); 
-            showView('guest-view'); 
-            document.getElementById('guest-room-display').innerText = currentRoom; 
-            startSync(); 
-            showFloatingMessage("انضممت إلى الحلبة!", true); 
-        }); 
-    }
-    
-    function showView(id) { ['setup-screen','admin-view','guest-view'].forEach(v=>document.getElementById(v).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
-    function changeCategory() { let newCat = document.getElementById('category-select-live').value; let newList = getQuestionsByCategory(newCat); db.ref(`rooms/${currentRoom}`).update({currentCategory:newCat, questionsList:newList, currentQuestionIndex:0}); showFloatingMessage(`تم تغيير المجال إلى ${newCat}`, true); }
-    function toggleOptionsVisibility() { db.ref(`rooms/${currentRoom}/showOptions`).once('value', snap=> db.ref(`rooms/${currentRoom}/showOptions`).set(!snap.val())); showFloatingMessage("تبديل عرض الاقتراحات", true); }
-    function showQuestionOnly() { db.ref(`rooms/${currentRoom}`).update({isQuestionVisible:true, manualHideActive:false}); showFloatingMessage("تم عرض السؤال فقط (بدون الاقتراحات)", true); }
-    function showFullQuestionWithOptions() { db.ref(`rooms/${currentRoom}`).update({isQuestionVisible:true, manualHideActive:false, showOptions:true}); showFloatingMessage("تم عرض السؤال + الاقتراحات", true); }
-    function hideQuestionFromGuests() { db.ref(`rooms/${currentRoom}`).update({isQuestionVisible:false, manualHideActive:true}); showFloatingMessage("تم إخفاء السؤال والاقتراحات", false); }
-    
-    // طرد نهائي: حذف اللاعب من قاعدة البيانات وفرض خروج فوري من جانبه عن طريق إعادة تحميل الصفحة أو كتم البيانات
-    function kickPlayer(playerName) {
-        if(!currentRoom || !isHost) return;
-        // حذف اللاعب من قائمة اللاعبين نهائياً
-        db.ref(`rooms/${currentRoom}/players/${playerName}`).remove().then(() => {
-            showFloatingMessage(`🚪 تم طرد اللاعب ${playerName} نهائياً من الغرفة`, false);
-            // إضافة إشارة للاعب المطرود بأنه تم إقصاؤه (سيتم التعامل معها في sync ليعيد توجيهه)
+        const questionsBank = {
+            easy: {
+                general: [
+                             { q: "ما هو لون السماء؟", a: "الأزرق", options: ["الأزرق", "الأحمر", "الأخضر", "الأصفر"] },
+                             { q: "كم عدد أيام الأسبوع؟", a: "7", options: ["5", "6", "7", "8"] },
+                             { q: "ما هو أكبر كوكب؟", a: "المشتري", options: ["الأرض", "المريخ", "المشتري", "زحل"] },
+                             { q: "كم عدد حروف اللغة العربية؟", a: "28", options: ["26", "28", "30", "32"] },
+                             { q: "ما هو عكس كلمة 'ليل'؟", a: "نهار", options: ["صباح", "نهار", "مساء", "فجر"] },
+                             { q: "ما هو لون التفاح الأحمر؟", a: "أحمر", options: ["أخضر", "أحمر", "أصفر", "برتقالي"] },
+                             { q: "كم عدد أصابع اليد؟", a: "5", options: ["4", "5", "6", "7"] },
+                             { q: "ما هو الشيء الذي نستخدمه للكتابة؟", a: "القلم", options: ["الكتاب", "القلم", "الممحاة", "المسطرة"] },
+                             { q: "ما هو عكس كلمة 'حار'؟", a: "بارد", options: ["دافئ", "بارد", "ساخن", "معتدل"] },
+                             { q: "كم عدد ألوان قوس قزح؟", a: "7", options: ["6", "7", "8", "5"] },
+                             { q: "ما هو الحيوان الذي يسمى بسفينة الصحراء؟", a: "الجمل", options: ["الحصان", "الجمل", "الفيل", "الأسد"] },
+                             { q: "ما هو أكبر محيط في العالم؟", a: "المحيط الهادئ", options: ["الأطلسي", "الهندي", "المحيط الهادئ", "المتجمد"] },
+                             { q: "ما هو أسرع حيوان بري؟", a: "الفهد", options: ["الأسد", "الفهد", "النمر", "الغزال"] },
+                             { q: "كم عدد القارات؟", a: "7", options: ["5", "6", "7", "8"] },
+                             { q: "ما هو لون الدم؟", a: "أحمر", options: ["أزرق", "أحمر", "أخضر", "أصفر"] },
+                             { q: "ما هو الشيء الذي نأكله عندما نكون جائعين؟", a: "الطعام", options: ["الماء", "الطعام", "النوم", "اللعب"] },
+                             { q: "ما هو عكس كلمة 'كبير'؟", a: "صغير", options: ["ضخم", "صغير", "طويل", "قصير"] },
+                             { q: "كم عدد أرجل العنكبوت؟", a: "8", options: ["6", "8", "10", "4"] },
+                             { q: "ما هو لون العشب؟", a: "أخضر", options: ["أزرق", "أخضر", "أصفر", "بني"] },
+                             { q: "ما هو الشيء الذي يطير في السماء؟", a: "الطائر", options: ["السمك", "الطائر", "القطة", "الكلب"] },
+                             { q: "كم عدد ساعات اليوم؟", a: "24", options: ["12", "24", "36", "48"] },
+                             { q: "ما هو عكس كلمة 'سريع'؟", a: "بطيء", options: ["سريع", "بطيء", "متوسط", "هادئ"] },
+                             { q: "ما هو أكبر حيوان في العالم؟", a: "الحوت الأزرق", options: ["الفيل", "الحوت الأزرق", "الزرافة", "الأسد"] },
+                             { q: "ما هو الشيء الذي نشربه؟", a: "الماء", options: ["الطعام", "الماء", "الهواء", "التراب"] },
+                             { q: "كم عدد أيام الأسبوع؟", a: "7", options: ["5", "6", "7", "8"] },
+                             { q: "ما هو لون الثلج؟", a: "أبيض", options: ["أسود", "أبيض", "أزرق", "أحمر"] },
+                             { q: "ما هو عكس كلمة 'طويل'؟", a: "قصير", options: ["طويل", "قصير", "عريض", "ضيق"] },
+                             { q: "ما هو الشيء الذي يضيء السماء ليلاً؟", a: "القمر", options: ["الشمس", "القمر", "النجوم", "السحاب"] },
+                             { q: "كم عدد أصابع القدم؟", a: "5", options: ["4", "5", "6", "7"] },
+                             { q: "ما هو لون البرتقال؟", a: "برتقالي", options: ["أحمر", "أصفر", "برتقالي", "أخضر"] }
+                          ],
+                islam: [
+    { q: "كم عدد أركان الإسلام؟", a: "5", options: ["5", "6", "7", "4"] },
+    { q: "كم عدد أركان الإيمان؟", a: "6", options: ["5", "6", "7", "4"] },
+    { q: "من هو نبي الإسلام؟", a: "محمد", options: ["موسى", "عيسى", "محمد", "إبراهيم"] },
+    { q: "ما هي أول سورة في القرآن؟", a: "الفاتحة", options: ["الإخلاص", "الفاتحة", "البقرة", "الناس"] },
+    { q: "كم عدد الصلوات المفروضة في اليوم؟", a: "5", options: ["3", "4", "5", "6"] },
+    { q: "ما هو الشهر الذي نصوم فيه؟", a: "رمضان", options: ["شوال", "رمضان", "ذو الحجة", "محرم"] },
+    { q: "ما هي القبلة التي نصلي إليها؟", a: "الكعبة", options: ["المسجد الأقصى", "الكعبة", "المسجد النبوي", "جبل عرفات"] },
+    { q: "من هو والد النبي محمد؟", a: "عبد الله", options: ["أبو طالب", "عبد الله", "عبد المطلب", "أبو لهب"] },
+    { q: "ما هو اسم أم النبي محمد؟", a: "آمنة", options: ["خديجة", "آمنة", "عائشة", "فاطمة"] },
+    { q: "ما هو الكتاب المقدس للمسلمين؟", a: "القرآن", options: ["الإنجيل", "التوراة", "القرآن", "الزبور"] },
+    { q: "كم عدد السجدات في الصلاة الواحدة؟", a: "2", options: ["1", "2", "3", "4"] },
+    { q: "ما هو الركن الثاني من الإسلام؟", a: "الصلاة", options: ["الشهادة", "الصلاة", "الزكاة", "الصوم"] },
+    { q: "ما هو اسم جبل النور؟", a: "حراء", options: ["أحد", "حراء", "ثور", "الطور"] },
+    { q: "من أول من آمن من الرجال؟", a: "أبو بكر الصديق", options: ["عمر بن الخطاب", "عثمان بن عفان", "أبو بكر الصديق", "علي بن أبي طالب"] },
+    { q: "ما هي سورة الإخلاص؟", a: "قل هو الله أحد", options: ["قل أعوذ برب الفلق", "قل هو الله أحد", "تبارك الذي بيده الملك", "الحمد لله رب العالمين"] },
+    { q: "كم عدد آيات سورة الفاتحة؟", a: "7", options: ["5", "6", "7", "8"] },
+    { q: "ما هو اسم المدينة التي هاجر إليها النبي؟", a: "المدينة المنورة", options: ["مكة", "المدينة المنورة", "الطائف", "بدر"] },
+    { q: "من هو مؤذن الرسول؟", a: "بلال بن رباح", options: ["عمر بن الخطاب", "بلال بن رباح", "عثمان بن عفان", "زيد بن ثابت"] },
+    { q: "ما هي أول غزوة في الإسلام؟", a: "بدر", options: ["أحد", "الخندق", "بدر", "تبوك"] },
+    { q: "من هو كاتب الوحي؟", a: "زيد بن ثابت", options: ["علي بن أبي طالب", "زيد بن ثابت", "عمر بن الخطاب", "أبو بكر الصديق"] },
+    { q: "ما هو اسم معركة الخندق؟", a: "الأحزاب", options: ["بدر", "أحد", "الأحزاب", "حنين"] },
+    { q: "كم عدد أبناء النبي محمد؟", a: "7", options: ["5", "6", "7", "8"] },
+    { q: "من هي أم المؤمنين خديجة؟", a: "زوجة النبي", options: ["ابنة النبي", "زوجة النبي", "أم النبي", "أخت النبي"] },
+    { q: "ما هو اسم الصلاة التي تصلى في العيد؟", a: "صلاة العيد", options: ["صلاة الجمعة", "صلاة العيد", "صلاة التراويح", "صلاة الوتر"] },
+    { q: "ما هو عدد الركعات في صلاة الفجر؟", a: "2", options: ["2", "3", "4", "1"] },
+    { q: "ما هو اسم المسجد الذي أسس على التقوى؟", a: "مسجد قباء", options: ["المسجد النبوي", "مسجد قباء", "المسجد الحرام", "مسجد الأقصى"] },
+    { q: "من هو أسد الله؟", a: "حمزة بن عبد المطلب", options: ["علي بن أبي طالب", "حمزة بن عبد المطلب", "عمر بن الخطاب", "خالد بن الوليد"] },
+    { q: "ما هو اسم سيف رسول الله؟", a: "ذو الفقار", options: ["المهند", "الرسوب", "ذو الفقار", "الصمصامة"] },
+    { q: "كم عدد المرات التي حج فيها النبي؟", a: "1", options: ["1", "2", "3", "4"] },
+    { q: "ما هو اسم عام الفتح؟", a: "8 هـ", options: ["6 هـ", "7 هـ", "8 هـ", "9 هـ"] }
+ ],
+                science: [
+    { q: "ما هو الكوكب الذي نعيش عليه؟", a: "الأرض", options: ["المريخ", "الأرض", "الزهرة", "عطارد"] },
+    { q: "ما هو مصدر الضوء الأساسي للأرض؟", a: "الشمس", options: ["القمر", "الشمس", "النجوم", "النار"] },
+    { q: "ما هو الغاز الذي نتنفسه؟", a: "الأكسجين", options: ["النيتروجين", "الأكسجين", "ثاني أكسيد الكربون", "الهيدروجين"] },
+    { q: "ما هو الجزء من النبات الذي يمتص الماء؟", a: "الجذور", options: ["الأوراق", "الساق", "الجذور", "الزهور"] },
+    { q: "ما هو أكبر عضو في جسم الإنسان؟", a: "الجلد", options: ["القلب", "الجلد", "الكبد", "المخ"] },
+    { q: "كم عدد عظام الإنسان البالغ؟", a: "206", options: ["200", "206", "210", "215"] },
+    { q: "ما هو أسرع حيوان في العالم؟", a: "الفهد", options: ["الأسد", "الفهد", "النمر", "الغزال"] },
+    { q: "ما هو أثقل معدن؟", a: "الأوزميوم", options: ["الذهب", "الحديد", "الأوزميوم", "البلاتين"] },
+    { q: "ما هو أخف غاز؟", a: "الهيدروجين", options: ["الأكسجين", "الهيدروجين", "الهيليوم", "النيتروجين"] },
+    { q: "ما هو أقرب نجم إلى الأرض؟", a: "الشمس", options: ["بروكسيما سنتوري", "الشمس", "سيريوس", "ألفا سنتوري"] },
+    { q: "ما هو الكوكب الأقرب إلى الشمس؟", a: "عطارد", options: ["الزهرة", "عطارد", "الأرض", "المريخ"] },
+    { q: "ما هو الكوكب الأبعد عن الشمس؟", a: "نبتون", options: ["أورانوس", "نبتون", "زحل", "المشتري"] },
+    { q: "ما هو أطول نهر في العالم؟", a: "النيل", options: ["الأمازون", "النيل", "اليانغتسي", "المسيسيبي"] },
+    { q: "ما هي أعلى قمة في العالم؟", a: "إيفرست", options: ["كيليمانجارو", "إيفرست", "ماونت ماكينلي", "مون بلان"] },
+    { q: "ما هو أعمق نقطة في المحيط؟", a: "ماريانا", options: ["بورتوريكو", "ماريانا", "الفلبي", "جافا"] },
+    { q: "ما هو أسرع حيوان طائر؟", a: "الشاهين", options: ["النسر", "الشاهين", "الصقر", "الباز"] },
+    { q: "ما هو أكبر حيوان في العالم؟", a: "الحوت الأزرق", options: ["الفيل", "الحوت الأزرق", "القرش", "الأخطبوط"] },
+    { q: "ما هو أطول حيوان في العالم؟", a: "الزرافة", options: ["الفيل", "الزرافة", "الأفعى", "الحوت"] },
+    { q: "ما هو أذكى حيوان؟", a: "الدolphin", options: ["الكلب", "القطة", "الدolphin", "الشمبانزي"] },
+    { q: "ما هو أسرع قطار في العالم؟", a: "ماغليف", options: ["TGV", "ماغليف", "شينكانسن", "آيس"] },
+    { q: "ما هي أكبر طائرة في العالم؟", a: "أنتونوف 225", options: ["بوينغ 747", "إيرباص A380", "أنتونوف 225", "لوكهيد C-5"] },
+    { q: "ما هي أكبر سفينة في العالم؟", a: "بايونيرينغ سبيريت", options: ["تيتانيك", "بايونيرينغ سبيريت", "كويين ماري 2", "أوسيدن"] },
+    { q: "ما هو أطول جسر في العالم؟", a: "جسر دانيانغ-كونشان", options: ["جسر البرج", "جسر دانيانغ-كونشان", "جسر ميلاو", "جسر أكاشي كايكو"] },
+    { q: "ما هو أطول نفق في العالم؟", a: "نفق غوتهارد", options: ["نفق القناة", "نفق غوتهارد", "نفق سيكان", "نفق لوتشبرغ"] },
+    { q: "ما هو أكبر برج في العالم؟", a: "برج خليفة", options: ["برج شنغهاي", "برج خليفة", "برج الساعة", "برج الحرية"] },
+    { q: "ما هو أطول مبنى في العالم؟", a: "برج خليفة", options: ["برج خليفة", "برج شنغهاي", "أبراج البيت", "مركز التجارة العالمي"] },
+    { q: "ما هو أسرع حاسوب في العالم؟", a: "فوجاكسو", options: ["سوميت", "فوجاكسو", "تيانهي-2", "سييرا"] },
+    { q: "ما هو أقوى ليزر في العالم؟", a: "ليزر شانغهاي", options: ["ليزر ليفرمور", "ليزر شانغهاي", "ليزر روتشستر", "ليزر ميونيخ"] },
+    { q: "ما هو أكبر مسرع جسيمات؟", a: "LHC", options: ["تيفاترون", "LHC", "RHIC", "بيبيت"] },
+    { q: "ما هو أقوى مجال مغناطيسي؟", a: "مغناطيس النبض", options: ["مغناطيس MRI", "مغناطيس النبض", "مغناطيس الموصل الفائق", "مغناطيس النيوديميوم"] }
+],
+                geography: [
+    { q: "ما هي عاصمة الجزائر؟", a: "الجزائر", options: ["وهران", "قسنطينة", "الجزائر", "عنابة"] },
+    { q: "ما هو أكبر محيط في العالم؟", a: "المحيط الهادئ", options: ["الأطلسي", "الهندي", "المحيط الهادئ", "المتجمد"] },
+    { q: "ما هي أكبر قارة في العالم؟", a: "آسيا", options: ["أفريقيا", "أوروبا", "آسيا", "أمريكا"] },
+    { q: "ما هي عاصمة مصر؟", a: "القاهرة", options: ["الإسكندرية", "القاهرة", "الجيزة", "الأقصر"] },
+    { q: "ما هي عاصمة السعودية؟", a: "الرياض", options: ["جدة", "مكة", "الرياض", "الدمام"] },
+    { q: "ما هي عاصمة الإمارات؟", a: "أبو ظبي", options: ["دبي", "أبو ظبي", "الشارقة", "عجمان"] },
+    { q: "ما هي عاصمة قطر؟", a: "الدوحة", options: ["الريان", "الدوحة", "الوكرة", "الخور"] },
+    { q: "ما هي عاصمة الكويت؟", a: "الكويت", options: ["الأحمدي", "الكويت", "حولي", "مبارك الكبير"] },
+    { q: "ما هي عاصمة البحرين؟", a: "المنامة", options: ["المحرق", "المنامة", "الرفاع", "عالي"] },
+    { q: "ما هي عاصمة عمان؟", a: "مسقط", options: ["صلالة", "مسقط", "نزوى", "صحار"] },
+    { q: "ما هي عاصمة اليمن؟", a: "صنعاء", options: ["عدن", "صنعاء", "تعز", "الحديدة"] },
+    { q: "ما هي عاصمة الأردن؟", a: "عمان", options: ["الزرقاء", "عمان", "إربد", "السلط"] },
+    { q: "ما هي عاصمة لبنان؟", a: "بيروت", options: ["طرابلس", "بيروت", "صيدا", "صور"] },
+    { q: "ما هي عاصمة سوريا؟", a: "دمشق", options: ["حلب", "دمشق", "حمص", "اللاذقية"] },
+    { q: "ما هي عاصمة العراق؟", a: "بغداد", options: ["البصرة", "بغداد", "الموصل", "أربيل"] },
+    { q: "ما هي عاصمة إيران؟", a: "طهران", options: ["أصفهان", "طهران", "شيراز", "تبريز"] },
+    { q: "ما هي عاصمة تركيا؟", a: "أنقرة", options: ["إسطنبول", "أنقرة", "إزمير", "بورصة"] },
+    { q: "ما هي عاصمة فرنسا؟", a: "باريس", options: ["ليون", "باريس", "مرسيليا", "تولوز"] },
+    { q: "ما هي عاصمة ألمانيا؟", a: "برلين", options: ["ميونخ", "برلين", "هامبورغ", "فرانكفورت"] },
+    { q: "ما هي عاصمة إيطاليا؟", a: "روما", options: ["ميلانو", "روما", "نابولي", "فلورنسا"] },
+    { q: "ما هي عاصمة إسبانيا؟", a: "مدريد", options: ["برشلونة", "مدريد", "إشبيلية", "بلنسية"] },
+    { q: "ما هي عاصمة بريطانيا؟", a: "لندن", options: ["مانشستر", "لندن", "برمنغهام", "ليفربول"] },
+    { q: "ما هي عاصمة روسيا؟", a: "موسكو", options: ["سانت بطرسبرغ", "موسكو", "نوفوسيبيرسك", "يكاترينبورغ"] },
+    { q: "ما هي عاصمة الصين؟", a: "بكين", options: ["شنغهاي", "بكين", "قوانغتشو", "شنتشن"] },
+    { q: "ما هي عاصمة الهند؟", a: "نيودلهي", options: ["مومباي", "نيودلهي", "بنغالور", "تشيناي"] },
+    { q: "ما هي عاصمة اليابان؟", a: "طوكيو", options: ["أوساكا", "طوكيو", "يوكوهاما", "ناغويا"] },
+    { q: "ما هي عاصمة كوريا الجنوبية؟", a: "سيول", options: ["بوسان", "سيول", "إنتشون", "دايغو"] },
+    { q: "ما هي عاصمة أستراليا؟", a: "كانبرا", options: ["سيدني", "كانبرا", "ملبورن", "بريزبن"] },
+    { q: "ما هي عاصمة البرازيل؟", a: "برازيليا", options: ["ريو دي جانيرو", "برازيليا", "ساو باولو", "سلفادور"] },
+    { q: "ما هي عاصمة كندا؟", a: "أوتاوا", options: ["تورنتو", "أوتاوا", "فانكوفر", "مونتريال"] }
+],
+                sports: [
+    { q: "من هو اللاعب الذي يُلقب بالدون؟", a: "كريستيانو رونالدو", options: ["ميسي", "نيمار", "كريستيانو رونالدو", "مبابي"] },
+    { q: "في أي بلد أقيم أول كأس عالم؟", a: "أوروغواي", options: ["البرازيل", "أوروغواي", "الأرجنتين", "إيطاليا"] },
+    { q: "ما اسم ملعب برشلونة؟", a: "كامب نو", options: ["ويمبلي", "كامب نو", "أولد ترافورد", "سان سيرو"] },
+    { q: "من هو الهداف التاريخي لكأس العالم؟", a: "ميروسلاف كلوزه", options: ["رونالدو", "بيليه", "ميروسلاف كلوزه", "مبابي"] },
+    { q: "كم عدد لاعبي كرة القدم في الملعب؟", a: "11", options: ["10", "11", "12", "9"] },
+    { q: "من فاز بأكبر عدد من كرات الذهب؟", a: "ميسي", options: ["رونالدو", "ميسي", "نيمار", "بوتشيتش"] },
+    { q: "ما هو اسم كأس العالم؟", a: "كأس العالم", options: ["كأس الأمم", "كأس العالم", "كأس القارات", "كأس أوروبا"] },
+    { q: "من هو أفضل لاعب في العالم 2022؟", a: "ميسي", options: ["مبابي", "ميسي", "هالاند", "بنزيما"] },
+    { q: "من هو أفضل حارس مرمى في العالم؟", a: "كورتوا", options: ["نوير", "كورتوا", "أليسون", "أوبلاك"] },
+    { q: "من هو أفضل مدرب في العالم؟", a: "جوارديولا", options: ["كلوب", "جوارديولا", "أنشيلوتي", "مورينيو"] },
+    { q: "ما هو أكبر نادٍ في العالم؟", a: "ريال مدريد", options: ["برشلونة", "ريال مدريد", "بايرن ميونخ", "مانشستر يونايتد"] },
+    { q: "ما هو أكبر ملعب في العالم؟", a: "ملعب رونغرادو", options: ["كامب نو", "ملعب رونغرادو", "ويمبلي", "ماراكانا"] },
+    { q: "من هو أغلى لاعب في العالم؟", a: "مبابي", options: ["نيمار", "مبابي", "هالاند", "فينيسيوس"] },
+    { q: "من هو الهداف التاريخي لريال مدريد؟", a: "رونالدو", options: ["راؤول", "رونالدو", "دي ستيفانو", "بوشكاش"] },
+    { q: "من هو الهداف التاريخي لبرشلونة؟", a: "ميسي", options: ["رونالدو", "ميسي", "سواريز", "كراوف"] },
+    { q: "كم مرة فاز البرازيل بكأس العالم؟", a: "5", options: ["4", "5", "6", "3"] },
+    { q: "كم مرة فاز ألمانيا بكأس العالم؟", a: "4", options: ["3", "4", "5", "2"] },
+    { q: "كم مرة فاز إيطاليا بكأس العالم؟", a: "4", options: ["3", "4", "5", "2"] },
+    { q: "كم مرة فاز الأرجنتين بكأس العالم؟", a: "3", options: ["2", "3", "4", "1"] },
+    { q: "كم مرة فاز فرنسا بكأس العالم؟", a: "2", options: ["1", "2", "3", "0"] },
+    { q: "من هو أسرع لاعب في العالم؟", a: "مبابي", options: ["هالاند", "مبابي", "فينيسيوس", "ساني"] },
+    { q: "من هو أقوى لاعب في العالم؟", a: "هالاند", options: ["هالاند", "لوكاكو", "أوسيمين", "بينتيكي"] },
+    { q: "من هو أفضل لاعب كرة سلة في التاريخ؟", a: "مايكل جوردان", options: ["ليبرون جيمس", "مايكل جوردان", "كوبي براينت", "شاكيل أونيل"] },
+    { q: "من هو أفضل لاعب كرة سلة حالياً؟", a: "ليبرون جيمس", options: ["ليبرون جيمس", "ستيفن كاري", "كيفن دورانت", "يانيس أنتيتوكونمبو"] },
+    { q: "من هو أفضل لاعب تنس في التاريخ؟", a: "فيدرر", options: ["نادال", "فيدرر", "جوكوفيتش", "سمباس"] },
+    { q: "من هو أفضل لاعب تنس حالياً؟", a: "جوكوفيتش", options: ["نادال", "فيدرر", "جوكوفيتش", "ألكاراز"] },
+    { q: "من هو أفضل لاعب غولف في التاريخ؟", a: "تايجر وودز", options: ["تايجر وودز", "جاك نيكلاوس", "أرنولد بالمر", "فيل ميكلسون"] },
+    { q: "من هو أفضل لاعب ملاكمة في التاريخ؟", a: "محمد علي", options: ["مايك تايسون", "محمد علي", "شوجار راي روبنسون", "جو فريزر"] },
+    { q: "من هو أفضل لاعب MMA في التاريخ؟", a: "جون جونز", options: ["حبيب نورماغوميدوف", "جون جونز", "أندرسون سيلفا", "جورج سانت بيير"] },
+    { q: "من هو أفضل لاعب كرة قدم في التاريخ؟", a: "ميسي", options: ["رونالدو", "ميسي", "مارادونا", "بيليه"] }
+],
+                arts: [
+    { q: "من رسم لوحة الموناليزا؟", a: "ليوناردو دا فينشي", options: ["بيكاسو", "ليوناردو دا فينشي", "فان غوخ", "مونيه"] },
+    { q: "ما اسم الفن الذي يعتمد على تشكيل المجسمات؟", a: "النحت", options: ["الرسم", "النحت", "الموسيقى", "التصوير"] },
+    { q: "في أي مجال يستخدم البيانو؟", a: "الموسيقى", options: ["الرسم", "الموسيقى", "النحت", "التصميم"] },
+    { q: "من هو الفنان التشكيلي المشهور بلوحة الاستغاثة؟", a: "إدفارد مونك", options: ["فان غوخ", "مونيه", "إدفارد مونك", "بيكاسو"] },
+    { q: "ما هي لون عباد الشمس في لوحة فان غوخ؟", a: "أصفر", options: ["أحمر", "أصفر", "أزرق", "برتقالي"] },
+    { q: "من هو مؤلف موسيقى السمفونية التاسعة؟", a: "بيتهوفن", options: ["موزارت", "بيتهوفن", "باخ", "شوبان"] },
+    { q: "ما هو اسم أشهر مسرح في العالم؟", a: "برودواي", options: ["الأوبرا", "برودواي", "الكولوسيوم", "المسرح الوطني"] },
+    { q: "من هو النحات الشهير لتمثال ديفيد؟", a: "مايكل أنجلو", options: ["دوناتيلو", "مايكل أنجلو", "برنيني", "رودان"] },
+    { q: "ما هي الحرفة التي تعتمد على الخشب؟", a: "النجارة", options: ["الحدادة", "النجارة", "الخياطة", "الزراعة"] },
+    { q: "ما هو اسم أقدم مسرح في العالم؟", a: "مسرح ديونيسوس", options: ["الكولوسيوم", "مسرح ديونيسوس", "الأمفي مسرح", "مسرح هيرودس"] },
+    { q: "من هو أشهر رسام إيطالي؟", a: "ليوناردو دا فينشي", options: ["مايكل أنجلو", "رافاييل", "ليوناردو دا فينشي", "كارافاجيو"] },
+    { q: "ما هو اسم لوحة العشاء الأخير؟", a: "العشاء الأخير", options: ["الموناليزا", "العشاء الأخير", "الاستغاثة", "ليلة النجوم"] },
+    { q: "من هو فنان عصر النهضة؟", a: "ليوناردو دا فينشي", options: ["بيكاسو", "فان غوخ", "ليوناردو دا فينشي", "مونيه"] },
+    { q: "ما هو اسم مدرسة الفن الإسبانية الشهيرة؟", a: "مدرسة مدريد", options: ["مدرسة برشلونة", "مدرسة مدريد", "مدرسة إشبيلية", "مدرسة بلنسية"] },
+    { q: "من هو الرسام الهولندي الشهير؟", a: "فان غوخ", options: ["رامبرانت", "فان غوخ", "فيرمير", "بوسخ"] },
+    { q: "ما هو اسم لوحة الموناليزا بالفرنسية؟", a: "La Joconde", options: ["Mona Lisa", "La Joconde", "La Gioconda", "The Mona Lisa"] },
+    { q: "من هو الشاعر الوطني الإنجليزي؟", a: "شكسبير", options: ["تشوسر", "شكسبير", "ميلتون", "ووردزورث"] },
+    { q: "ما هو اسم مسرحية هاملت؟", a: "هاملت", options: ["روميو وجولييت", "هاملت", "ماكبث", "عطيل"] },
+    { q: "من هو مؤلف الأوبرا الإيطالية؟", a: "فيردي", options: ["بوتشيني", "فيردي", "دونيزيتي", "بيليني"] },
+    { q: "ما هو اسم أشهر باليه في العالم؟", a: "بحيرة البجع", options: ["كسارة البندق", "بحيرة البجع", "الجمال النائم", "روميو وجولييت"] },
+    { q: "من هو الموسيقار الألماني الشهير؟", a: "باخ", options: ["بيتهوفن", "موزارت", "باخ", "برامز"] },
+    { q: "ما هو اسم الآلة الموسيقية الوترية؟", a: "الكمان", options: ["الناي", "الكمان", "البيانو", "الطبل"] },
+    { q: "من هو الفنان الفرنسي المشهور بالانطباعية؟", a: "مونيه", options: ["رينوار", "مونيه", "ديغا", "سيزان"] },
+    { q: "ما هو اسم تمثال الحرية؟", a: "تمثال الحرية", options: ["تمثال المسيح", "تمثال الحرية", "تمثال ديفيد", "تمثال النصر"] },
+    { q: "من هو نحات تمثال فينوس؟", a: "ألكسندروس", options: ["براكسيتيليس", "ألكسندروس", "ليسيبوس", "فيدياس"] },
+    { q: "ما هو اسم قصر اللوفر؟", a: "متحف اللوفر", options: ["قصر فرساي", "متحف اللوفر", "قصر باكنغهام", "الكرملين"] },
+    { q: "من هو رسام لوحة غيرنيكا؟", a: "بيكاسو", options: ["دالي", "بيكاسو", "ميرو", "غويا"] },
+    { q: "ما هو اسم الفنان التشكيلي السوريالي؟", a: "سلفادور دالي", options: ["بيكاسو", "ميرو", "سلفادور دالي", "ماغريت"] },
+    { q: "من هو مؤلف أغنية 'تحيا مصر'؟", a: "سيد درويش", options: ["فريد الأطرش", "سيد درويش", "محمد عبد الوهاب", "رياض السنباطي"] },
+    { q: "ما هو اسم أول فيلم ملون في التاريخ؟", a: "The Wizard of Oz", options: ["Gone with the Wind", "The Wizard of Oz", "Snow White", "Singin' in the Rain"] }
+],
+                history: [
+    { q: "من بنى الأهرامات؟", a: "المصريون القدماء", options: ["الرومان", "الإغريق", "المصريون القدماء", "الفرس"] },
+    { q: "ما هي أقدم حضارة معروفة؟", a: "الحضارة السومرية", options: ["المصرية", "السومرية", "الرومانية", "الصينية"] },
+    { q: "من اخترع العجلة؟", a: "السومريون", options: ["الرومان", "السومريون", "الإغريق", "الصينيون"] },
+    { q: "من هو أول خليفة في الإسلام؟", a: "أبو بكر الصديق", options: ["عمر بن الخطاب", "عثمان بن عفان", "أبو بكر الصديق", "علي بن أبي طالب"] },
+    { q: "من هو مؤسس الدولة الأموية؟", a: "معاوية بن أبي سفيان", options: ["يزيد بن معاوية", "معاوية بن أبي سفيان", "عبد الملك بن مروان", "الوليد بن عبد الملك"] },
+    { q: "من هو مؤسس الدولة العباسية؟", a: "أبو العباس السفاح", options: ["المنصور", "المهدي", "أبو العباس السفاح", "هارون الرشيد"] },
+    { q: "من هو صلاح الدين الأيوبي؟", a: "قائد عربي", options: ["سلطان عثماني", "قائد عربي", "خليفة عباسي", "ملك أوروبي"] },
+    { q: "ما هي معركة حطين؟", a: "معركة ضد الصليبيين", options: ["معركة عربية فارسية", "معركة ضد الصليبيين", "معركة أوروبية", "معركة عثمانية"] },
+    { q: "من هو مؤسس الدولة العثمانية؟", a: "عثمان الأول", options: ["أورخان", "مراد الأول", "عثمان الأول", "بايزيد الأول"] },
+    { q: "من هو محمد الفاتح؟", a: "فاتح القسطنطينية", options: ["سلطان عثماني", "فاتح القسطنطينية", "قائد مغولي", "خليفة عباسي"] },
+    { q: "ما هو سقوط القسطنطينية؟", a: "1453", options: ["1453", "1492", "1517", "1526"] },
+    { q: "من هو مؤسس الإمبراطورية الرومانية؟", a: "أغسطس قيصر", options: ["يوليوس قيصر", "أغسطس قيصر", "نيرون", "تراجان"] },
+    { q: "من هو الإسكندر الأكبر؟", a: "فاتح فارس", options: ["ملك يوناني", "فاتح فارس", "قائد روماني", "ملك مصري"] },
+    { q: "ما هي معركة بدر؟", a: "أول غزوة في الإسلام", options: ["معركة يهودية", "أول غزوة في الإسلام", "معركة فارسية", "معركة رومانية"] },
+    { q: "من هو هانيبال؟", a: "قائد قرطاجي", options: ["قائد روماني", "قائد قرطاجي", "قائد يوناني", "قائد مصري"] },
+    { q: "من هو يوليوس قيصر؟", a: "قائد روماني", options: ["قائد يوناني", "قائد روماني", "قائد مصري", "قائد فارسي"] },
+    { q: "ما هي الثورة الفرنسية؟", a: "1789", options: ["1776", "1789", "1799", "1804"] },
+    { q: "من هو نابليون بونابرت؟", a: "إمبراطور فرنسي", options: ["ملك إنجليزي", "إمبراطور فرنسي", "قيصر روسي", "سلطان عثماني"] },
+    { q: "ما هي الحرب العالمية الأولى؟", a: "1914", options: ["1912", "1914", "1918", "1920"] },
+    { q: "ما هي الحرب العالمية الثانية؟", a: "1939", options: ["1937", "1939", "1941", "1945"] },
+    { q: "من هو هتلر؟", a: "زعيم ألماني نازي", options: ["زعيم إيطالي", "زعيم ألماني نازي", "زعيم ياباني", "زعيم روسي"] },
+    { q: "من هو ستالين؟", a: "زعيم سوفيتي", options: ["زعيم أمريكي", "زعيم سوفيتي", "زعيم بريطاني", "زعيم فرنسي"] },
+    { q: "من هو تشرشل؟", a: "رئيس وزراء بريطاني", options: ["رئيس أمريكي", "رئيس وزراء بريطاني", "رئيس فرنسي", "رئيس سوفيتي"] },
+    { q: "من هو روزفلت؟", a: "رئيس أمريكي", options: ["رئيس بريطاني", "رئيس أمريكي", "رئيس فرنسي", "رئيس سوفيتي"] },
+    { q: "ما هو القصف النووي على هيروشيما؟", a: "1945", options: ["1944", "1945", "1946", "1943"] },
+    { q: "من هو غاندي؟", a: "زعيم هندي", options: ["زعيم صيني", "زعيم هندي", "زعيم ياباني", "زعيم مصري"] },
+    { q: "من هو نيلسون مانديلا؟", a: "زعيم جنوب أفريقي", options: ["زعيم كيني", "زعيم جنوب أفريقي", "زعيم نيجيري", "زعيم مصري"] },
+    { q: "ما هو سور الصين العظيم؟", a: "جدار دفاعي صيني", options: ["قصر صيني", "جدار دفاعي صيني", "معبد صيني", "مدينة صينية"] },
+    { q: "من هو مارتن لوثر كينغ؟", a: "زعيم حقوق مدنية", options: ["رئيس أمريكي", "زعيم حقوق مدنية", "ممثل أمريكي", "عالم أمريكي"] },
+    { q: "من هو تشي جيفارا؟", a: "ثوري أرجنتيني", options: ["رئيس أرجنتيني", "ثوري أرجنتيني", "لاعب أرجنتيني", "كاتب أرجنتيني"] }
+],
+                technology: [
+    { q: "ما هو الجهاز الذي نستخدمه للتصفح؟", a: "الحاسوب", options: ["الحاسوب", "الثلاجة", "السيارة", "المروحة"] },
+    { q: "ما اسم الجهاز المحمول للاتصال؟", a: "الهاتف", options: ["التلفاز", "الهاتف", "الميكروويف", "الراديو"] },
+    { q: "ما اسم الشركة التي صنعت الآيفون؟", a: "آبل", options: ["سامسونغ", "آبل", "نوكيا", "هواوي"] },
+    { q: "ما هو نظام التشغيل من مايكروسوفت؟", a: "ويندوز", options: ["لينكس", "ويندوز", "أندرويد", "ماك"] },
+    { q: "ما هو اختصار HTML؟", a: "HyperText Markup Language", options: ["HighText Machine Language", "HyperText Markup Language", "Hyper Transfer Mark Language", "Home Tool Markup Language"] },
+    { q: "من مؤسس مايكروسوفت؟", a: "بيل غيتس", options: ["ستيف جوبز", "بيل غيتس", "إيلون ماسك", "مارك زوكربيرغ"] },
+    { q: "ما هو اسم متصفح جوجل؟", a: "كروم", options: ["فايرفوكس", "كروم", "إيدج", "سفاري"] },
+    { q: "ما هو اسم محرك البحث الشهير؟", a: "جوجل", options: ["بينغ", "جوجل", "ياهو", "دك دك غو"] },
+    { q: "ما هو اسم موقع التواصل الاجتماعي الأزرق؟", a: "فيسبوك", options: ["تويتر", "فيسبوك", "إنستغرام", "لينكد إن"] },
+    { q: "ما هو اسم تطبيق الصور الشهير؟", a: "إنستغرام", options: ["سناب شات", "إنستغرام", "تيك توك", "بينترست"] },
+    { q: "من هو مؤسس آبل؟", a: "ستيف جوبز", options: ["بيل غيتس", "ستيف جوبز", "إيلون ماسك", "جيف بيزوس"] },
+    { q: "من هو مؤسس أمازون؟", a: "جيف بيزوس", options: ["بيل غيتس", "ستيف جوبز", "إيلون ماسك", "جيف بيزوس"] },
+    { q: "من هو مؤسس تسلا؟", a: "إيلون ماسك", options: ["بيل غيتس", "ستيف جوبز", "إيلون ماسك", "جيف بيزوس"] },
+    { q: "ما هو اسم أول حاسوب في العالم؟", a: "ENIAC", options: ["IBM PC", "ENIAC", "Apple I", "Commodore 64"] },
+    { q: "ما هو اسم أول هاتف ذكي؟", a: "IBM Simon", options: ["iPhone", "BlackBerry", "IBM Simon", "Nokia 9000"] },
+    { q: "ما هو اسم أول موقع تواصل اجتماعي؟", a: "Six Degrees", options: ["MySpace", "Facebook", "Six Degrees", "Friendster"] },
+    { q: "ما هو اسم أول متصفح ويب؟", a: "WorldWideWeb", options: ["Netscape", "Internet Explorer", "WorldWideWeb", "Mosaic"] },
+    { q: "ما هو اسم أول محرك بحث؟", a: "Archie", options: ["Google", "Yahoo", "Archie", "AltaVista"] },
+    { q: "ما هو اسم أول فيروس كمبيوتر؟", a: "Creeper", options: ["Morris", "Creeper", "ILOVEYOU", "Melissa"] },
+    { q: "ما هو اسم أول لعبة فيديو؟", a: "Tennis for Two", options: ["Pong", "Spacewar!", "Tennis for Two", "Computer Space"] },
+    { q: "ما هو اسم أول هاتف أندرويد؟", a: "HTC Dream", options: ["Samsung Galaxy", "HTC Dream", "Google Pixel", "LG Optimus"] },
+    { q: "ما هو اسم أول آيفون؟", a: "iPhone 2G", options: ["iPhone", "iPhone 2G", "iPhone 3G", "iPhone 3GS"] },
+    { q: "ما هو اسم أول معالج إنتل؟", a: "Intel 4004", options: ["Intel 8086", "Intel 4004", "Intel 8008", "Intel 8080"] },
+    { q: "ما هو اسم أول قرص صلب؟", a: "IBM 350", options: ["Seagate ST-506", "IBM 350", "Western Digital", "Maxtor"] },
+    { q: "ما هو اسم أول طابعة؟", a: "IBM 3800", options: ["HP LaserJet", "IBM 3800", "Xerox 914", "Canon LBP"] },
+    { q: "ما هو اسم أول هاتف محمول؟", a: "Motorola DynaTAC", options: ["Nokia 1011", "Motorola DynaTAC", "Siemens S10", "Ericsson GH198"] },
+    { q: "ما هو اسم أول قمر صناعي؟", a: "Sputnik 1", options: ["Explorer 1", "Sputnik 1", "Vanguard 1", "Telstar 1"] },
+    { q: "ما هو اسم أول إنسان في الفضاء؟", a: "يوري غاغارين", options: ["نيل أرمسترونغ", "يوري غاغارين", "ألان شيبارد", "جون غلين"] },
+    { q: "ما هو اسم أول إنسان على القمر؟", a: "نيل أرمسترونغ", options: ["باز ألدرين", "نيل أرمسترونغ", "مايكل كولينز", "جيم لوفل"] },
+    { q: "ما هو اسم أول مكوك فضائي؟", a: "كولومبيا", options: ["تشالنجر", "كولومبيا", "ديسكفري", "أتلانتس"] }
+],
+                entertainment: [
+    { q: "ما اسم مدينة السينما العالمية؟", a: "هوليوود", options: ["باريس", "هوليوود", "لندن", "روما"] },
+    { q: "ما اسم فيلم ملك الأسد؟", a: "الأسد الملك", options: ["فروزن", "الأسد الملك", "توي ستوري", "شريك"] },
+    { q: "ما اسم لعبة البناء الشهيرة؟", a: "ماينكرافت", options: ["فورتنايت", "ماينكرافت", "ببجي", "روبلوكس"] },
+    { q: "من هو بطل هاري بوتر؟", a: "هاري بوتر", options: ["هاري بوتر", "فروودو", "أراغون", "نيو"] },
+    { q: "من هو مخرج فيلم Titanic؟", a: "جيمس كاميرون", options: ["سبيلبرغ", "كريستوفر نولان", "جيمس كاميرون", "تيم بورتون"] },
+    { q: "ما اسم شخصية باتمان الحقيقية؟", a: "بروس واين", options: ["كلارك كينت", "بروس واين", "توني ستارك", "بيتر باركر"] },
+    { q: "من هو الممثل الذي جسد دور ترامب؟", a: "أليك بالدوين", options: ["دونالد ترامب", "أليك بالدوين", "لويس دي نيرو", "جون كريستوفر"] },
+    { q: "ما هو اسم مسلسل العائلة الحديدية؟", a: "آل التنين", options: ["صراع العروش", "آل التنين", "العرش الحديدي", "الممالك السبع"] },
+    { q: "من هو مغني 'ماتشا ماتشا'؟", a: "عمرو دياب", options: ["تامر حسني", "عمرو دياب", "محمد حماقي", "شيرين"] },
+    { q: "من هو مغني 'تملي معاك'؟", a: "تامر حسني", options: ["عمرو دياب", "تامر حسني", "محمد حماقي", "إليسا"] },
+    { q: "من هو مغني 'أهواك'؟", a: "عبد الحليم حافظ", options: ["فريد الأطرش", "عبد الحليم حافظ", "محمد عبد الوهاب", "أم كلثوم"] },
+    { q: "من هي مغنية 'الأطلال'؟", a: "أم كلثوم", options: ["فايزة أحمد", "أم كلثوم", "شادية", "وردة"] },
+    { q: "من هو ممثل 'المومياء'؟", a: "أحمد زكي", options: ["محمود عبد العزيز", "أحمد زكي", "عادل إمام", "نور الشريف"] },
+    { q: "من هو ممثل 'الإرهاب والكباب'؟", a: "عادل إمام", options: ["أحمد زكي", "عادل إمام", "محمود عبد العزيز", "نور الشريف"] },
+    { q: "من هو ممثل 'الكرنك'؟", a: "نور الشريف", options: ["عادل إمام", "نور الشريف", "محمود ياسين", "حسين فهمي"] },
+    { q: "ما هو اسم فيلم 'أفريكانو'؟", a: "أفريكانو", options: ["إفريكانو", "أسف على الإزعاج", "الألماني", "عمر وسلمى"] },
+    { q: "من هو مخرج فيلم 'الكنز'؟", a: "شريف عرفة", options: ["مروان حامد", "شريف عرفة", "ساندى", "خالد يوسف"] },
+    { q: "من هو مخرج فيلم 'الفيل الأزرق'؟", a: "مروان حامد", options: ["شريف عرفة", "مروان حامد", "بيتر ميمي", "طارق العريان"] },
+    { q: "من هو مخرج فيلم 'حرب كرموز'؟", a: "بيتر ميمي", options: ["مروان حامد", "شريف عرفة", "بيتر ميمي", "ساندى"] },
+    { q: "من هو مخرج فيلم 'ولاد رزق'؟", a: "طارق العريان", options: ["بيتر ميمي", "شريف عرفة", "طارق العريان", "مروان حامد"] },
+    { q: "من هو مخرج فيلم 'طيور الظلام'؟", a: "شريف عرفة", options: ["مروان حامد", "شريف عرفة", "بيتر ميمي", "ساندى"] },
+    { q: "من هو مخرج فيلم 'كيرة والجن'؟", a: "مروان حامد", options: ["شريف عرفة", "مروان حامد", "بيتر ميمي", "ساندى"] },
+    { q: "من هو مخرج فيلم 'الممر'؟", a: "شريف عرفة", options: ["مروان حامد", "شريف عرفة", "بيتر ميمي", "ساندى"] },
+    { q: "من هو مخرج فيلم 'عسل أسود'؟", a: "خالد مرعي", options: ["خالد مرعي", "علي إدريس", "محمد النجار", "أحمد البدري"] },
+    { q: "من هو مخرج فيلم 'البدلة'؟", a: "محمد النجار", options: ["خالد مرعي", "علي إدريس", "محمد النجار", "أحمد البدري"] },
+    { q: "من هو مخرج فيلم 'جريمي'؟", a: "علي إدريس", options: ["خالد مرعي", "علي إدريس", "محمد النجار", "أحمد البدري"] },
+    { q: "من هو مخرج فيلم 'صابر وراضي'؟", a: "أحمد البدري", options: ["خالد مرعي", "علي إدريس", "محمد النجار", "أحمد البدري"] },
+    { q: "من هو مخرج فيلم 'عنتر ابن ابن ابن شداد'؟", a: "محمد النجار", options: ["خالد مرعي", "علي إدريس", "محمد النجار", "أحمد البدري"] },
+    { q: "من هو مخرج فيلم 'الغسالة'؟", a: "علي إدريس", options: ["خالد مرعي", "علي إدريس", "محمد النجار", "أحمد البدري"] },
+    { q: "من هو مخرج فيلم 'أبو شنب'؟", a: "خالد مرعي", options: ["خالد مرعي", "علي إدريس", "محمد النجار", "أحمد البدري"] }
+],
+                medicine: [
+    { q: "ما هو العضو المسؤول عن ضخ الدم؟", a: "القلب", options: ["القلب", "الرئتين", "الكبد", "المعدة"] },
+    { q: "ما هو العضو الذي نتنفس به؟", a: "الرئتين", options: ["الكبد", "الرئتين", "القلب", "المعدة"] },
+    { q: "ما هو العضو الذي نرى به؟", a: "العين", options: ["الأذن", "العين", "الأنف", "اليد"] },
+    { q: "ما هو عدد عظام الإنسان البالغ؟", a: "206", options: ["201", "206", "210", "198"] },
+    { q: "ما المرض الذي يسبب ارتفاع السكر؟", a: "السكري", options: ["الضغط", "السكري", "الأنيميا", "الربو"] },
+    { q: "ما هو العضو المسؤول عن تنقية الدم؟", a: "الكلى", options: ["الكبد", "الكلى", "القلب", "المعدة"] },
+    { q: "ما هو العضو المسؤول عن الهضم؟", a: "المعدة", options: ["الكبد", "الكلى", "القلب", "المعدة"] },
+    { q: "ما هو العضو المسؤول عن التفكير؟", a: "المخ", options: ["القلب", "المخ", "الكبد", "الرئتين"] },
+    { q: "ما هو أكبر عضو في جسم الإنسان؟", a: "الجلد", options: ["الكبد", "الجلد", "القلب", "الرئتين"] },
+    { q: "ما هو أقوى عظم في جسم الإنسان؟", a: "عظم الفخذ", options: ["العمود الفقري", "عظم الفخذ", "الجمجمة", "القصبة"] },
+    { q: "ما هو أصغر عظم في جسم الإنسان؟", a: "عظم الركاب", options: ["عظم الركاب", "عظم المطرقة", "عظم السندان", "عظم الرسغ"] },
+    { q: "ما هو عدد أسنان الإنسان البالغ؟", a: "32", options: ["28", "30", "32", "34"] },
+    { q: "ما هو عدد أسنان الطفل؟", a: "20", options: ["18", "20", "22", "24"] },
+    { q: "ما هو عدد ضربات القلب في الدقيقة؟", a: "72", options: ["60", "72", "80", "90"] },
+    { q: "ما هو ضغط الدم الطبيعي؟", a: "120/80", options: ["110/70", "120/80", "130/90", "140/100"] },
+    { q: "ما هو نسبة الماء في جسم الإنسان؟", a: "60%", options: ["50%", "60%", "70%", "80%"] },
+    { q: "ما هو فيروس كورونا؟", a: "كوفيد-19", options: ["السارس", "كوفيد-19", "ميرس", "إيبولا"] },
+    { q: "ما هو لقاح كورونا؟", a: "فايزر", options: ["فايزر", "أسترازينيكا", "جونسون", "سبوتنيك"] },
+    { q: "ما هو دواء الباراسيتامول؟", a: "مسكن ألم", options: ["مضاد حيوي", "مسكن ألم", "خافض حرارة", "مضاد فيروس"] },
+    { q: "ما هو دواء الأيبوبروفين؟", a: "مسكن ألم", options: ["مضاد حيوي", "مسكن ألم", "خافض حرارة", "مضاد اكتئاب"] },
+    { q: "ما هو دواء الأموكسيسيلين؟", a: "مضاد حيوي", options: ["مضاد حيوي", "مسكن ألم", "خافض حرارة", "مضاد فيروس"] },
+    { q: "ما هو فيروس نقص المناعة البشرية؟", a: "HIV", options: ["HBV", "HIV", "HPV", "HCV"] },
+    { q: "ما هو فيروس الكبد الوبائي B؟", a: "HBV", options: ["HAV", "HBV", "HCV", "HDV"] },
+    { q: "ما هو فيروس الكبد الوبائي C؟", a: "HCV", options: ["HAV", "HBV", "HCV", "HDV"] },
+    { q: "ما هو فيروس الورم الحليمي البشري؟", a: "HPV", options: ["HIV", "HBV", "HPV", "HCV"] },
+    { q: "ما هو سرطان الثدي؟", a: "سرطان الثدي", options: ["سرطان الرئة", "سرطان الثدي", "سرطان القولون", "سرطان البروستاتا"] },
+    { q: "ما هو سرطان الرئة؟", a: "سرطان الرئة", options: ["سرطان الثدي", "سرطان الرئة", "سرطان القولون", "سرطان البروستاتا"] },
+    { q: "ما هو سرطان القولون؟", a: "سرطان القولون", options: ["سرطان الثدي", "سرطان الرئة", "سرطان القولون", "سرطان البروستاتا"] },
+    { q: "ما هو سرطان البروستاتا؟", a: "سرطان البروستاتا", options: ["سرطان الثدي", "سرطان الرئة", "سرطان القولون", "سرطان البروستاتا"] },
+    { q: "ما هو داء السكري؟", a: "مرض مزمن", options: ["مرض وراثي", "مرض مزمن", "مرض معدي", "مرض نفسي"] }
+],
+                economy: [
+                    { q: "ما هو الشيء الذي نستخدمه للشراء؟", a: "المال", options: ["المال", "الوقت", "الطعام", "الكتب"] },
+                    { q: "ما هو مكان إيداع الأموال؟", a: "البنك", options: ["السوق", "البنك", "المتجر", "المدرسة"] },
+                    { q: "ما هو الشيء الذي يحصل عليه العامل؟", a: "الراتب", options: ["الهدية", "الراتب", "الطعام", "الوقت"] }
+                ]
+            },
+            medium: {
+                general: [
+    { q: "كم عدد خلايا جسم الإنسان تقريباً؟", a: "37 تريليون", options: ["10 تريليون", "37 تريليون", "100 تريليون", "1 تريليون"] },
+    { q: "ما هي أسرع طائرة في العالم؟", a: "SR-71 بلاكبيرد", options: ["F-22", "SR-71 بلاكبيرد", "كونكورد", "B-2"] },
+    { q: "من اخترع التلفاز؟", a: "جون لوجي بيرد", options: ["توماس إديسون", "نيكولا تيسلا", "جون لوجي بيرد", "غراهام بل"] },
+    { q: "ما هو أعمق محيط في العالم؟", a: "المحيط الهادئ", options: ["الأطلسي", "الهندي", "المحيط الهادئ", "المتجمد الشمالي"] },
+    { q: "ما هي أقدم جامعة في العالم؟", a: "جامعة القرويين", options: ["الأزهر", "القرويين", "أكسفورد", "بولونيا"] },
+    { q: "من هو مكتشف الجاذبية الأرضية؟", a: "إسحاق نيوتن", options: ["أينشتاين", "جاليليو", "نيوتن", "كوبرنيكوس"] },
+    { q: "ما هي عملة دولة الإمارات؟", a: "الدرهم", options: ["الدينار", "الريال", "الدرهم", "الدولار"] },
+    { q: "ما هي عاصمة النرويج؟", a: "أوسلو", options: ["ستوكهولم", "كوبنهاغن", "أوسلو", "هلسنكي"] },
+    { q: "ما هي عاصمة الدنمارك؟", a: "كوبنهاغن", options: ["ستوكهولم", "كوبنهاغن", "أوسلو", "ريكيافيك"] },
+    { q: "ما هي عاصمة السويد؟", a: "ستوكهولم", options: ["ستوكهولم", "كوبنهاغن", "أوسلو", "هلسنكي"] },
+    { q: "ما هي عاصمة فنلندا؟", a: "هلسنكي", options: ["ستوكهولم", "كوبنهاغن", "أوسلو", "هلسنكي"] },
+    { q: "من هو مخترع المصباح الكهربائي؟", a: "توماس إديسون", options: ["تيسلا", "إديسون", "فرانكلين", "فولتا"] },
+    { q: "من هو مخترع الراديو؟", a: "غولييلمو ماركوني", options: ["تيسلا", "ماركوني", "إديسون", "فاراداي"] },
+    { q: "من هو مكتشف البنسلين؟", a: "ألكسندر فليمنغ", options: ["باستور", "فليمنغ", "كوخ", "جينر"] },
+    { q: "ما هي عملة سويسرا؟", a: "الفرنك السويسري", options: ["اليورو", "الفرنك", "الدولار", "الجنيه"] },
+    { q: "ما هي عملة روسيا؟", a: "الروبل", options: ["اليورو", "الدولار", "الروبل", "اليوان"] },
+    { q: "ما هي عملة تركيا؟", a: "الليرة التركية", options: ["الدولار", "اليورو", "الليرة", "الدرهم"] },
+    { q: "ما هي أكبر جزيرة في العالم؟", a: "غرينلاند", options: ["أستراليا", "غرينلاند", "بابوا", "بورنيو"] },
+    { q: "ما هي أكبر بحيرة في العالم؟", a: "بحيرة سوبيريور", options: ["فيكتوريا", "سوبيريور", "ميشيغان", "تانجانيقا"] },
+    { q: "ما هي أطول سلسلة جبال في العالم؟", a: "جبال الأنديز", options: ["الهيمالايا", "الأنديز", "الروكي", "جبال الألب"] },
+    { q: "من هو أول من صعد إلى قمة إيفرست؟", a: "إدموند هيلاري", options: ["تينسينغ نورغاي", "إدموند هيلاري", "راينهولد ميسنر", "جورج مالوري"] },
+    { q: "كم عدد السور الصيني العظيم؟", a: "21000 كم", options: ["15000 كم", "21000 كم", "25000 كم", "30000 كم"] },
+    { q: "ما هي أقدم حضارة في العالم؟", a: "حضارة وادي السند", options: ["المصرية", "السومرية", "وادي السند", "الصينية"] },
+    { q: "من هو مكتشف الدورة الدموية الصغرى؟", a: "ابن النفيس", options: ["ابن سينا", "الرازي", "ابن النفيس", "الزهراوي"] },
+    { q: "ما هي أسرع سيارة في العالم؟", a: "بوغاتي شيرون", options: ["بوغاتي فيرون", "بوغاتي شيرون", "هنيسي فينوم", "SSC تواتارا"] },
+    { q: "ما هو أطول قطار في العالم؟", a: "قطار بيلاروس", options: ["قطار الصين", "قطار روسيا", "قطار بيلاروس", "قطار أستراليا"] },
+    { q: "ما هي أكبر شركة في العالم؟", a: "أرامكو السعودية", options: ["آبل", "مايكروسوفت", "أرامكو", "أمازون"] },
+    { q: "من هو أغنى رجل في العالم؟", a: "برنارد أرنو", options: ["إيلون ماسك", "برنارد أرنو", "جيف بيزوس", "بيل غيتس"] },
+    { q: "ما هي أغلى لوحة في العالم؟", a: "الموناليزا", options: ["الاستغاثة", "الموناليزا", "ليلة النجوم", "الولادة"] },
+    { q: "ما هو أقدم فيلم في التاريخ؟", a: "رحلة إلى القمر", options: ["القطار", "رحلة إلى القمر", "الآلة", "الحديقة"] }
+],
+                islam: [
+    { q: "في أي سنة كانت غزوة بدر الكبرى؟", a: "2 هـ", options: ["1 هـ", "2 هـ", "3 هـ", "4 هـ"] },
+    { q: "في أي سنة كانت غزوة أحد؟", a: "3 هـ", options: ["2 هـ", "3 هـ", "4 هـ", "5 هـ"] },
+    { q: "في أي سنة كانت غزوة الخندق؟", a: "5 هـ", options: ["4 هـ", "5 هـ", "6 هـ", "7 هـ"] },
+    { q: "في أي سنة كانت صلح الحديبية؟", a: "6 هـ", options: ["5 هـ", "6 هـ", "7 هـ", "8 هـ"] },
+    { q: "في أي سنة كانت فتح مكة؟", a: "8 هـ", options: ["7 هـ", "8 هـ", "9 هـ", "10 هـ"] },
+    { q: "في أي سنة كانت حجة الوداع؟", a: "10 هـ", options: ["8 هـ", "9 هـ", "10 هـ", "11 هـ"] },
+    { q: "في أي سنة توفي النبي محمد؟", a: "11 هـ", options: ["10 هـ", "11 هـ", "12 هـ", "13 هـ"] },
+    { q: "من هو الخليفة الثاني؟", a: "عمر بن الخطاب", options: ["أبو بكر", "عمر", "عثمان", "علي"] },
+    { q: "من هو الخليفة الثالث؟", a: "عثمان بن عفان", options: ["أبو بكر", "عمر", "عثمان", "علي"] },
+    { q: "من هو الخليفة الرابع؟", a: "علي بن أبي طالب", options: ["أبو بكر", "عمر", "عثمان", "علي"] },
+    { q: "ما هي مدة خلافة أبي بكر الصديق؟", a: "سنتان", options: ["سنة", "سنتان", "ثلاث سنوات", "أربع سنوات"] },
+    { q: "ما هي مدة خلافة عمر بن الخطاب؟", a: "10 سنوات", options: ["8 سنوات", "10 سنوات", "12 سنة", "15 سنة"] },
+    { q: "ما هي مدة خلافة عثمان بن عفان؟", a: "12 سنة", options: ["10 سنوات", "11 سنة", "12 سنة", "13 سنة"] },
+    { q: "ما هي مدة خلافة علي بن أبي طالب؟", a: "5 سنوات", options: ["4 سنوات", "5 سنوات", "6 سنوات", "7 سنوات"] },
+    { q: "من هو أول شهيد في الإسلام؟", a: "الحارث بن أبي هالة", options: ["عمرو بن الحضرمي", "الحارث بن أبي هالة", "سعد بن أبي وقاص", "الزبير"] },
+    { q: "من هو أول من استشهد من الصحابة في بدر؟", a: "عبيدة بن الحارث", options: ["حمزة", "عبيدة", "علي", "عمر"] },
+    { q: "من هو الصحابي الذي استشهد في أحد؟", a: "حمزة بن عبد المطلب", options: ["حمزة", "مصعب", "عبد الله بن جحش", "سعد"] },
+    { q: "من هو الصحابي الملقب بالحبر والبحر؟", a: "عبد الله بن عباس", options: ["ابن مسعود", "ابن عباس", "ابن عمر", "ابن الزبير"] },
+    { q: "من هو الصحابي الملقب بترجمان القرآن؟", a: "عبد الله بن عباس", options: ["ابن مسعود", "ابن عباس", "ابن عمر", "أبي بن كعب"] },
+    { q: "من هو قارئ القرآن المشهور؟", a: "عبد الله بن مسعود", options: ["ابن عباس", "ابن مسعود", "أبي بن كعب", "زيد بن ثابت"] },
+    { q: "من هو الصحابي الذي اهتز لموته عرش الرحمن؟", a: "سعد بن معاذ", options: ["سعد بن أبي وقاص", "سعد بن معاذ", "سعد بن عبادة", "أسعد بن زرارة"] },
+    { q: "من هو الصحابي الذي كان يسمى غلام بني هاشم؟", a: "عبد الله بن عباس", options: ["علي", "حمزة", "عبد الله بن عباس", "جعفر"] },
+    { q: "من هو الصحابي الذي نزل فيه قرآن؟", a: "أبو لبابة", options: ["أبو لبابة", "ثعلبة", "حاطب", "أبو محجن"] },
+    { q: "من هي الصحابية التي تزوجها النبي في الجاهلية؟", a: "خديجة", options: ["خديجة", "عائشة", "سودة", "حفصة"] },
+    { q: "من هي أم المؤمنين التي كانت بنت عمر؟", a: "حفصة", options: ["عائشة", "حفصة", "سودة", "أم سلمة"] },
+    { q: "من هي أم المؤمنين التي كانت بنت أبي بكر؟", a: "عائشة", options: ["عائشة", "حفصة", "أم حبيبة", "ميمونة"] },
+    { q: "من هي أم المؤمنين التي كانت أخت معاوية؟", a: "أم حبيبة", options: ["صفية", "أم حبيبة", "جويرية", "ريحانة"] },
+    { q: "من هي أم المؤمنين التي كانت من بني إسرائيل؟", a: "صفية", options: ["صفية", "مارية", "ريحانة", "جويرية"] },
+    { q: "من هي أم المؤمنين التي كانت بنت الحارث؟", a: "جويرية", options: ["ميمونة", "جويرية", "زينب بنت جحش", "زينب بنت خزيمة"] },
+    { q: "من هي أم المؤمنين التي كانت بنت أبي سفيان؟", a: "أم حبيبة", options: ["أم حبيبة", "معاوية", "يزيد", "عتبة"] }
+],
+                science: [
+    { q: "ما هو الكوكب الذي يسمى بكوكب الجمال؟", a: "الزهرة", options: ["المشتري", "زحل", "الزهرة", "المريخ"] },
+    { q: "ما هو الكوكب الذي يسمى بكوكب الحروب؟", a: "المريخ", options: ["عطارد", "المريخ", "المشتري", "زحل"] },
+    { q: "ما هو الكوكب الذي له حلقات؟", a: "زحل", options: ["المشتري", "زحل", "أورانوس", "نبتون"] },
+    { q: "ما هو الكوكب العملاق الغازي؟", a: "المشتري", options: ["زحل", "المشتري", "أورانوس", "نبتون"] },
+    { q: "ما هو الكوكب الذي يدور مائلاً؟", a: "أورانوس", options: ["زحل", "المشتري", "أورانوس", "نبتون"] },
+    { q: "ما هو أقرب نجم إلى الأرض بعد الشمس؟", a: "بروكسيما سنتوري", options: ["سيريوس", "بروكسيما سنتوري", "ألفا سنتوري", "بيتيلجوس"] },
+    { q: "ما هو أكبر نجم في الكون المعروف؟", a: "UY Scuti", options: ["VY Canis Majoris", "UY Scuti", "Betelgeuse", "Antares"] },
+    { q: "ما هو ألمع نجم في السماء؟", a: "سيريوس", options: ["الشعرى اليمانية", "سيريوس", "النجم القطبي", "الجدي"] },
+    { q: "ما هو الثقب الأسود؟", a: "جرم سماوي", options: ["نجم ميت", "جرم سماوي", "مجرة", "سحابة"] },
+    { q: "ما هو الانفجار العظيم؟", a: "نشأة الكون", options: ["نشأة الكون", "موت نجم", "اصطدام مجرات", "انفجار نجم"] },
+    { q: "ما هي المادة المظلمة؟", a: "مادة غير مرئية", options: ["مادة معتمة", "مادة غير مرئية", "طاقة مظلمة", "فراغ"] },
+    { q: "ما هي الطاقة المظلمة؟", a: "طاقة غامضة", options: ["طاقة شمسية", "طاقة غامضة", "طاقة نووية", "طاقة كهرومغناطيسية"] },
+    { q: "ما هو قانون أوم؟", a: "V = IR", options: ["F = ma", "E = mc²", "V = IR", "P = IV"] },
+    { q: "ما هو قانون نيوتن الأول؟", a: "القصور الذاتي", options: ["الفعل ورد الفعل", "القصور الذاتي", "F = ma", "الجاذبية"] },
+    { q: "ما هو قانون نيوتن الثاني؟", a: "F = ma", options: ["القصور الذاتي", "F = ma", "الفعل ورد الفعل", "الجاذبية"] },
+    { q: "ما هو قانون نيوتن الثالث؟", a: "الفعل ورد الفعل", options: ["القصور الذاتي", "F = ma", "الفعل ورد الفعل", "الجاذبية"] },
+    { q: "ما هي معادلة أينشتاين الشهيرة؟", a: "E = mc²", options: ["F = ma", "E = mc²", "V = IR", "PV = nRT"] },
+    { q: "ما هي النظرية النسبية؟", a: "نظرية أينشتاين", options: ["نظرية نيوتن", "نظرية أينشتاين", "نظرية جاليليو", "نظرية بلانك"] },
+    { q: "ما هو سرعة الضوء؟", a: "300,000 كم/ث", options: ["150,000 كم/ث", "300,000 كم/ث", "450,000 كم/ث", "600,000 كم/ث"] },
+    { q: "ما هو سرعة الصوت؟", a: "343 م/ث", options: ["300 م/ث", "343 م/ث", "400 م/ث", "500 م/ث"] },
+    { q: "ما هو العنصر الأكثر توصيلاً للكهرباء؟", a: "الفضة", options: ["النحاس", "الذهب", "الفضة", "الألمنيوم"] },
+    { q: "ما هو أقوى معدن في العالم؟", a: "التنغستن", options: ["الحديد", "التنغستن", "الكروم", "التيتانيوم"] },
+    { q: "ما هو أخف معدن في العالم؟", a: "الليثيوم", options: ["الألومنيوم", "المغنيسيوم", "الليثيوم", "البريليوم"] },
+    { q: "ما هو أندر معدن في العالم؟", a: "الروديوم", options: ["البلاتين", "الذهب", "الروديوم", "الإيريديوم"] },
+    { q: "ما هو أثقل غاز في العالم؟", a: "الرادون", options: ["الكريبتون", "الزينون", "الرادون", "الأوزون"] },
+    { q: "ما هو أخف غاز في العالم؟", a: "الهيدروجين", options: ["الهيليوم", "الهيدروجين", "النيتروجين", "الأكسجين"] },
+    { q: "ما هو أكثر غاز سام في العالم؟", a: "السيانيد", options: ["أول أكسيد الكربون", "السيانيد", "الكلور", "الأمونيا"] },
+    { q: "ما هو أكثر حمض قوة في العالم؟", a: "حمض الفلوروأنتيمونيك", options: ["حمض الكبريتيك", "حمض النيتريك", "حمض الفلوروأنتيمونيك", "حمض الهيدروكلوريك"] },
+    { q: "ما هو أكثر قاعدة قوة في العالم؟", a: "هيدروكسيد الصوديوم", options: ["هيدروكسيد البوتاسيوم", "هيدروكسيد الصوديوم", "هيدروكسيد الكالسيوم", "الأمونيا"] },
+    { q: "ما هو الجرام؟", a: "وحدة قياس الكتلة", options: ["وحدة طول", "وحدة كتلة", "وحدة زمن", "وحدة حرارة"] }
+],
+                geography: [
+    { q: "ما هي عاصمة بولندا؟", a: "وارسو", options: ["كراكوف", "وارسو", "غدانسك", "بوزنان"] },
+    { q: "ما هي عاصمة أوكرانيا؟", a: "كييف", options: ["لفيف", "كييف", "أوديسا", "خاركيف"] },
+    { q: "ما هي عاصمة رومانيا؟", a: "بوخارست", options: ["كلوج", "بوخارست", "تيميشوارا", "براشوف"] },
+    { q: "ما هي عاصمة بلغاريا؟", a: "صوفيا", options: ["بلوفديف", "صوفيا", "فارنا", "بورغاس"] },
+    { q: "ما هي عاصمة المجر؟", a: "بودابست", options: ["ديبرتسن", "بودابست", "سيغد", "ميشكولتس"] },
+    { q: "ما هي عاصمة النمسا؟", a: "فيينا", options: ["سالزبورغ", "فيينا", "غراتس", "لينتس"] },
+    { q: "ما هي عاصمة التشيك؟", a: "براغ", options: ["برنو", "براغ", "أوسترافا", "بلزن"] },
+    { q: "ما هي عاصمة سلوفاكيا؟", a: "براتيسلافا", options: ["كوشيتسه", "براتيسلافا", "زيلينا", "نترا"] },
+    { q: "ما هي عاصمة سلوفينيا؟", a: "ليوبليانا", options: ["ماريبور", "ليوبليانا", "تسلي", "كراني"] },
+    { q: "ما هي عاصمة كرواتيا؟", a: "زغرب", options: ["سبليت", "زغرب", "رييكا", "أوسييك"] },
+    { q: "ما هي عاصمة البوسنة؟", a: "سراييفو", options: ["بانيالوكا", "سراييفو", "موستار", "توزلا"] },
+    { q: "ما هي عاصمة صربيا؟", a: "بلغراد", options: ["نوفي ساد", "بلغراد", "نيش", "كراغوييفاتس"] },
+    { q: "ما هي عاصمة الجبل الأسود؟", a: "بودغوريتشا", options: ["نيكشيتش", "بودغوريتشا", "بار", "بييلو بوليي"] },
+    { q: "ما هي عاصمة ألبانيا؟", a: "تيرانا", options: ["دوريس", "تيرانا", "شكودر", "فلورا"] },
+    { q: "ما هي عاصمة اليونان؟", a: "أثينا", options: ["سالونيك", "أثينا", "باتراس", "هيراكليون"] },
+    { q: "ما هي عاصمة قبرص؟", a: "نيقوسيا", options: ["ليماسول", "نيقوسيا", "لارنكا", "بافوس"] },
+    { q: "ما هي عاصمة مالطا؟", a: "فاليتا", options: ["بirkirkara", "فاليتا", "موستا", "زابار"] },
+    { q: "ما هي عاصمة آيسلندا؟", a: "ريكيافيك", options: ["كوبافوغور", "ريكيافيك", "هافنارفيوردور", "أكوريري"] },
+    { q: "ما هي عاصمة أيرلندا؟", a: "دبلن", options: ["كورك", "دبلن", "غالواي", "ليمرك"] },
+    { q: "ما هي عاصمة البرتغال؟", a: "لشبونة", options: ["بورتو", "لشبونة", "براغا", "كويمبرا"] },
+    { q: "ما هي عاصمة بلجيكا؟", a: "بروكسل", options: ["أنتويرب", "بروكسل", "غنت", "بروج"] },
+    { q: "ما هي عاصمة هولندا؟", a: "أمستردام", options: ["روتردام", "أمستردام", "لاهاي", "أوترخت"] },
+    { q: "ما هي عاصمة لوكسمبورغ؟", a: "لوكسمبورغ", options: ["إيش سور ألزيت", "لوكسمبورغ", "ديفردانج", "دوديلانج"] },
+    { q: "ما هي عاصمة موناكو؟", a: "موناكو", options: ["مونتي كارلو", "موناكو", "لا كوندامين", "فونتفاي"] },
+    { q: "ما هي عاصمة ليختنشتاين؟", a: "فادوز", options: ["شآن", "فادوز", "بالزرز", "ترايسن"] },
+    { q: "ما هي عاصمة سان مارينو؟", a: "سان مارينو", options: ["بورغو ماجيوري", "سان مارينو", "دومانيانو", "سيرافالي"] },
+    { q: "ما هي عاصمة الفاتيكان؟", a: "مدينة الفاتيكان", options: ["روما", "مدينة الفاتيكان", "الفاتيكان", "البابوية"] },
+    { q: "ما هي عاصمة أندورا؟", a: "أندورا لا فيلا", options: ["إسكاليس", "أندورا لا فيلا", "إنجولاسترز", "سان جوليا"] },
+    { q: "ما هي عاصمة لاتفيا؟", a: "ريغا", options: ["داوغافبيلس", "ريغا", "يلغافا", "يورمالا"] },
+    { q: "ما هي عاصمة ليتوانيا؟", a: "فيلنيوس", options: ["كاوناس", "فيلنيوس", "كلايبيدا", "شياولياي"] }
+],
+                sports: [
+    { q: "من هو اللاعب الذي أطلق عليه اسم 'الظاهرة'؟", a: "رونالدو", options: ["رونالدينيو", "رونالدو", "روماريو", "ريفالدو"] },
+    { q: "من هو اللاعب الملقب بـ 'الغزال'؟", a: "كاكا", options: ["نيمار", "كاكا", "رونالدينيو", "روبنهو"] },
+    { q: "من هو اللاعب الملقب بـ 'العقرب'؟", a: "رينيه هيغيتا", options: ["شيلتون", "هيغيتا", "كامبوس", "شوماخر"] },
+    { q: "من هو الحارس الذي سجل هدفاً من مرماه؟", a: "روجيريو سيني", options: ["شيلتون", "سيني", "كامبوس", "شوماخر"] },
+    { q: "من هو أول لاعب يفوز بالكرة الذهبية 3 مرات؟", a: "يوهان كرويف", options: ["بلاتيني", "كرويف", "فان باستن", "بكنباور"] },
+    { q: "من هو أول لاعب يفوز بالكرة الذهبية 5 مرات؟", a: "كريستيانو رونالدو", options: ["ميسي", "رونالدو", "بلاتيني", "كرويف"] },
+    { q: "من هو أول لاعب يفوز بالكرة الذهبية 7 مرات؟", a: "ليونيل ميسي", options: ["ميسي", "رونالدو", "مبابي", "هالاند"] },
+    { q: "من هو أصغر لاعب يفوز بالكرة الذهبية؟", a: "رونالدو", options: ["ميسي", "رونالدو", "أوين", "بيليه"] },
+    { q: "من هو أكبر لاعب يفوز بالكرة الذهبية؟", a: "ستانلي ماثيوز", options: ["ليفاندوفسكي", "ماثيوز", "مودريتش", "بنزيما"] },
+    { q: "من هو اللاعب الذي فاز بالكرة الذهبية وهو حارس مرمى؟", a: "ليف ياشين", options: ["نوير", "بوفون", "ليف ياشين", "كاسياس"] },
+    { q: "من هو أول لاعب عربي يفوز بالكرة الذهبية؟", a: "جورج وهبة", options: ["ماجد عبد الله", "جورج وهبة", "محمد أبو تريكة", "رياض محرز"] },
+    { q: "من هو أول لاعب أفريقي يفوز بالكرة الذهبية؟", a: "جورج ويا", options: ["دروغبا", "إيتو", "جورج ويا", "محرز"] },
+    { q: "من هو هداف كأس العالم 1998؟", a: "دافور شوكر", options: ["رونالدو", "شوكر", "باتيستوتا", "فييرا"] },
+    { q: "من هو هداف كأس العالم 2002؟", a: "رونالدو", options: ["ريفالدو", "رونالدو", "كلوزه", "باتيستوتا"] },
+    { q: "من هو هداف كأس العالم 2006؟", a: "ميروسلاف كلوزه", options: ["زيدان", "كلوزه", "رونالدو", "توتي"] },
+    { q: "من هو هداف كأس العالم 2010؟", a: "توماس مولر", options: ["فيلا", "فورلان", "مولر", "سنيدر"] },
+    { q: "من هو هداف كأس العالم 2014؟", a: "جيمس رودريغيز", options: ["مولر", "ميسي", "جيمس رودريغيز", "نيمار"] },
+    { q: "من هو هداف كأس العالم 2018؟", a: "هاري كين", options: ["مبابي", "غريزمان", "هاري كين", "تشيريشيف"] },
+    { q: "من هو هداف كأس العالم 2022؟", a: "كيليان مبابي", options: ["ميسي", "مبابي", "ألفاريز", "جيرو"] },
+    { q: "من هو أكثر لاعب سجل أهدافاً في مباراة واحدة بكأس العالم؟", a: "سالمين", options: ["فونتين", "سالمين", "باتيستوتا", "كلوزه"] },
+    { q: "من هو أول لاعب يسجل هاتريك في كأس العالم؟", a: "برت باتنود", options: ["بيليه", "باتنود", "مبابي", "رونالدو"] },
+    { q: "من هو أول لاعب يسجل في 3 كؤوس عالم؟", a: "بيليه", options: ["بيليه", "مبابي", "رونالدو", "كلوزه"] },
+    { q: "من هو أول لاعب يسجل في 4 كؤوس عالم؟", a: "ميروسلاف كلوزه", options: ["بيليه", "كلوزه", "رونالدو", "مبابي"] },
+    { q: "من هو أول لاعب يسجل هدفاً في نهائي كأس العالم؟", a: "بيليه", options: ["مبابي", "بيليه", "زيدان", "رونالدو"] },
+    { q: "من هو أول لاعب يطرد في نهائي كأس العالم؟", a: "زيزو", options: ["كانتونا", "زيزو", "بيليه", "مارادونا"] },
+    { q: "من هو أول مدرب يفوز بكأس العالم مرتين؟", a: "فيتوريو بوتسو", options: ["زاغالو", "بوتسو", "بيليه", "بكنباور"] },
+    { q: "من هو أول مدرب يفوز بكأس العالم كلاعب ومدرب؟", a: "ماريو زاغالو", options: ["زاغالو", "بكنباور", "ديشان", "بيليه"] },
+    { q: "من هو أصغر مدرب يفوز بكأس العالم؟", a: "ألبرتو سوبيتشي", options: ["زاغالو", "سوبيتشي", "بكنباور", "ديشان"] },
+    { q: "من هو أكبر مدرب يفوز بكأس العالم؟", a: "فيتوريو بوتسو", options: ["زاغالو", "بوتسو", "بكنباور", "ليبي"] },
+    { q: "من هو أول مدرب غير أوروبي يفوز بكأس العالم؟", a: "ألبرتو سوبيتشي", options: ["زاغالو", "سوبيتشي", "بكنباور", "ليبي"] }
+],
+                arts: [
+    { q: "من هو فنان عصر النهضة الإيطالي؟", a: "مايكل أنجلو", options: ["رافاييل", "مايكل أنجلو", "دافنشي", "بوتيتشيلي"] },
+    { q: "من هو فنان عصر النهضة الألماني؟", a: "ألبريشت دورر", options: ["هانز هولباين", "دورر", "كراناخ", "غرونيوالد"] },
+    { q: "من هو فنان عصر النهضة الهولندي؟", a: "بيتر بروغل", options: ["فان إيك", "بروغل", "بوسخ", "فيرمير"] },
+    { q: "من هو فنان عصر النهضة الإسباني؟", a: "إل غريكو", options: ["فيالاسكيز", "إل غريكو", "غويا", "موريو"] },
+    { q: "من هو فنان عصر النهضة الفرنسي؟", a: "جان فوكيه", options: ["كلويه", "فوكيه", "بوسان", "لورين"] },
+    { q: "من هو فنان عصر النهضة الإنجليزي؟", a: "هولباين", options: ["هولباين", "هيلارد", "نايس", "فان ديك"] },
+    { q: "من هو فنان الباروك الإيطالي؟", a: "كارافاجيو", options: ["بيرنيني", "كارافاجيو", "مونتي", "روسبي"] },
+    { q: "من هو فنان الباروك الإسباني؟", a: "دييغو فيالاسكيز", options: ["موريو", "فيالاسكيز", "ريبيرا", "زوفراني"] },
+    { q: "من هو فنان الباروك الفلمنكي؟", a: "بيتر بول روبنز", options: ["روبنز", "فان ديك", "جوردانز", "بروغل"] },
+    { q: "من هو فنان الباروك الهولندي؟", a: "رامبرانت", options: ["فيرمير", "رامبرانت", "هالس", "ستين"] },
+    { q: "من هو فنان الروكوكو الفرنسي؟", a: "أنطوان واتو", options: ["بوشيه", "واتو", "فراغونار", "غرين"] },
+    { q: "من هو فنان الكلاسيكية الجديدة؟", a: "جاك لويس دافيد", options: ["دانتي", "دافيد", "إنجرس", "كانوفا"] },
+    { q: "من هو فنان الرومانسية الفرنسية؟", a: "أوجين ديلاكروا", options: ["جيريكو", "ديلاكروا", "شاسيريو", "مورو"] },
+    { q: "من هو فنان الرومانسية الإسبانية؟", a: "فرانسيسكو غويا", options: ["غويا", "زوريلا", "مادارزو", "فورتوني"] },
+    { q: "من هو فنان الرومانسية الإنجليزية؟", a: "ويليام تيرنر", options: ["كونستابل", "تيرنر", "بليك", "فوسيلي"] },
+    { q: "من هو فنان الرومانسية الألمانية؟", a: "كاسبار ديفيد فريدريش", options: ["فريدريش", "رونجي", "بليكر", "نازارين"] },
+    { q: "من هو فنان الواقعية الفرنسية؟", a: "غوستاف كوربيه", options: ["كوربيه", "ميلليه", "بونفين", "فورتوني"] },
+    { q: "من هو فنان الانطباعية الفرنسية؟", a: "كلود مونيه", options: ["رينوار", "مونيه", "ديغا", "سيزان"] },
+    { q: "من هو فنان ما بعد الانطباعية؟", a: "فان غوخ", options: ["غوغان", "سيزان", "فان غوخ", "سورا"] },
+    { q: "من هو فنان الوحشية؟", a: "هنري ماتيس", options: ["ديرين", "ماتيس", "فلامينك", "فريز"] },
+    { q: "من هو فنان التكعيبية؟", a: "بابلو بيكاسو", options: ["بريك", "بيكاسو", "غريس", "ليجر"] },
+    { q: "من هو فنان السريالية؟", a: "سلفادور دالي", options: ["ماغريت", "دالي", "ميرو", "إرنست"] },
+    { q: "من هو فنان التجريدية؟", a: "فاسيلي كاندينسكي", options: ["ماليفيتش", "كاندينسكي", "موندريان", "كلي"] },
+    { q: "من هو فنان التعبيرية؟", a: "إدفارد مونك", options: ["كيرشنر", "مونك", "بيكشتاين", "نولده"] },
+    { q: "من هو فنان البوب آرت؟", a: "آندي وارهول", options: ["ليختنشتاين", "وارهول", "روزنكويست", "هاملتون"] },
+    { q: "من هو فنان الفن المفاهيمي؟", a: "مارسيل دوشامب", options: ["كوسوث", "دوشامب", "بويز", "بوردن"] },
+    { q: "من هو فنان فن الأرض؟", a: "روبرت سميثسون", options: ["هيز", "سميثسون", "دي ماريا", "أوبنهايم"] },
+    { q: "من هو فنان فن الفيديو؟", a: "نام جون بايك", options: ["فيولا", "بايك", "نوماس", "آكونشي"] },
+    { q: "من هو فنان الفن الرقمي؟", a: "دييغو ريفيرا", options: ["هوكر", "ريفيرا", "موراي", "بينروز"] },
+    { q: "من هو فنان الجرافيتي؟", a: "باسكيات", options: ["هيرينغ", "باسكيات", "بونس", "باس"] }
+],
+                history: [
+    { q: "في أي سنة سقطت بغداد على يد المغول؟", a: "1258", options: ["1218", "1258", "1300", "1350"] },
+    { q: "في أي سنة كانت معركة عين جالوت؟", a: "1260", options: ["1250", "1260", "1270", "1280"] },
+    { q: "في أي سنة فتح المسلمون قبرص؟", a: "649", options: ["638", "649", "655", "661"] },
+    { q: "في أي سنة فتح المسلمون صقلية؟", a: "827", options: ["800", "827", "850", "875"] },
+    { q: "في أي سنة فتح المسلمون الأندلس؟", a: "711", options: ["700", "711", "720", "730"] },
+    { q: "في أي سنة سقطت الأندلس؟", a: "1492", options: ["1453", "1472", "1492", "1500"] },
+    { q: "في أي سنة كانت معركة اليرموك؟", a: "636", options: ["630", "636", "640", "650"] },
+    { q: "في أي سنة كانت معركة القادسية؟", a: "636", options: ["630", "636", "640", "642"] },
+    { q: "في أي سنة كانت معركة نهاوند؟", a: "642", options: ["638", "642", "650", "655"] },
+    { q: "في أي سنة كانت معركة بلاط الشهداء؟", a: "732", options: ["725", "732", "740", "750"] },
+    { q: "في أي سنة كانت معركة حطين؟", a: "1187", options: ["1175", "1187", "1192", "1200"] },
+    { q: "في أي سنة كانت معركة عين جالوت؟", a: "1260", options: ["1250", "1260", "1270", "1280"] },
+    { q: "في أي سنة كانت معركة مرج دابق؟", a: "1516", options: ["1500", "1516", "1520", "1530"] },
+    { q: "في أي سنة كانت معركة موهاج؟", a: "1526", options: ["1520", "1526", "1530", "1540"] },
+    { q: "في أي سنة كانت معركة ليبانتو؟", a: "1571", options: ["1560", "1571", "1580", "1590"] },
+    { q: "في أي سنة كانت معركة فيينا الأولى؟", a: "1529", options: ["1525", "1529", "1535", "1540"] },
+    { q: "في أي سنة كانت معركة فيينا الثانية؟", a: "1683", options: ["1670", "1683", "1690", "1700"] },
+    { q: "في أي سنة كانت معركة نافارين؟", a: "1827", options: ["1820", "1827", "1830", "1840"] },
+    { q: "في أي سنة كانت معركة القصرين؟", a: "1943", options: ["1940", "1943", "1945", "1948"] },
+    { q: "في أي سنة كانت حرب أكتوبر؟", a: "1973", options: ["1967", "1973", "1975", "1980"] },
+    { q: "من هو أول ملك للسعودية؟", a: "عبد العزيز آل سعود", options: ["سعود", "فيصل", "عبد العزيز", "خالد"] },
+    { q: "من هو مؤسس الدولة السعودية الأولى؟", a: "محمد بن سعود", options: ["عبد العزيز", "محمد بن سعود", "سعود", "فيصل"] },
+    { q: "من هو مؤسس الدولة السعودية الثانية؟", a: "تركي بن عبد الله", options: ["فيصل", "تركي", "عبد الله", "سعود"] },
+    { q: "من هو مؤسس الدولة السعودية الثالثة؟", a: "عبد العزيز آل سعود", options: ["سعود", "فيصل", "عبد العزيز", "خالد"] },
+    { q: "من هو أول ملك لمصر الحديثة؟", a: "محمد علي باشا", options: ["إسماعيل", "محمد علي", "فؤاد", "فاروق"] },
+    { q: "من هو أول رئيس لمصر؟", a: "محمد نجيب", options: ["جمال عبد الناصر", "محمد نجيب", "أنور السادات", "حسني مبارك"] },
+    { q: "من هو أول رئيس للجزائر؟", a: "أحمد بن بلة", options: ["هواري بومدين", "أحمد بن بلة", "الشاذلي بن جديد", "عبد العزيز بوتفليقة"] },
+    { q: "من هو أول رئيس لتونس؟", a: "الحبيب بورقيبة", options: ["زين العابدين بن علي", "الحبيب بورقيبة", "الباجي قائد السبسي", "قيس سعيد"] },
+    { q: "من هو أول رئيس لليبيا؟", a: "إدريس السنوسي", options: ["معمر القذافي", "إدريس السنوسي", "عبد السلام جلود", "محمد المقريف"] },
+    { q: "من هو أول رئيس للمغرب؟", a: "محمد الخامس", options: ["الحسن الثاني", "محمد الخامس", "محمد السادس", "عبد الكريم الخطابي"] }
+],
+                technology: [
+    { q: "ما هو نظام التشغيل من جوجل؟", a: "أندرويد", options: ["كروم", "أندرويد", "فيوشا", "دنجل"] },
+    { q: "ما هو نظام التشغيل من آبل؟", a: "iOS", options: ["macOS", "iOS", "iPadOS", "watchOS"] },
+    { q: "ما هو معالج Intel الأحدث؟", a: "Core i9", options: ["Core i5", "Core i7", "Core i9", "Pentium"] },
+    { q: "ما هو معالج AMD الأحدث؟", a: "Ryzen 9", options: ["Ryzen 5", "Ryzen 7", "Ryzen 9", "Threadripper"] },
+    { q: "ما هي أفضل بطاقة رسوميات من NVIDIA؟", a: "RTX 4090", options: ["RTX 3080", "RTX 3090", "RTX 4090", "RTX 4080"] },
+    { q: "ما هي أفضل بطاقة رسوميات من AMD؟", a: "RX 7900 XTX", options: ["RX 6800 XT", "RX 6900 XT", "RX 7900 XTX", "RX 7800 XT"] },
+    { q: "ما هي أسرع ذاكرة RAM؟", a: "DDR5", options: ["DDR3", "DDR4", "DDR5", "GDDR6"] },
+    { q: "ما هو أسرع SSD؟", a: "NVMe", options: ["SATA", "NVMe", "M.2", "PCIe"] },
+    { q: "ما هي أفضل شاشة في العالم؟", a: "OLED", options: ["LCD", "LED", "OLED", "QLED"] },
+    { q: "ما هي أفضل كاميرا في العالم؟", a: "Sony A1", options: ["Canon R5", "Nikon Z9", "Sony A1", "Fujifilm X-T4"] },
+    { q: "ما هي أفضل سماعة في العالم؟", a: "Sony WH-1000XM5", options: ["Bose QC45", "Sony XM5", "Apple AirPods Max", "Sennheiser Momentum 4"] },
+    { q: "ما هو أفضل هاتف في العالم؟", a: "iPhone 15 Pro Max", options: ["Samsung S24 Ultra", "iPhone 15 Pro Max", "Google Pixel 8 Pro", "OnePlus 12"] },
+    { q: "ما هي أفضل ساعة ذكية؟", a: "Apple Watch Ultra 2", options: ["Samsung Watch 6", "Apple Watch Ultra 2", "Garmin Fenix 7", "Amazfit"] },
+    { q: "ما هو أفضل جهاز لوحي؟", a: "iPad Pro M4", options: ["Samsung Tab S9", "iPad Pro M4", "Microsoft Surface Pro", "Lenovo Tab"] },
+    { q: "ما هو أفضل حاسوب محمول؟", a: "MacBook Pro M3 Max", options: ["Dell XPS", "MacBook Pro", "Lenovo ThinkPad", "HP Spectre"] },
+    { q: "ما هو أفضل حاسوب مكتبي؟", a: "Alienware Aurora", options: ["HP OMEN", "Alienware Aurora", "Lenovo Legion", "MSI Trident"] },
+    { q: "ما هي أفضل طابعة ثلاثية الأبعاد؟", a: "Prusa MK4", options: ["Creality Ender", "Prusa MK4", "Bambu Lab X1", "Anycubic"] },
+    { q: "ما هي أفضل طائرة درون؟", a: "DJI Mavic 3 Pro", options: ["DJI Mini 4", "DJI Mavic 3 Pro", "Autel Evo", "Skydio 2"] },
+    { q: "ما هو أفضل روبوت؟", a: "Boston Dynamics Atlas", options: ["Tesla Optimus", "Boston Dynamics Atlas", "Sony Aibo", "SoftBank Pepper"] },
+    { q: "ما هي أفضل سيارة كهربائية؟", a: "Tesla Model S Plaid", options: ["Lucid Air", "Tesla Model S Plaid", "Rivian R1T", "Porsche Taycan"] },
+    { q: "ما هو أفضل تطبيق تراسل؟", a: "WhatsApp", options: ["Telegram", "Signal", "WhatsApp", "WeChat"] },
+    { q: "ما هو أفضل تطبيق تواصل اجتماعي؟", a: "TikTok", options: ["Instagram", "TikTok", "Facebook", "Twitter"] },
+    { q: "ما هو أفضل تطبيق فيديو؟", a: "YouTube", options: ["Netflix", "YouTube", "TikTok", "Vimeo"] },
+    { q: "ما هو أفضل تطبيق موسيقى؟", a: "Spotify", options: ["Apple Music", "Spotify", "Amazon Music", "YouTube Music"] },
+    { q: "ما هو أفضل تطبيق خرائط؟", a: "Google Maps", options: ["Apple Maps", "Google Maps", "Waze", "Here WeGo"] },
+    { q: "ما هو أفضل متصفح؟", a: "Google Chrome", options: ["Safari", "Chrome", "Firefox", "Edge"] },
+    { q: "ما هو أفضل محرك بحث؟", a: "Google", options: ["Bing", "Google", "DuckDuckGo", "Yahoo"] },
+    { q: "ما هي أفضل خدمة بريد إلكتروني؟", a: "Gmail", options: ["Outlook", "Gmail", "Yahoo Mail", "ProtonMail"] },
+    { q: "ما هي أفضل خدمة تخزين سحابي؟", a: "Google Drive", options: ["iCloud", "OneDrive", "Google Drive", "Dropbox"] },
+    { q: "ما هي أفضل خدمة VPN؟", a: "NordVPN", options: ["ExpressVPN", "NordVPN", "Surfshark", "CyberGhost"] }
+],
+                entertainment: [
+    { q: "من هو مخرج فيلم 'Inception'؟", a: "كريستوفر نولان", options: ["سبيلبرغ", "نولان", "كاميرون", "سكورسيزي"] },
+    { q: "من هو مخرج فيلم 'Interstellar'؟", a: "كريستوفر نولان", options: ["سبيلبرغ", "نولان", "كاميرون", "سكورسيزي"] },
+    { q: "من هو مخرج فيلم 'The Dark Knight'؟", a: "كريستوفر نولان", options: ["سبيلبرغ", "نولان", "كاميرون", "سكورسيزي"] },
+    { q: "من هو مخرج فيلم 'Fight Club'؟", a: "ديفيد فينشر", options: ["فينشر", "نولان", "سبيلبرغ", "سكورسيزي"] },
+    { q: "من هو مخرج فيلم 'Se7en'؟", a: "ديفيد فينشر", options: ["فينشر", "نولان", "سبيلبرغ", "سكورسيزي"] },
+    { q: "من هو مخرج فيلم 'Gone Girl'؟", a: "ديفيد فينشر", options: ["فينشر", "نولان", "سبيلبرغ", "سكورسيزي"] },
+    { q: "من هو مخرج فيلم 'The Godfather'؟", a: "فرانسيس فورد كوبولا", options: ["كوبولا", "سكورسيزي", "سبيلبرغ", "نولان"] },
+    { q: "من هو مخرج فيلم 'Apocalypse Now'؟", a: "فرانسيس فورد كوبولا", options: ["كوبولا", "سكورسيزي", "سبيلبرغ", "نولان"] },
+    { q: "من هو مخرج فيلم 'Goodfellas'؟", a: "مارتن سكورسيزي", options: ["كوبولا", "سكورسيزي", "سبيلبرغ", "نولان"] },
+    { q: "من هو مخرج فيلم 'The Departed'؟", a: "مارتن سكورسيزي", options: ["كوبولا", "سكورسيزي", "سبيلبرغ", "نولان"] },
+    { q: "من هو مخرج فيلم 'Schindler's List'؟", a: "ستيفن سبيلبرغ", options: ["كوبولا", "سكورسيزي", "سبيلبرغ", "نولان"] },
+    { q: "من هو مخرج فيلم 'Saving Private Ryan'؟", a: "ستيفن سبيلبرغ", options: ["كوبولا", "سكورسيزي", "سبيلبرغ", "نولان"] },
+    { q: "من هو مخرج فيلم 'Jurassic Park'؟", a: "ستيفن سبيلبرغ", options: ["كوبولا", "سكورسيزي", "سبيلبرغ", "نولان"] },
+    { q: "من هو مخرج فيلم 'Avatar'؟", a: "جيمس كاميرون", options: ["كاميرون", "نولان", "سبيلبرغ", "سكورسيزي"] },
+    { q: "من هو مخرج فيلم 'Titanic'؟", a: "جيمس كاميرون", options: ["كاميرون", "نولان", "سبيلبرغ", "سكورسيزي"] },
+    { q: "من هو مخرج فيلم 'Terminator 2'؟", a: "جيمس كاميرون", options: ["كاميرون", "نولان", "سبيلبرغ", "سكورسيزي"] },
+    { q: "من هو مخرج فيلم 'Pulp Fiction'؟", a: "كوينتن تارانتينو", options: ["تارانتينو", "نولان", "سبيلبرغ", "سكورسيزي"] },
+    { q: "من هو مخرج فيلم 'Kill Bill'؟", a: "كوينتن تارانتينو", options: ["تارانتينو", "نولان", "سبيلبرغ", "سكورسيزي"] },
+    { q: "من هو مخرج فيلم 'Django Unchained'؟", a: "كوينتن تارانتينو", options: ["تارانتينو", "نولان", "سبيلبرغ", "سكورسيزي"] },
+    { q: "من هو مخرج فيلم 'The Matrix'؟", a: "الأخوان واتشوسكي", options: ["واتشوسكي", "نولان", "سبيلبرغ", "كاميرون"] },
+    { q: "من هو مخرج فيلم 'The Lord of the Rings'؟", a: "بيتر جاكسون", options: ["جاكسون", "نولان", "سبيلبرغ", "كاميرون"] },
+    { q: "من هو مخرج فيلم 'The Hobbit'؟", a: "بيتر جاكسون", options: ["جاكسون", "نولان", "سبيلبرغ", "كاميرون"] },
+    { q: "من هو مخرج فيلم 'Gladiator'؟", a: "ريدلي سكوت", options: ["سكوت", "نولان", "سبيلبرغ", "كاميرون"] },
+    { q: "من هو مخرج فيلم 'Alien'؟", a: "ريدلي سكوت", options: ["سكوت", "نولان", "سبيلبرغ", "كاميرون"] },
+    { q: "من هو مخرج فيلم 'Blade Runner'؟", a: "ريدلي سكوت", options: ["سكوت", "نولان", "سبيلبرغ", "كاميرون"] },
+    { q: "من هو مخرج فيلم 'The Silence of the Lambs'؟", a: "جوناثان ديم", options: ["ديم", "نولان", "سبيلبرغ", "فينشر"] },
+    { q: "من هو مخرج فيلم 'Forrest Gump'؟", a: "روبرت زيميكس", options: ["زيميكس", "نولان", "سبيلبرغ", "فينشر"] },
+    { q: "من هو مخرج فيلم 'Back to the Future'؟", a: "روبرت زيميكس", options: ["زيميكس", "نولان", "سبيلبرغ", "فينشر"] },
+    { q: "من هو مخرج فيلم 'The Shawshank Redemption'؟", a: "فرانك دارابونت", options: ["دارابونت", "نولان", "سبيلبرغ", "فينشر"] },
+    { q: "من هو مخرج فيلم 'The Green Mile'؟", a: "فرانك دارابونت", options: ["دارابونت", "نولان", "سبيلبرغ", "فينشر"] }
+],
+                medicine: [
+    { q: "ما هو عدد عظام الجمجمة؟", a: "22", options: ["20", "22", "24", "26"] },
+    { q: "ما هو عدد عظام الوجه؟", a: "14", options: ["12", "14", "16", "18"] },
+    { q: "ما هو عدد عظام الجذع؟", a: "51", options: ["49", "51", "53", "55"] },
+    { q: "ما هو عدد عظام الطرف العلوي؟", a: "64", options: ["60", "64", "68", "72"] },
+    { q: "ما هو عدد عظام الطرف السفلي؟", a: "62", options: ["58", "62", "66", "70"] },
+    { q: "ما هو عدد فقرات العمود الفقري؟", a: "33", options: ["31", "33", "35", "37"] },
+    { q: "ما هو عدد فقرات الرقبة؟", a: "7", options: ["5", "7", "9", "11"] },
+    { q: "ما هو عدد فقرات الصدر؟", a: "12", options: ["10", "12", "14", "16"] },
+    { q: "ما هو عدد فقرات القطنية؟", a: "5", options: ["3", "5", "7", "9"] },
+    { q: "ما هو عدد أزواج الأعصاب القحفية؟", a: "12", options: ["10", "12", "14", "16"] },
+    { q: "ما هو عدد أزواج الأعصاب الشوكية؟", a: "31", options: ["29", "31", "33", "35"] },
+    { q: "ما هو حجم الدم في جسم الإنسان؟", a: "5 لترات", options: ["4 لترات", "5 لترات", "6 لترات", "7 لترات"] },
+    { q: "ما هو عدد خلايا الدم الحمراء؟", a: "25 تريليون", options: ["20 تريليون", "25 تريليون", "30 تريليون", "35 تريليون"] },
+    { q: "ما هو عدد خلايا الدم البيضاء؟", a: "70 مليار", options: ["50 مليار", "60 مليار", "70 مليار", "80 مليار"] },
+    { q: "ما هو عدد الصفائح الدموية؟", a: "1.5 تريليون", options: ["1 تريليون", "1.5 تريليون", "2 تريليون", "2.5 تريليون"] },
+    { q: "ما هو عدد نبضات القلب في اليوم؟", a: "100,000", options: ["80,000", "100,000", "120,000", "140,000"] },
+    { q: "ما هو عدد نبضات القلب في السنة؟", a: "35 مليون", options: ["30 مليون", "35 مليون", "40 مليون", "45 مليون"] },
+    { q: "ما هو عدد مرات التنفس في اليوم؟", a: "20,000", options: ["15,000", "20,000", "25,000", "30,000"] },
+    { q: "ما هو عدد مرات البلع في اليوم؟", a: "600", options: ["400", "600", "800", "1000"] },
+    { q: "ما هو عدد مرات الرمش في اليوم؟", a: "15,000", options: ["10,000", "15,000", "20,000", "25,000"] },
+    { q: "ما هو عدد مرات التبول في اليوم؟", a: "8", options: ["6", "8", "10", "12"] },
+    { q: "ما هو عدد ساعات النوم الطبيعي؟", a: "8", options: ["6", "8", "10", "12"] },
+    { q: "ما هو فيروس الإيبولا؟", a: "فيروس قاتل", options: ["فيروس معوي", "فيروس قاتل", "فيروس تنفسي", "فيروس جلدي"] },
+    { q: "ما هو فيروس زيكا؟", a: "فيروس ينقله البعوض", options: ["فيروس معوي", "فيروس ينقله البعوض", "فيروس تنفسي", "فيروس جلدي"] },
+    { q: "ما هو فيروس ماربورغ؟", a: "فيروس نادر", options: ["فيروس معوي", "فيروس نادر", "فيروس تنفسي", "فيروس جلدي"] },
+    { q: "ما هو فيروس لاسا؟", a: "فيروس من غرب أفريقيا", options: ["فيروس معوي", "فيروس من غرب أفريقيا", "فيروس تنفسي", "فيروس جلدي"] },
+    { q: "ما هو فيروس هانتا؟", a: "فيروس من الفئران", options: ["فيروس معوي", "فيروس من الفئران", "فيروس تنفسي", "فيروس جلدي"] },
+    { q: "ما هو فيروس نيباه؟", a: "فيروس من الخفافيش", options: ["فيروس معوي", "فيروس من الخفافيش", "فيروس تنفسي", "فيروس جلدي"] },
+    { q: "ما هو فيروس هيندرا؟", a: "فيروس من الخيول", options: ["فيروس معوي", "فيروس من الخيول", "فيروس تنفسي", "فيروس جلدي"] },
+    { q: "ما هو فيروس كريمين كونغو؟", a: "فيروس من القراد", options: ["فيروس معوي", "فيروس من القراد", "فيروس تنفسي", "فيروس جلدي"] }
+],
+                economy: [
+    { q: "ما هو البنك المركزي المصري؟", a: "البنك المركزي المصري", options: ["البنك الأهلي", "البنك المركزي المصري", "بنك مصر", "البنك العربي"] },
+    { q: "ما هو البنك المركزي السعودي؟", a: "البنك المركزي السعودي", options: ["الراجحي", "البنك المركزي السعودي", "الأهلي", "الرياض"] },
+    { q: "ما هو البنك المركزي الإماراتي؟", a: "مصرف الإمارات المركزي", options: ["بنك دبي", "مصرف الإمارات المركزي", "بنك أبوظبي", "بنك الإمارات"] },
+    { q: "ما هو البنك المركزي الكويتي؟", a: "بنك الكويت المركزي", options: ["الوطني", "بنك الكويت المركزي", "الخليج", "برقان"] },
+    { q: "ما هو البنك المركزي القطري؟", a: "مصرف قطر المركزي", options: ["قطر الوطني", "مصرف قطر المركزي", "الدوحة", "الريان"] },
+    { q: "ما هو البنك المركزي البحريني؟", a: "مصرف البحرين المركزي", options: ["الأهلي", "مصرف البحرين المركزي", "الخليج", "الإسلامي"] },
+    { q: "ما هو البنك المركزي العماني؟", a: "البنك المركزي العماني", options: ["مسقط", "البنك المركزي العماني", "العربي", "النهضة"] },
+    { q: "ما هو البنك المركزي اليمني؟", a: "البنك المركزي اليمني", options: ["الأهلي", "البنك المركزي اليمني", "اليمني", "الخليج"] },
+    { q: "ما هو البنك المركزي الأردني؟", a: "البنك المركزي الأردني", options: ["الأردني", "البنك المركزي الأردني", "العربي", "الإسلامي"] },
+    { q: "ما هو البنك المركزي اللبناني؟", a: "مصرف لبنان", options: ["الأهلي", "مصرف لبنان", "العربي", "الإسلامي"] },
+    { q: "ما هو البنك المركزي السوري؟", a: "مصرف سورية المركزي", options: ["الأهلي", "مصرف سورية المركزي", "العربي", "الإسلامي"] },
+    { q: "ما هو البنك المركزي العراقي؟", a: "البنك المركزي العراقي", options: ["الرافدين", "البنك المركزي العراقي", "الرشيد", "العربي"] },
+    { q: "ما هو البنك المركزي الإيراني؟", a: "البنك المركزي الإيراني", options: ["ملي", "البنك المركزي الإيراني", "صادرات", "توسعة"] },
+    { q: "ما هو البنك المركزي التركي؟", a: "البنك المركزي التركي", options: ["زيراعات", "البنك المركزي التركي", "إش بنك", "غارانتي"] },
+    { q: "ما هو البنك المركزي الأوروبي؟", a: "ECB", options: ["IMF", "ECB", "WB", "WTO"] },
+    { q: "ما هو البنك المركزي الأمريكي؟", a: "Fed", options: ["IMF", "Fed", "WB", "WTO"] },
+    { q: "ما هو البنك المركزي البريطاني؟", a: "Bank of England", options: ["BoE", "Fed", "ECB", "BoJ"] },
+    { q: "ما هو البنك المركزي الياباني؟", a: "Bank of Japan", options: ["BoE", "Fed", "ECB", "BoJ"] },
+    { q: "ما هو البنك المركزي الصيني؟", a: "PBOC", options: ["BoE", "Fed", "ECB", "PBOC"] },
+    { q: "ما هو البنك المركزي الروسي؟", a: "CBR", options: ["BoE", "Fed", "ECB", "CBR"] },
+    { q: "ما هو البنك المركزي الهندي؟", a: "RBI", options: ["BoE", "Fed", "ECB", "RBI"] },
+    { q: "ما هو البنك المركزي البرازيلي؟", a: "BCB", options: ["BoE", "Fed", "ECB", "BCB"] },
+    { q: "ما هو البنك المركزي الكندي؟", a: "BoC", options: ["BoE", "Fed", "ECB", "BoC"] },
+    { q: "ما هو البنك المركزي الأسترالي؟", a: "RBA", options: ["BoE", "Fed", "ECB", "RBA"] },
+    { q: "ما هو صندوق النقد الدولي؟", a: "IMF", options: ["IMF", "WB", "WTO", "UN"] },
+    { q: "ما هو البنك الدولي؟", a: "World Bank", options: ["IMF", "World Bank", "WTO", "UN"] },
+    { q: "ما هي منظمة التجارة العالمية؟", a: "WTO", options: ["IMF", "WB", "WTO", "UN"] },
+    { q: "ما هي مجموعة العشرين؟", a: "G20", options: ["G7", "G20", "G77", "G8"] },
+    { q: "ما هي مجموعة السبع؟", a: "G7", options: ["G7", "G20", "G77", "G8"] },
+    { q: "ما هي الأوبك؟", a: "OPEC", options: ["OPEC", "OECD", "WHO", "UNESCO"] }
+]
+            },
+            hard: {
+                general: [
+    { q: "كم تبلغ سرعة الضوء في الفراغ بوحدة كم/ث؟", a: "299,792", options: ["280,000", "299,792", "300,000", "310,000"] },
+    { q: "ما هو الرقم السري لجهاز فوياجر الذهبي؟", a: "120", options: ["90", "120", "150", "180"] },
+    { q: "كم عدد الأوتار في آلة العود العربية؟", a: "5 أوتار مزدوجة", options: ["4 أوتار", "5 أوتار مزدوجة", "6 أوتار", "7 أوتار"] },
+    { q: "ما هي أعلى شهادة في مجال الفيزياء النظرية؟", a: "دكتوراه في فيزياء الكم", options: ["ماجستير", "دكتوراه", "بروفيسور", "زميل ماكس بلانك"] },
+    { q: "من هو أول من اكتشف أن الذرة تتكون من نواة وإلكترونات؟", a: "إرنست رذرفورد", options: ["نيلز بور", "إرنست رذرفورد", "جيمس تشادويك", "جون دالتون"] },
+    { q: "ما هي السرعة المدارية للأرض حول الشمس؟", a: "29.8 كم/ث", options: ["25 كم/ث", "29.8 كم/ث", "35 كم/ث", "40 كم/ث"] },
+    { q: "كم تبلغ درجة حرارة لب الأرض؟", a: "5,200°C", options: ["4,000°C", "5,200°C", "6,000°C", "7,000°C"] },
+    { q: "ما هو سمك قشرة الأرض المحيطية؟", a: "5-10 كم", options: ["2-5 كم", "5-10 كم", "10-20 كم", "20-30 كم"] },
+    { q: "كم عدد الأقمار الطبيعية لكوكب زحل؟", a: "82 قمراً", options: ["62", "72", "82", "92"] },
+    { q: "ما هو أبرد مكان في الكون المعروف؟", a: "سديم بوميرانج", options: ["بلوتو", "سديم بوميرانج", "القمر", "المريخ"] },
+    { q: "كم تبلغ درجة حرارة سديم بوميرانج؟", a: "-272°C", options: ["-250°C", "-260°C", "-272°C", "-280°C"] },
+    { q: "ما هي أسرع جسيم أولي معروف؟", a: "التاكيون", options: ["النيوترينو", "الفوتون", "التاكيون", "الجرافيتون"] },
+    { q: "من هو مؤسس علم التحكم الآلي؟", a: "نوربرت وينر", options: ["آلان تورينج", "نوربرت وينر", "كلود شانون", "جون فون نيومان"] },
+    { q: "ما هي لغة البرمجة الأولى في التاريخ؟", a: "فورتران", options: ["كوبول", "فورتران", "لسب", "ألغول"] },
+    { q: "من هو مخترع نظام العد الثنائي؟", a: "غوتفريد لايبنتز", options: ["بليز باسكال", "غوتفريد لايبنتز", "توماس هوبز", "رينيه ديكارت"] },
+    { q: "ما هو الكويكب الذي يُعتقد أنه تسبب في انقراض الديناصورات؟", a: "شيككسولوب", options: ["أبوفيس", "شيككسولوب", "بينو", "إيروس"] },
+    { q: "كم تبلغ قطر الكويكب شيككسولوب؟", a: "10-15 كم", options: ["5-10 كم", "10-15 كم", "15-20 كم", "20-25 كم"] },
+    { q: "في أي عام سقط الكويكب شيككسولوب على الأرض؟", a: "66 مليون سنة", options: ["55 مليون", "60 مليون", "65 مليون", "66 مليون"] },
+    { q: "ما هو أقدم حفرة صدمية على الأرض؟", a: "حفرة فرادفورت", options: ["حفرة تشيكسولوب", "حفرة فرادفورت", "حفرة بارينجر", "حفرة مانيكوانغان"] },
+    { q: "كم عمر حفرة فرادفورت؟", a: "2.023 مليار سنة", options: ["1.5 مليار", "2.023 مليار", "2.5 مليار", "3 مليار"] },
+    { q: "ما هي أعمق حفرة من صنع الإنسان؟", a: "حفرة كولا العميقة", options: ["منجم مبونينغ", "حفرة كولا", "منجم توتونا", "بئر برنت"] },
+    { q: "كم عمق حفرة كولا العميقة؟", a: "12,262 متراً", options: ["10,000 م", "11,000 م", "12,262 م", "13,000 م"] },
+    { q: "ما هو أطول كهف في العالم؟", a: "كهف ماموث", options: ["كهف ماموث", "كهف العليا", "كهف ساك أكتون", "كهف جومانتونغ"] },
+    { q: "كم طول كهف ماموث؟", a: "675.9 كم", options: ["500 كم", "600 كم", "675.9 كم", "750 كم"] },
+    { q: "ما هو أعمق كهف في العالم؟", a: "كهف كروبيرا", options: ["كهف ماموث", "كهف كروبيرا", "كهف سارما", "كهف فريزا"] },
+    { q: "كم عمق كهف كروبيرا؟", a: "2,197 متراً", options: ["1,500 م", "2,197 م", "2,500 م", "3,000 م"] },
+    { q: "ما هي أعلى شلال في العالم؟", a: "شلال آنجل", options: ["شلال آنجل", "شلال توغيلا", "شلال تروميلباخ", "شلال يوسمايت"] },
+    { q: "كم ارتفاع شلال آنجل؟", a: "979 متراً", options: ["800 م", "979 م", "1,000 م", "1,100 م"] },
+    { q: "ما هي أعمق نقطة في المحيطات؟", a: "خندق ماريانا", options: ["خندق تونغا", "خندق ماريانا", "خندق الفلبين", "خندق كوريل"] },
+    { q: "كم عمق خندق ماريانا؟", a: "11,034 متراً", options: ["10,000 م", "11,034 م", "12,000 م", "13,000 م"] }
+],
+                islam: [
+    { q: "من هو الصحابي الذي كان يسمى 'أمين الأمة'؟", a: "أبو عبيدة بن الجراح", options: ["أبو بكر", "عمر", "أبو عبيدة", "سعد"] },
+    { q: "من هو الصحابي الذي قال عنه النبي 'نعم أهل البيت عبد الله بن رواحة'؟", a: "عبد الله بن رواحة", options: ["عبد الله بن مسعود", "عبد الله بن رواحة", "عبد الله بن عباس", "عبد الله بن عمر"] },
+    { q: "كم عدد السور التي سجد فيها النبي؟", a: "15 سجدة", options: ["11", "13", "15", "17"] },
+    { q: "من هو آخر من مات من العشرة المبشرين بالجنة؟", a: "سعد بن أبي وقاص", options: ["عثمان", "علي", "سعد", "الزبير"] },
+    { q: "من هو أول من جمع القرآن في مصحف واحد؟", a: "أبو بكر الصديق", options: ["عمر", "عثمان", "أبو بكر", "علي"] },
+    { q: "من هو أول من نقط المصحف؟", a: "أبو الأسود الدؤلي", options: ["الخليل بن أحمد", "أبو الأسود الدؤلي", "نصر بن عاصم", "يحيى بن يعمر"] },
+    { q: "من هو أول من وضع علامات التشكيل في المصحف؟", a: "الخليل بن أحمد الفراهيدي", options: ["سيبويه", "الخليل", "أبو الأسود", "نصر"] },
+    { q: "من هو صاحب كتاب 'الموطأ'؟", a: "مالك بن أنس", options: ["الشافعي", "مالك", "أبو حنيفة", "أحمد"] },
+    { q: "من هو صاحب كتاب 'المسند'؟", a: "أحمد بن حنبل", options: ["البخاري", "مسلم", "أحمد", "أبو داود"] },
+    { q: "من هو أول من صنف في علوم القرآن؟", a: "علي بن أبي طالب", options: ["ابن عباس", "علي", "عمر", "أبو بكر"] },
+    { q: "من هو أول من كتب في أصول الفقه؟", a: "الإمام الشافعي", options: ["أبو حنيفة", "مالك", "الشافعي", "أحمد"] },
+    { q: "من هو أول من كتب في الجرح والتعديل؟", a: "شعبة بن الحجاج", options: ["يحيى بن سعيد", "شعبة", "ابن المبارك", "وكيع"] },
+    { q: "من هو أول من جمع الحديث النبوي؟", a: "عمر بن عبد العزيز", options: ["الزهري", "عمر بن عبد العزيز", "ابن شهاب", "مالك"] },
+    { q: "كم عدد أحاديث صحيح البخاري؟", a: "7,563", options: ["5,000", "7,000", "7,563", "8,000"] },
+    { q: "كم عدد أحاديث صحيح مسلم؟", a: "4,000", options: ["3,000", "4,000", "5,000", "6,000"] },
+    { q: "من هو أول من فسر القرآن الكريم؟", a: "عبد الله بن عباس", options: ["علي", "ابن مسعود", "ابن عباس", "أبي بن كعب"] },
+    { q: "من هو أول قارئ للقرآن في التاريخ؟", a: "جبريل عليه السلام", options: ["النبي", "جبريل", "خديجة", "ورقة"] },
+    { q: "من هو أول من قال بالقراءات السبع؟", a: "ابن مجاهد", options: ["الداناني", "ابن مجاهد", "مكي", "أبو عمرو"] },
+    { q: "من هو أشهر قارئ للقرآن في التاريخ؟", a: "عبد الباسط عبد الصمد", options: ["مصطفى إسماعيل", "عبد الباسط", "محمد صديق المنشاوي", "محمود خليل الحصري"] },
+    { q: "كم عدد أحزاب القرآن؟", a: "60 حزباً", options: ["30", "60", "90", "120"] },
+    { q: "كم عدد أرباع القرآن؟", a: "240 ربعاً", options: ["120", "180", "240", "300"] },
+    { q: "كم عدد أخماس القرآن؟", a: "150 خمساً", options: ["100", "120", "150", "180"] },
+    { q: "ما هي السورة التي تسمى 'سورة النساء الصغرى'؟", a: "سورة الطلاق", options: ["سورة الحجرات", "سورة الطلاق", "سورة التحريم", "سورة الممتحنة"] },
+    { q: "ما هي السورة التي تسمى 'سورة القتال'؟", a: "سورة محمد", options: ["سورة الأنفال", "سورة التوبة", "سورة محمد", "سورة الفتح"] },
+    { q: "ما هي السورة التي تسمى 'سورة العروس'؟", a: "سورة الرحمن", options: ["سورة يس", "سورة الواقعة", "سورة الرحمن", "سورة الملك"] },
+    { q: "ما هي السورة التي تسمى 'قلب القرآن'؟", a: "سورة يس", options: ["سورة الإخلاص", "سورة الفاتحة", "سورة يس", "سورة الملك"] },
+    { q: "ما هي السورة التي تسمى 'فستق القرآن'؟", a: "سورة الحاقة", options: ["سورة القارعة", "سورة الحاقة", "سورة الواقعة", "سورة النبأ"] },
+    { q: "من هو أول من أذن في السماء؟", a: "جبريل عليه السلام", options: ["ميكائيل", "جبريل", "إسرافيل", "عزرائيل"] },
+    { q: "من هو أول من أذن على الأرض؟", a: "بلال بن رباح", options: ["عبد الله بن زيد", "بلال", "عمر", "عثمان"] },
+    { q: "من هو أول من خطب على المنبر؟", a: "النبي محمد", options: ["أبو بكر", "عمر", "النبي", "عثمان"] }
+],
+                science: [
+    { q: "ما هو ثابت بلانك؟", a: "6.626 × 10⁻³⁴ J·s", options: ["6.626 × 10⁻³²", "6.626 × 10⁻³³", "6.626 × 10⁻³⁴", "6.626 × 10⁻³⁵"] },
+    { q: "ما هو رقم أفوجادرو؟", a: "6.022 × 10²³", options: ["6.022 × 10²²", "6.022 × 10²³", "6.022 × 10²⁴", "6.022 × 10²⁵"] },
+    { q: "ما هو ثابت الجاذبية العام؟", a: "6.674 × 10⁻¹¹ N·m²/kg²", options: ["6.674 × 10⁻¹⁰", "6.674 × 10⁻¹¹", "6.674 × 10⁻¹²", "6.674 × 10⁻¹³"] },
+    { q: "ما هو ثابت بولتزمان؟", a: "1.380649 × 10⁻²³ J/K", options: ["1.38 × 10⁻²²", "1.38 × 10⁻²³", "1.38 × 10⁻²⁴", "1.38 × 10⁻²⁵"] },
+    { q: "ما هو ثابت ريدبرغ؟", a: "1.097 × 10⁷ m⁻¹", options: ["1.097 × 10⁶", "1.097 × 10⁷", "1.097 × 10⁸", "1.097 × 10⁹"] },
+    { q: "ما هو فيرميون؟", a: "جسيم نصف صحيح السبين", options: ["جسيم صحيح السبين", "جسيم نصف صحيح السبين", "جسيم عديم الكتلة", "جسيم مشحون"] },
+    { q: "ما هو بوزون؟", a: "جسيم صحيح السبين", options: ["جسيم صحيح السبين", "جسيم نصف صحيح السبين", "جسيم عديم الشحنة", "جسيم افتراضي"] },
+    { q: "ما هو بوزون هيغز؟", a: "جسيم مسؤول عن الكتلة", options: ["جسيم مسؤول عن الشحنة", "جسيم مسؤول عن الكتلة", "جسيم مسؤول عن الدوران", "جسيم مسؤول عن الطاقة"] },
+    { q: "كم تبلغ كتلة بوزون هيغز؟", a: "125 GeV/c²", options: ["100 GeV", "125 GeV", "150 GeV", "175 GeV"] },
+    { q: "في أي عام تم اكتشاف بوزون هيغز؟", a: "2012", options: ["2008", "2010", "2012", "2014"] },
+    { q: "ما هي نظرية الأوتار الفائقة؟", a: "نظرية فيزيائية", options: ["نظرية كونية", "نظرية فيزيائية", "نظرية رياضية", "نظرية كيميائية"] },
+    { q: "كم عدد أبعاد نظرية الأوتار الفائقة؟", a: "10 أبعاد", options: ["8", "9", "10", "11"] },
+    { q: "ما هي نظرية M؟", a: "نظرية الأوتار الفائقة", options: ["نظرية الجاذبية", "نظرية الأوتار الفائقة", "نظرية الكم", "نظرية النسبية"] },
+    { q: "كم عدد أبعاد نظرية M؟", a: "11 بعداً", options: ["9", "10", "11", "12"] },
+    { q: "ما هو مبدأ الريبة لهايزنبرغ؟", a: "Δx Δp ≥ ħ/2", options: ["E = mc²", "F = ma", "Δx Δp ≥ ħ/2", "PV = nRT"] },
+    { q: "ما هو تشابك الكم؟", a: "ارتباط جسيمين كمياً", options: ["ارتباط جسيمين كمياً", "انفصال جسيمين", "تصادم جسيمين", "تحول جسيمين"] },
+    { q: "ما هي تجربة شقي يونغ؟", a: "إثبات ازدواجية الموجة والجسيم", options: ["إثبات الجاذبية", "إثبات ازدواجية الموجة والجسيم", "إثبات النسبية", "إثبات الكهرومغناطيسية"] },
+    { q: "ما هي معادلة شرودنغر؟", a: "iħ ∂ψ/∂t = Ĥψ", options: ["E = mc²", "F = ma", "iħ ∂ψ/∂t = Ĥψ", "∇·E = ρ/ε₀"] },
+    { q: "ما هو مبدأ استبعاد باولي؟", a: "لا يمكن لإلكترونين أن يكون لهما نفس الأعداد الكمومية", options: ["لا يمكن لإلكترونين أن يكون لهما نفس الأعداد الكمومية", "كل إلكترون له مدار خاص", "الإلكترونات تتجاذب", "الإلكترونات تتنافر"] },
+    { q: "ما هو الاندماج النووي؟", a: "اتحاد نواتين ذريتين", options: ["انشطار نواة", "اتحاد نواتين", "تحلل إشعاعي", "تفاعل كيميائي"] },
+    { q: "ما هو الانشطار النووي؟", a: "انقسام نواة ثقيلة", options: ["اتحاد نواتين", "انقسام نواة", "تحلل بيتا", "تحلل ألفا"] },
+    { q: "ما هي المفاعلات النووية من الجيل الرابع؟", a: "جيل جديد من المفاعلات", options: ["جيل قديم", "جيل جديد", "جيل وسيط", "جيل تجريبي"] },
+    { q: "ما هو مفاعل MSR؟", a: "مفاعل الملح المنصهر", options: ["مفاعل الماء الخفيف", "مفاعل الماء الثقيل", "مفاعل الملح المنصهر", "مفاعل النيوترونات السريعة"] },
+    { q: "ما هو مفاعل FBR؟", a: "مفاعل النيوترونات السريعة", options: ["مفاعل الماء الخفيف", "مفاعل النيوترونات السريعة", "مفاعل الملح المنصهر", "مفاعل الغاز"] },
+    { q: "ما هي الطاقة المظلمة؟", a: "طاقة غامضة تتسبب في توسع الكون", options: ["طاقة مظلمة", "مادة مظلمة", "ثقب أسود", "نجم نيوتروني"] },
+    { q: "ما هي نسبة الطاقة المظلمة في الكون؟", a: "68%", options: ["27%", "68%", "5%", "95%"] },
+    { q: "ما هي نسبة المادة المظلمة في الكون؟", a: "27%", options: ["27%", "68%", "5%", "95%"] },
+    { q: "ما هي نسبة المادة العادية في الكون؟", a: "5%", options: ["27%", "68%", "5%", "95%"] },
+    { q: "ما هو الإنتروبيا؟", a: "مقياس الفوضى في النظام", options: ["مقياس الحرارة", "مقياس الفوضى", "مقياس الضغط", "مقياس الحجم"] },
+    { q: "ما هو القانون الثاني للديناميكا الحرارية؟", a: "الإنتروبيا تزداد دائماً", options: ["الطاقة لا تفنى", "الإنتروبيا تزداد دائماً", "الحرارة تنتقل من الساخن للبارد", "الضغط يتناسب مع الحجم"] }
+],
+                geography: [
+    { q: "ما هي عاصمة مدغشقر؟", a: "أنتاناناريفو", options: ["تواماسينا", "أنتاناناريفو", "ماهاجانجا", "أنتسيرانانا"] },
+    { q: "ما هي عاصمة سيشيل؟", a: "فيكتوريا", options: ["فيكتوريا", "بوينت لارو", "بورت غلود", "تاكاماكا"] },
+    { q: "ما هي عاصمة موريشيوس؟", a: "بورت لويس", options: ["بورت لويس", "كوريبيب", "فواكس", "بومبليموس"] },
+    { q: "ما هي عاصمة جزر القمر؟", a: "موروني", options: ["موروني", "موتسامودو", "فومبوني", "دوموني"] },
+    { q: "ما هي عاصمة سورينام؟", a: "باراماريبو", options: ["باراماريبو", "نيو نيكيري", "مونغو", "بروكوبوندو"] },
+    { q: "ما هي عاصمة غيانا؟", a: "جورج تاون", options: ["جورج تاون", "ليندين", "نيو أمستردام", "كوريفرين"] },
+    { q: "ما هي عاصمة غويانا الفرنسية؟", a: "كايين", options: ["كايين", "سان لوران", "كورو", "سيناماري"] },
+    { q: "ما هي عاصمة فيجي؟", a: "سوفا", options: ["سوفا", "نادي", "لامي", "با"] },
+    { q: "ما هي عاصمة بابوا غينيا الجديدة؟", a: "بورت مورسبي", options: ["بورت مورسبي", "لاي", "ماونت هاغن", "مادانغ"] },
+    { q: "ما هي عاصمة تيمور الشرقية؟", a: "ديلي", options: ["ديلي", "باوكاو", "لوسبالوس", "فيلاكي"] },
+    { q: "ما هي عاصمة بروناي؟", a: "بندر سري بكاوان", options: ["بندر سري بكاوان", "كوالا بيلايت", "سيريا", "توتونغ"] },
+    { q: "ما هي عاصمة ميانمار؟", a: "نايبيداو", options: ["يانغون", "ماندالاي", "نايبيداو", "باغان"] },
+    { q: "ما هي عاصمة كمبوديا؟", a: "بنوم بنه", options: ["بنوم بنه", "سييم ريب", "باتامبانغ", "سيهانوكفيل"] },
+    { q: "ما هي عاصمة لاوس؟", a: "فيينتيان", options: ["فيينتيان", "لوانغ برابانغ", "باكسي", "سافاناخيت"] },
+    { q: "ما هي عاصمة منغوليا؟", a: "أولان باتور", options: ["أولان باتور", "إردينيت", "دارخان", "تشويبالسان"] },
+    { q: "ما هي عاصمة قيرغيزستان؟", a: "بيشكك", options: ["بيشكك", "أوش", "جالال أباد", "كاراكول"] },
+    { q: "ما هي عاصمة طاجيكستان؟", a: "دوشانبي", options: ["دوشانبي", "خجند", "بنجكنت", "كولاب"] },
+    { q: "ما هي عاصمة تركمانستان؟", a: "عشق آباد", options: ["عشق آباد", "تركمن آباد", "داشوغوز", "ماري"] },
+    { q: "ما هي عاصمة أذربيجان؟", a: "باكو", options: ["باكو", "جانجا", "سومقاييت", "مينجا تشيفير"] },
+    { q: "ما هي عاصمة أرمينيا؟", a: "يريفان", options: ["يريفان", "غيومري", "فانادزور", "فاغارشابات"] },
+    { q: "ما هي عاصمة جورجيا؟", a: "تبليسي", options: ["تبليسي", "كوتايسي", "باتومي", "روستافي"] },
+    { q: "ما هي عاصمة مولدوفا؟", a: "كيشيناو", options: ["كيشيناو", "تياسبول", "بيلتسي", "بينديري"] },
+    { q: "ما هي عاصمة بيلاروسيا؟", a: "مينسك", options: ["مينسك", "غوميل", "موغيليف", "فيتيبسك"] },
+    { q: "ما هي عاصمة إستونيا؟", a: "تالين", options: ["تالين", "تارتو", "نارفا", "بارنو"] },
+    { q: "ما هي أكبر بحيرة في أوروبا؟", a: "بحيرة لادوغا", options: ["بحيرة أونيغا", "بحيرة لادوغا", "بحيرة فينرن", "بحيرة بالاتون"] },
+    { q: "كم مساحة بحيرة لادوغا؟", a: "17,700 كم²", options: ["15,000", "17,700", "20,000", "22,500"] },
+    { q: "ما هي أطول بحيرة في العالم؟", a: "بحيرة تنجانيقا", options: ["بحيرة تنجانيقا", "بحيرة ميشيغان", "بحيرة بايكال", "بحيرة فيكتوريا"] },
+    { q: "كم طول بحيرة تنجانيقا؟", a: "673 كم", options: ["500 كم", "600 كم", "673 كم", "750 كم"] },
+    { q: "ما هي أعمق بحيرة في العالم؟", a: "بحيرة بايكال", options: ["بحيرة تنجانيقا", "بحيرة بايكال", "بحيرة كريتر", "بحيرة سوبيريور"] },
+    { q: "كم عمق بحيرة بايكال؟", a: "1,642 متراً", options: ["1,200 م", "1,400 م", "1,642 م", "1,800 م"] }
+],
+               sports: [
+    { q: "من هو اللاعب الوحيد الذي فاز بكأس العالم كلاعب ومدرب؟", a: "ماريو زاغالو", options: ["فرانتس بكنباور", "ديدييه ديشان", "ماريو زاغالو", "ألبرتو سوبيتشي"] },
+    { q: "من هو أول لاعب سجل في 3 نهائيات كأس عالم مختلفة؟", a: "بيليه", options: ["زين الدين زيدان", "بيليه", "ميروسلاف كلوزه", "كريستيانو رونالدو"] },
+    { q: "من هو اللاعب الأكثر مشاركة في نهائيات كأس العالم؟", a: "ليونيل ميسي", options: ["لوتار ماتيوس", "ليونيل ميسي", "جيانلويجي بوفون", "رافاييل ماركيز"] },
+    { q: "كم عدد المباريات التي لعبها ليونيل ميسي في كأس العالم؟", a: "26 مباراة", options: ["22", "24", "26", "28"] },
+    { q: "من هو اللاعب الأكثر تسجيلاً في تاريخ كأس العالم؟", a: "ميروسلاف كلوزه", options: ["رونالدو نازاريو", "ليونيل ميسي", "ميروسلاف كلوزه", "بيليه"] },
+    { q: "كم هدفاً سجل ميروسلاف كلوزه في كأس العالم؟", a: "16 هدفاً", options: ["14", "15", "16", "17"] },
+    { q: "من هو الحارس الأكثر حفاظاً على نظافة شباكه في كأس العالم؟", a: "فابيان بارتيز", options: ["بيتر شيلتون", "فابيان بارتيز", "إدوين فان در سار", "إيمانويل لويس"] },
+    { q: "كم عدد مرات الحفاظ على نظافة الشباك لبارتيز؟", a: "10 مرات", options: ["8", "9", "10", "11"] },
+    { q: "من هو أصغر لاعب يلعب في كأس العالم؟", a: "نورمان وايتسايد", options: ["بيليه", "نورمان وايتسايد", "ليونيل ميسي", "كوبي ماينو"] },
+    { q: "كم كان عمر نورمان وايتسايد في كأس العالم 1982؟", a: "17 سنة و41 يوماً", options: ["16 سنة", "17 سنة", "17 سنة و41 يوماً", "18 سنة"] },
+    { q: "من هو أكبر لاعب يلعب في كأس العالم؟", a: "فريدي بوب", options: ["بيتر شيلتون", "فريدي بوب", "إيساك كيني", "روجيريو سيني"] },
+    { q: "كم كان عمر فريدي بوب في كأس العالم 2006؟", a: "40 سنة", options: ["38", "39", "40", "41"] },
+    { q: "من هو أول فريق يفوز بكأس العالم مرتين متتاليتين؟", a: "إيطاليا", options: ["البرازيل", "إيطاليا", "الأرجنتين", "ألمانيا"] },
+    { q: "من هو أول فريق يفوز بكأس العالم 3 مرات؟", a: "البرازيل", options: ["البرازيل", "إيطاليا", "ألمانيا", "الأرجنتين"] },
+    { q: "من هو أول فريق يفوز بكأس العالم 4 مرات؟", a: "البرازيل", options: ["البرازيل", "إيطاليا", "ألمانيا", "الأرجنتين"] },
+    { q: "من هو أول فريق يفوز بكأس العالم 5 مرات؟", a: "البرازيل", options: ["البرازيل", "إيطاليا", "ألمانيا", "الأرجنتين"] },
+    { q: "من هو أكثر فريق مشاركة في نهائيات كأس العالم؟", a: "البرازيل", options: ["البرازيل", "ألمانيا", "إيطاليا", "الأرجنتين"] },
+    { q: "كم مرة شاركت البرازيل في كأس العالم؟", a: "22 مرة", options: ["20", "21", "22", "23"] },
+    { q: "من هو أكثر فريق فوزاً بالمباريات في كأس العالم؟", a: "البرازيل", options: ["البرازيل", "ألمانيا", "إيطاليا", "الأرجنتين"] },
+    { q: "كم عدد انتصارات البرازيل في كأس العالم؟", a: "76 مباراة", options: ["70", "73", "76", "80"] },
+    { q: "من هو أكثر فريق تسجيلاً للأهداف في كأس العالم؟", a: "البرازيل", options: ["البرازيل", "ألمانيا", "إيطاليا", "الأرجنتين"] },
+    { q: "كم هدفاً سجلت البرازيل في كأس العالم؟", a: "237 هدفاً", options: ["220", "229", "237", "245"] },
+    { q: "من هو أكثر فريق استقبالاً للأهداف في كأس العالم؟", a: "ألمانيا", options: ["البرازيل", "الأرجنتين", "ألمانيا", "إنجلترا"] },
+    { q: "كم هدفاً استقبلت ألمانيا في كأس العالم؟", a: "130 هدفاً", options: ["120", "125", "130", "135"] },
+    { q: "من هو اللاعب الوحيد الذي سجل هاتريك في نهائي كأس العالم؟", a: "جيوف هورست", options: ["بيليه", "زيدان", "جيوف هورست", "مبابي"] },
+    { q: "في أي عام سجل جيوف هورست الهاتريك في النهائي؟", a: "1966", options: ["1958", "1962", "1966", "1970"] },
+    { q: "من هو اللاعب الوحيد الذي سجل هدفاً في 4 كؤوس عالم مختلفة؟", a: "ميروسلاف كلوزه", options: ["بيليه", "ليونيل ميسي", "ميروسلاف كلوزه", "كريستيانو رونالدو"] },
+    { q: "من هو اللاعب الوحيد الذي سجل في 3 نهائيات كأس عالم مختلفة؟", a: "بيليه", options: ["زين الدين زيدان", "بيليه", "مبابي", "فافا"] },
+    { q: "من هو اللاعب الوحيد الذي فاز بجائزة أفضل لاعب في كأس العالم مرتين؟", a: "ليونيل ميسي", options: ["رونالدو نازاريو", "زيدان", "ليونيل ميسي", "مبابي"] },
+    { q: "في أي عام فاز ميسي بجائزة أفضل لاعب في كأس العالم؟", a: "2014 و2022", options: ["2010 و2014", "2014 و2018", "2014 و2022", "2018 و2022"] }
+],
+                arts: [
+    { q: "من هو النحات الذي صنع تمثال 'الموتى' الشهير؟", a: "أغوست رودان", options: ["مايكل أنجلو", "رودان", "برنيني", "دوناتيلو"] },
+    { q: "كم استغرق رودان في صنع تمثال 'المفكر'؟", a: "28 سنة", options: ["20 سنة", "25 سنة", "28 سنة", "30 سنة"] },
+    { q: "من هو الرسام الذي رسم لوحة 'الليل المرصع بالنجوم'؟", a: "فان غوخ", options: ["فان غوخ", "غوغان", "سيزان", "مونيه"] },
+    { q: "أين توجد لوحة 'الليل المرصع بالنجوم' حالياً؟", a: "متحف الفن الحديث بنيويورك", options: ["اللوفر", "متحف أورسيه", "متحف الفن الحديث", "متحف فان غوخ"] },
+    { q: "من هو الرسام الذي رسم لوحة 'ولادة فينوس'؟", a: "ساندرو بوتيتشيلي", options: ["دافنشي", "بوتيتشيلي", "مايكل أنجلو", "رافاييل"] },
+    { q: "أين توجد لوحة 'ولادة فينوس'؟", a: "معرض أوفيزي في فلورنسا", options: ["اللوفر", "معرض أوفيزي", "متحف الفاتيكان", "متحف برادو"] },
+    { q: "من هو الرسام الذي رسم لوحة 'الحكم الأخير'؟", a: "مايكل أنجلو", options: ["دافنشي", "مايكل أنجلو", "رافاييل", "بوتيتشيلي"] },
+    { q: "أين توجد لوحة 'الحكم الأخير'؟", a: "كنيسة سيستين", options: ["كنيسة سيستين", "كاتدرائية القديس بطرس", "اللوفر", "متحف الفاتيكان"] },
+    { q: "من هو الرسام الذي رسم لوحة 'مدرسة أثينا'؟", a: "رافاييل", options: ["دافنشي", "مايكل أنجلو", "رافاييل", "بوتيتشيلي"] },
+    { q: "أين توجد لوحة 'مدرسة أثينا'؟", a: "قصر الفاتيكان", options: ["اللوفر", "قصر الفاتيكان", "متحف برادو", "معرض أوفيزي"] },
+    { q: "من هو المهندس المعماري الذي صمم كاتدرائية فلورنسا؟", a: "فيليبو برونليسكي", options: ["برونليسكي", "برامانتي", "بيرنيني", "بورتا"] },
+    { q: "كم استغرق بناء قبة كاتدرائية فلورنسا؟", a: "16 سنة", options: ["10 سنوات", "13 سنة", "16 سنة", "20 سنة"] },
+    { q: "من هو المهندس المعماري الذي صمم كاتدرائية القديس بطرس؟", a: "برامانتي", options: ["برونليسكي", "برامانتي", "مايكل أنجلو", "بيرنيني"] },
+    { q: "كم استغرق بناء كاتدرائية القديس بطرس؟", a: "120 سنة", options: ["80 سنة", "100 سنة", "120 سنة", "150 سنة"] },
+    { q: "من هو المهندس المعماري الذي صمم تاج محل؟", a: "أستاذ أحمد", options: ["أستاذ أحمد", "شاه جيهان", "عيسى خان", "محمد شريف"] },
+    { q: "كم استغرق بناء تاج محل؟", a: "22 سنة", options: ["15 سنة", "20 سنة", "22 سنة", "25 سنة"] },
+    { q: "من هو المهندس المعماري الذي صمم مسجد الشيخ زايد؟", a: "يوسف عبدالكي", options: ["يوسف عبدالكي", "زكي حلمي", "محمد مكية", "رشاد عطية"] },
+    { q: "كم استغرق بناء مسجد الشيخ زايد؟", a: "12 سنة", options: ["8 سنوات", "10 سنوات", "12 سنة", "15 سنة"] },
+    { q: "من هو المهندس المعماري الذي صمم برج خليفة؟", a: "أدريان سميث", options: ["نورمان فوستر", "زها حديد", "أدريان سميث", "سنتياگو كالاترافا"] },
+    { q: "كم استغرق بناء برج خليفة؟", a: "6 سنوات", options: ["4 سنوات", "5 سنوات", "6 سنوات", "7 سنوات"] },
+    { q: "من هو المهندس المعماري الذي صمم دار الأوبرا في سيدني؟", a: "يورن أوتسون", options: ["فرانك جيري", "يورن أوتسون", "لويس كان", "إيرو سارينن"] },
+    { q: "كم استغرق بناء دار أوبرا سيدني؟", a: "14 سنة", options: ["10 سنوات", "12 سنة", "14 سنة", "16 سنة"] },
+    { q: "من هو المهندس المعماري الذي صمم متحف غوغنهايم بلباو؟", a: "فرانك جيري", options: ["فرانك جيري", "نورمان فوستر", "زها حديد", "رينزو بيانو"] },
+    { q: "كم استغرق بناء متحف غوغنهايم بلباو؟", a: "4 سنوات", options: ["3 سنوات", "4 سنوات", "5 سنوات", "6 سنوات"] },
+    { q: "من هو المهندس المعماري الذي صمم مطار بكين الدولي؟", a: "نورمان فوستر", options: ["زها حديد", "نورمان فوستر", "رينزو بيانو", "ريتشارد روجرز"] },
+    { q: "كم استغرق بناء مطار بكين الدولي؟", a: "4 سنوات", options: ["3 سنوات", "4 سنوات", "5 سنوات", "6 سنوات"] },
+    { q: "من هو المهندس المعماري الذي صمم مركز حيدر علييف؟", a: "زها حديد", options: ["زها حديد", "فرانك جيري", "نورمان فوستر", "رينزو بيانو"] },
+    { q: "كم استغرق بناء مركز حيدر علييف؟", a: "5 سنوات", options: ["3 سنوات", "4 سنوات", "5 سنوات", "6 سنوات"] },
+    { q: "من هو المهندس المعماري الذي صمم برج بيزا المائل؟", a: "بونانو بيسانو", options: ["ديوتيسالف", "بونانو بيسانو", "جوجليلمو", "توماسو"] },
+    { q: "كم استغرق بناء برج بيزا المائل؟", a: "199 سنة", options: ["150 سنة", "177 سنة", "199 سنة", "220 سنة"] }
+],
+                history: [
+    { q: "في أي عام كانت معركة أكتيوم البحرية؟", a: "31 ق.م", options: ["40 ق.م", "35 ق.م", "31 ق.م", "27 ق.م"] },
+    { q: "من انتصر في معركة أكتيوم؟", a: "أغسطس قيصر", options: ["مارك أنتوني", "أغسطس قيصر", "بومبي", "يوليوس قيصر"] },
+    { q: "في أي عام كانت معركة هاستينغز؟", a: "1066", options: ["1040", "1066", "1080", "1100"] },
+    { q: "من انتصر في معركة هاستينغز؟", a: "وليام الفاتح", options: ["هارولد جودوينسون", "وليام الفاتح", "هارالد هاردرادا", "إدوارد المعترف"] },
+    { q: "في أي عام كانت معركة أجينكور؟", a: "1415", options: ["1400", "1415", "1425", "1450"] },
+    { q: "من انتصر في معركة أجينكور؟", a: "هنري الخامس ملك إنجلترا", options: ["تشارلز السادس", "هنري الخامس", "جان دارك", "فيليب الجيد"] },
+    { q: "في أي عام كانت معركة واترلو؟", a: "1815", options: ["1805", "1812", "1815", "1820"] },
+    { q: "من انتصر في معركة واترلو؟", a: "دوق ويلينغتون", options: ["نابليون بونابرت", "دوق ويلينغتون", "جيش بروسيا", "جيش النمسا"] },
+    { q: "في أي عام كانت معركة ستالينغراد؟", a: "1942-1943", options: ["1941-1942", "1942-1943", "1943-1944", "1944-1945"] },
+    { q: "من انتصر في معركة ستالينغراد؟", a: "الاتحاد السوفيتي", options: ["ألمانيا النازية", "الاتحاد السوفيتي", "الولايات المتحدة", "بريطانيا"] },
+    { q: "في أي عام كانت معركة العلمين؟", a: "1942", options: ["1940", "1941", "1942", "1943"] },
+    { q: "من انتصر في معركة العلمين؟", a: "قوات الحلفاء", options: ["ألمانيا النازية", "قوات الحلفاء", "إيطاليا", "اليابان"] },
+    { q: "في أي عام كانت معركة ميدواي؟", a: "1942", options: ["1941", "1942", "1943", "1944"] },
+    { q: "من انتصر في معركة ميدواي؟", a: "الولايات المتحدة", options: ["اليابان", "الولايات المتحدة", "الصين", "أستراليا"] },
+    { q: "في أي عام كانت معركة كورسك؟", a: "1943", options: ["1941", "1942", "1943", "1944"] },
+    { q: "من انتصر في معركة كورسك؟", a: "الاتحاد السوفيتي", options: ["ألمانيا النازية", "الاتحاد السوفيتي", "بولندا", "فرنسا"] },
+    { q: "في أي عام كانت معركة النورماندي؟", a: "1944", options: ["1942", "1943", "1944", "1945"] },
+    { q: "من انتصر في معركة النورماندي؟", a: "قوات الحلفاء", options: ["ألمانيا النازية", "قوات الحلفاء", "فرنسا", "بريطانيا"] },
+    { q: "في أي عام كانت معركة برلين؟", a: "1945", options: ["1943", "1944", "1945", "1946"] },
+    { q: "من انتصر في معركة برلين؟", a: "الاتحاد السوفيتي", options: ["ألمانيا النازية", "الاتحاد السوفيتي", "الولايات المتحدة", "بريطانيا"] },
+    { q: "في أي عام كانت معركة الحصبة؟", a: "634", options: ["630", "634", "640", "645"] },
+    { q: "من انتصر في معركة الحصبة؟", a: "المسلمون", options: ["الرومان", "المسلمون", "الفرس", "العرب"] },
+    { q: "في أي عام كانت معركة الجسر؟", a: "634", options: ["630", "634", "638", "642"] },
+    { q: "من انتصر في معركة الجسر؟", a: "الفرس", options: ["المسلمون", "الفرس", "الرومان", "العرب"] },
+    { q: "في أي عام كانت معركة أرمينيا؟", a: "653", options: ["650", "653", "656", "660"] },
+    { q: "من انتصر في معركة أرمينيا؟", a: "المسلمون", options: ["الرومان", "المسلمون", "الفرس", "الأرمن"] },
+    { q: "في أي عام كانت معركة سبيطلة؟", a: "647", options: ["640", "645", "647", "650"] },
+    { q: "من انتصر في معركة سبيطلة؟", a: "المسلمون", options: ["البربر", "المسلمون", "الرومان", "الإسبان"] },
+    { q: "في أي عام كانت معركة وادي لكة؟", a: "711", options: ["700", "711", "720", "730"] },
+    { q: "من انتصر في معركة وادي لكة؟", a: "طارق بن زياد", options: ["موسى بن نصير", "طارق بن زياد", "الوليد بن عبد الملك", "المنصور"] }
+],
+                technology: [
+    { q: "ما هو اسم أول معالج دقيق من إنتل؟", a: "Intel 4004", options: ["Intel 8008", "Intel 4040", "Intel 4004", "Intel 8080"] },
+    { q: "كم عدد الترانزستورات في Intel 4004؟", a: "2,300", options: ["1,000", "2,000", "2,300", "3,000"] },
+    { q: "ما هو اسم أول معالج 32 بت من إنتل؟", a: "Intel 80386", options: ["Intel 80286", "Intel 80386", "Intel 80486", "Intel Pentium"] },
+    { q: "كم عدد الترانزستورات في Intel 80386؟", a: "275,000", options: ["100,000", "200,000", "275,000", "300,000"] },
+    { q: "ما هو اسم أول معالج ثنائي النواة من إنتل؟", a: "Intel Core Duo", options: ["Pentium D", "Core 2 Duo", "Core Duo", "Pentium Dual"] },
+    { q: "كم عدد الترانزستورات في Core Duo؟", a: "151 مليون", options: ["100 مليون", "151 مليون", "200 مليون", "250 مليون"] },
+    { q: "ما هو اسم أقوى معالج حالي من إنتل؟", a: "Intel Core i9-14900K", options: ["i9-13900K", "i9-14900K", "i9-12900K", "i9-11900K"] },
+    { q: "كم عدد الترانزستورات في i9-14900K؟", a: "25 مليار", options: ["15 مليار", "20 مليار", "25 مليار", "30 مليار"] },
+    { q: "ما هو اسم أول معالج من AMD؟", a: "Am9080", options: ["Am8080", "Am9080", "Am8085", "Am80186"] },
+    { q: "كم عدد الترانزستورات في Am9080؟", a: "6,000", options: ["4,000", "5,000", "6,000", "7,000"] },
+    { q: "ما هو اسم أول معالج 64 بت من AMD؟", a: "AMD Athlon 64", options: ["AMD K8", "AMD Opteron", "AMD Athlon 64", "AMD Turion 64"] },
+    { q: "كم عدد الترانزستورات في Athlon 64؟", a: "105.9 مليون", options: ["80 مليون", "100 مليون", "105.9 مليون", "120 مليون"] },
+    { q: "ما هو اسم أقوى معالج حالي من AMD؟", a: "AMD Ryzen 9 7950X", options: ["Ryzen 9 5950X", "Ryzen 9 7950X", "Ryzen 9 3950X", "Ryzen 9 9950X"] },
+    { q: "كم عدد الترانزستورات في Ryzen 9 7950X؟", a: "13.1 مليار", options: ["10 مليار", "13.1 مليار", "15 مليار", "20 مليار"] },
+    { q: "ما هو اسم أول بطاقة رسوميات من NVIDIA؟", a: "NV1", options: ["RIVA 128", "NV1", "GeForce 256", "TNT"] },
+    { q: "كم عدد الترانزستورات في NV1؟", a: "1 مليون", options: ["500,000", "1 مليون", "1.5 مليون", "2 مليون"] },
+    { q: "ما هو اسم أقوى بطاقة رسوميات حالية من NVIDIA؟", a: "RTX 4090", options: ["RTX 3090", "RTX 4080", "RTX 4090", "RTX 5090"] },
+    { q: "كم عدد الترانزستورات في RTX 4090؟", a: "76.3 مليار", options: ["50 مليار", "60 مليار", "76.3 مليار", "80 مليار"] },
+    { q: "ما هو اسم أول بطاقة رسوميات من AMD؟", a: "ATI Rage", options: ["ATI Mach64", "ATI Rage", "ATI Radeon", "ATI All-In-Wonder"] },
+    { q: "كم عدد الترانزستورات في ATI Rage؟", a: "5 ملايين", options: ["3 ملايين", "5 ملايين", "8 ملايين", "10 ملايين"] },
+    { q: "ما هو اسم أقوى بطاقة رسوميات حالية من AMD؟", a: "RX 7900 XTX", options: ["RX 6900 XT", "RX 7900 XT", "RX 7900 XTX", "RX 7800 XT"] },
+    { q: "كم عدد الترانزستورات في RX 7900 XTX؟", a: "57.7 مليار", options: ["40 مليار", "50 مليار", "57.7 مليار", "60 مليار"] },
+    { q: "ما هو اسم أول هاتف ذكي من آبل؟", a: "iPhone 2G", options: ["iPhone", "iPhone 2G", "iPhone 3G", "iPhone 4"] },
+    { q: "كم كان سعر أول iPhone عند الإطلاق؟", a: "$499", options: ["$399", "$499", "$599", "$699"] },
+    { q: "ما هو اسم أول هاتف أندرويد؟", a: "HTC Dream", options: ["Samsung Galaxy", "HTC Dream", "Google Pixel", "Motorola Droid"] },
+    { q: "كم كان سعر HTC Dream عند الإطلاق؟", a: "$179", options: ["$149", "$179", "$199", "$249"] },
+    { q: "ما هو اسم أول جهاز لوحي من آبل؟", a: "iPad", options: ["iPad 2", "iPad Mini", "iPad Air", "iPad Pro"] },
+    { q: "كم كان سعر أول iPad عند الإطلاق؟", a: "$499", options: ["$399", "$499", "$599", "$699"] },
+    { q: "ما هو اسم أول حاسوب محمول من آبل؟", a: "Macintosh Portable", options: ["PowerBook", "MacBook", "Macintosh Portable", "iBook"] },
+    { q: "كم كان وزن Macintosh Portable؟", a: "7.2 كجم", options: ["5 كجم", "6 كجم", "7.2 كجم", "8 كجم"] }
+],
+                entertainment: [
+    { q: "من هو مخرج فيلم 'Citizen Kane'؟", a: "أورسون ويلز", options: ["أورسون ويلز", "ألفريد هيتشكوك", "جون فورد", "فرانك كابرا"] },
+    { q: "في أي عام صدر فيلم 'Citizen Kane'؟", a: "1941", options: ["1939", "1941", "1943", "1945"] },
+    { q: "من هو مخرج فيلم 'Vertigo'؟", a: "ألفريد هيتشكوك", options: ["هيتشكوك", "فينشر", "نولان", "سبيلبرغ"] },
+    { q: "في أي عام صدر فيلم 'Vertigo'؟", a: "1958", options: ["1956", "1958", "1960", "1962"] },
+    { q: "من هو مخرج فيلم '2001: A Space Odyssey'؟", a: "ستانلي كوبريك", options: ["كوبريك", "نولان", "سبيلبرغ", "تارانتينو"] },
+    { q: "في أي عام صدر فيلم '2001: A Space Odyssey'؟", a: "1968", options: ["1965", "1968", "1970", "1972"] },
+    { q: "من هو مخرج فيلم 'Apocalypse Now'؟", a: "فرانسيس فورد كوبولا", options: ["كوبولا", "سكورسيزي", "سبيلبرغ", "نولان"] },
+    { q: "في أي عام صدر فيلم 'Apocalypse Now'؟", a: "1979", options: ["1977", "1979", "1981", "1983"] },
+    { q: "من هو مخرج فيلم 'Raging Bull'؟", a: "مارتن سكورسيزي", options: ["سكورسيزي", "كوبولا", "سبيلبرغ", "نولان"] },
+    { q: "في أي عام صدر فيلم 'Raging Bull'؟", a: "1980", options: ["1978", "1980", "1982", "1984"] },
+    { q: "من هو مخرج فيلم 'Blue Velvet'؟", a: "ديفيد لينش", options: ["لينش", "فينشر", "تارانتينو", "كوبريك"] },
+    { q: "في أي عام صدر فيلم 'Blue Velvet'؟", a: "1986", options: ["1984", "1986", "1988", "1990"] },
+    { q: "من هو مخرج فيلم 'Fargo'؟", a: "الإخوان كوين", options: ["الإخوان كوين", "تارانتينو", "فينشر", "نولان"] },
+    { q: "في أي عام صدر فيلم 'Fargo'؟", a: "1996", options: ["1994", "1996", "1998", "2000"] },
+    { q: "من هو مخرج فيلم 'There Will Be Blood'؟", a: "بول توماس أندرسون", options: ["أندرسون", "نولان", "فينشر", "كوين"] },
+    { q: "في أي عام صدر فيلم 'There Will Be Blood'؟", a: "2007", options: ["2005", "2007", "2009", "2011"] },
+    { q: "من هو مخرج فيلم 'Tree of Life'؟", a: "تيرينس ماليك", options: ["ماليك", "أندرسون", "لينش", "نولان"] },
+    { q: "في أي عام صدر فيلم 'Tree of Life'؟", a: "2011", options: ["2009", "2011", "2013", "2015"] },
+    { q: "من هو مخرج فيلم 'Birdman'؟", a: "أليخاندرو غونزاليز إيناريتو", options: ["إيناريتو", "كوارون", "ديل تورو", "أندرسون"] },
+    { q: "في أي عام صدر فيلم 'Birdman'؟", a: "2014", options: ["2012", "2014", "2016", "2018"] },
+    { q: "من هو مخرج فيلم 'La La Land'؟", a: "داميان شازيل", options: ["شازيل", "إيناريتو", "كوارون", "ديل تورو"] },
+    { q: "في أي عام صدر فيلم 'La La Land'؟", a: "2016", options: ["2014", "2015", "2016", "2017"] },
+    { q: "من هو مخرج فيلم 'Roma'؟", a: "ألفونسو كوارون", options: ["كوارون", "إيناريتو", "ديل تورو", "شازيل"] },
+    { q: "في أي عام صدر فيلم 'Roma'؟", a: "2018", options: ["2016", "2017", "2018", "2019"] },
+    { q: "من هو مخرج فيلم 'Parasite'؟", a: "بونغ جون هو", options: ["بونغ جون هو", "لي تشانغ دونغ", "كم جي وون", "بارك تشان ووك"] },
+    { q: "في أي عام صدر فيلم 'Parasite'؟", a: "2019", options: ["2017", "2018", "2019", "2020"] },
+    { q: "من هو مخرج فيلم 'Nomadland'؟", a: "كلوي تشاو", options: ["كلوي تشاو", "غريتا غيرويغ", "صوفيا كوبولا", "أفيا دوفيرناي"] },
+    { q: "في أي عام صدر فيلم 'Nomadland'؟", a: "2020", options: ["2018", "2019", "2020", "2021"] },
+    { q: "من هو مخرج فيلم 'CODA'؟", a: "سيان هيدر", options: ["سيان هيدر", "كينيث براناه", "جين كامبيون", "بول توماس أندرسون"] },
+    { q: "في أي عام صدر فيلم 'CODA'؟", a: "2021", options: ["2019", "2020", "2021", "2022"] }
+],
+                medicine: [
+    { q: "ما هو مرض 'الساركوما'؟", a: "ورم خبيث في الأنسجة الرخوة", options: ["ورم في العظام", "ورم في الأنسجة الرخوة", "ورم في الدم", "ورم في الجلد"] },
+    { q: "ما هو معدل الشفاء من ساركوما إيوينغ؟", a: "70%", options: ["50%", "60%", "70%", "80%"] },
+    { q: "ما هو مرض 'اللوكيميا'؟", a: "سرطان الدم", options: ["سرطان العظام", "سرطان الدم", "سرطان الغدد", "سرطان الجلد"] },
+    { q: "ما هو معدل الشفاء من اللوكيميا الليمفاوية الحادة؟", a: "90%", options: ["70%", "80%", "90%", "95%"] },
+    { q: "ما هو مرض 'اللمفوما'؟", a: "سرطان الغدد الليمفاوية", options: ["سرطان الدم", "سرطان الغدد الليمفاوية", "سرطان العظام", "سرطان الجلد"] },
+    { q: "ما هو معدل الشفاء من لمفوما هودجكين؟", a: "85%", options: ["65%", "75%", "85%", "95%"] },
+    { q: "ما هو مرض 'الورم الأرومي العصبي'؟", a: "سرطان الجهاز العصبي عند الأطفال", options: ["سرطان الدماغ", "سرطان الجهاز العصبي", "سرطان العظام", "سرطان الكلى"] },
+    { q: "ما هو معدل الشفاء من الورم الأرومي العصبي؟", a: "50%", options: ["30%", "40%", "50%", "60%"] },
+    { q: "ما هو مرض 'الورم الأرومي الشبكي'؟", a: "سرطان العين عند الأطفال", options: ["سرطان العين", "سرطان الدماغ", "سرطان الكلى", "سرطان العظام"] },
+    { q: "ما هو معدل الشفاء من الورم الأرومي الشبكي؟", a: "95%", options: ["80%", "85%", "90%", "95%"] },
+    { q: "ما هو مرض 'الورم الأرومي الكلوي'؟", a: "سرطان الكلى عند الأطفال", options: ["سرطان الكلى", "سرطان الكبد", "سرطان العظام", "سرطان الدماغ"] },
+    { q: "ما هو معدل الشفاء من الورم الأرومي الكلوي؟", a: "90%", options: ["70%", "80%", "90%", "95%"] },
+    { q: "ما هو مرض 'الورم الأرومي الكبدي'؟", a: "سرطان الكبد عند الأطفال", options: ["سرطان الكبد", "سرطان الكلى", "سرطان العظام", "سرطان الدماغ"] },
+    { q: "ما هو معدل الشفاء من الورم الأرومي الكبدي؟", a: "70%", options: ["50%", "60%", "70%", "80%"] },
+    { q: "ما هو مرض 'الورم الأرومي العضلي المخطط'؟", a: "سرطان العضلات عند الأطفال", options: ["سرطان العضلات", "سرطان العظام", "سرطان الدماغ", "سرطان الكلى"] },
+    { q: "ما هو معدل الشفاء من الورم الأرومي العضلي المخطط؟", a: "65%", options: ["45%", "55%", "65%", "75%"] },
+    { q: "ما هو مرض 'التصلب المتعدد'؟", a: "مرض مناعي يؤثر على الجهاز العصبي", options: ["مرض مناعي", "مرض فيروسي", "مرض بكتيري", "مرض وراثي"] },
+    { q: "ما هو معدل انتشار التصلب المتعدد في العالم؟", a: "2.8 مليون شخص", options: ["1 مليون", "2 مليون", "2.8 مليون", "3.5 مليون"] },
+    { q: "ما هو مرض 'الذئبة الحمراء'؟", a: "مرض مناعي ذاتي", options: ["مرض مناعي", "مرض فيروسي", "مرض بكتيري", "مرض وراثي"] },
+    { q: "ما هي نسبة إصابة النساء بالذئبة الحمراء مقارنة بالرجال؟", a: "9:1", options: ["5:1", "7:1", "9:1", "11:1"] },
+    { q: "ما هو مرض 'التهاب المفاصل الروماتويدي'؟", a: "مرض مناعي ذاتي", options: ["مرض مناعي", "مرض فيروسي", "مرض بكتيري", "مرض وراثي"] },
+    { q: "ما هي نسبة إصابة النساء بالتهاب المفاصل الروماتويدي؟", a: "3:1", options: ["2:1", "3:1", "4:1", "5:1"] },
+    { q: "ما هو مرض 'السكري من النوع الأول'؟", a: "مرض مناعي ذاتي", options: ["مرض مناعي", "مرض فيروسي", "مرض بكتيري", "مرض وراثي"] },
+    { q: "ما هي نسبة الإصابة بالسكري من النوع الأول عند الأطفال؟", a: "1 من كل 500", options: ["1 من كل 300", "1 من كل 400", "1 من كل 500", "1 من كل 600"] },
+    { q: "ما هو مرض 'مرض كرون'؟", a: "مرض التهاب الأمعاء", options: ["مرض مناعي", "مرض التهاب الأمعاء", "مرض فيروسي", "مرض بكتيري"] },
+    { q: "ما هي نسبة الإصابة بمرض كرون في العالم؟", a: "1 من كل 5000", options: ["1 من كل 3000", "1 من كل 4000", "1 من كل 5000", "1 من كل 6000"] },
+    { q: "ما هو مرض 'التهاب القولون التقرحي'؟", a: "مرض التهاب الأمعاء", options: ["مرض مناعي", "مرض التهاب الأمعاء", "مرض فيروسي", "مرض بكتيري"] },
+    { q: "ما هي نسبة الإصابة بالتهاب القولون التقرحي؟", a: "1 من كل 4000", options: ["1 من كل 2000", "1 من كل 3000", "1 من كل 4000", "1 من كل 5000"] },
+    { q: "ما هو مرض 'متلازمة غيلان باريه'؟", a: "مرض مناعي يؤثر على الأعصاب", options: ["مرض مناعي", "مرض فيروسي", "مرض بكتيري", "مرض وراثي"] },
+    { q: "ما هي نسبة الشفاء من متلازمة غيلان باريه؟", a: "80%", options: ["60%", "70%", "80%", "90%"] }
+],
+                economy: [
+    { q: "ما هو صندوق النقد الدولي؟", a: "IMF", options: ["IMF", "WB", "WTO", "UN"] },
+    { q: "كم عدد الدول الأعضاء في صندوق النقد الدولي؟", a: "190 دولة", options: ["180", "185", "190", "195"] },
+    { q: "ما هو البنك الدولي؟", a: "World Bank", options: ["IMF", "World Bank", "WTO", "UN"] },
+    { q: "كم عدد الدول الأعضاء في البنك الدولي؟", a: "189 دولة", options: ["180", "185", "189", "190"] },
+    { q: "ما هي منظمة التجارة العالمية؟", a: "WTO", options: ["IMF", "WB", "WTO", "UN"] },
+    { q: "كم عدد الدول الأعضاء في منظمة التجارة العالمية؟", a: "164 دولة", options: ["150", "160", "164", "170"] },
+    { q: "ما هي مجموعة العشرين؟", a: "G20", options: ["G7", "G20", "G77", "G8"] },
+    { q: "كم عدد الدول الأعضاء في مجموعة العشرين؟", a: "20 دولة", options: ["19", "20", "21", "22"] },
+    { q: "ما هي مجموعة السبع؟", a: "G7", options: ["G7", "G20", "G77", "G8"] },
+    { q: "ما هي الدول الأعضاء في مجموعة السبع؟", a: "الولايات المتحدة، كندا، بريطانيا، فرنسا، ألمانيا، إيطاليا، اليابان", options: ["الولايات المتحدة، كندا، بريطانيا، فرنسا، ألمانيا، إيطاليا، اليابان", "الولايات المتحدة، روسيا، بريطانيا، فرنسا، ألمانيا، إيطاليا، كندا", "الولايات المتحدة، الصين، بريطانيا، فرنسا، ألمانيا، إيطاليا، اليابان", "الولايات المتحدة، كندا، أستراليا، فرنسا، ألمانيا، إيطاليا، اليابان"] },
+    { q: "ما هي مجموعة الثماني؟", a: "G8", options: ["G7", "G20", "G77", "G8"] },
+    { q: "ما هي الدول الأعضاء في مجموعة الثماني سابقاً؟", a: "الولايات المتحدة، كندا، بريطانيا، فرنسا، ألمانيا، إيطاليا، اليابان، روسيا", options: ["الولايات المتحدة، كندا، بريطانيا، فرنسا، ألمانيا، إيطاليا، اليابان، الصين", "الولايات المتحدة، كندا، بريطانيا، فرنسا، ألمانيا، إيطاليا، اليابان، روسيا", "الولايات المتحدة، كندا، بريطانيا، فرنسا، ألمانيا، إيطاليا، اليابان، الهند", "الولايات المتحدة، كندا، بريطانيا، فرنسا، ألمانيا، إيطاليا، اليابان، البرازيل"] },
+    { q: "ما هي الأوبك؟", a: "OPEC", options: ["OPEC", "OECD", "WHO", "UNESCO"] },
+    { q: "كم عدد الدول الأعضاء في الأوبك؟", a: "13 دولة", options: ["11", "12", "13", "14"] },
+    { q: "ما هي منظمة التعاون الاقتصادي والتنمية؟", a: "OECD", options: ["OPEC", "OECD", "WHO", "UNESCO"] },
+    { q: "كم عدد الدول الأعضاء في منظمة التعاون الاقتصادي والتنمية؟", a: "38 دولة", options: ["35", "36", "37", "38"] },
+    { q: "ما هو المنتدى الاقتصادي العالمي؟", a: "WEF", options: ["IMF", "WB", "WEF", "WTO"] },
+    { q: "أين يعقد المنتدى الاقتصادي العالمي سنوياً؟", a: "دافوس، سويسرا", options: ["نيويورك", "لندن", "دافوس", "طوكيو"] },
+    { q: "ما هي مجموعة البنوك الأربعة الكبرى في الولايات المتحدة؟", a: "جيه بي مورغان، بنك أوف أمريكا، سيتي جروب، ويلز فارجو", options: ["جيه بي مورغان، بنك أوف أمريكا، سيتي جروب، ويلز فارجو", "جولدمان ساكس، مورغان ستانلي، بنك أوف أمريكا، سيتي جروب", "جيه بي مورغان، بنك أوف أمريكا، جولدمان ساكس، مورغان ستانلي", "ويلز فارجو، جيه بي مورغان، جولدمان ساكس، مورغان ستانلي"] },
+    { q: "ما هي أكبر خمسة بنوك في العالم من حيث الأصول؟", a: "ICBC، البنك الزراعي الصيني، بنك الصين، البناء الصيني، ميتسوبيشي", options: ["ICBC، البنك الزراعي الصيني، بنك الصين، البناء الصيني، ميتسوبيشي", "جيه بي مورغان، بنك أوف أمريكا، سيتي جروب، ويلز فارجو، ICBC", "HSBC، ICBC، البنك الزراعي الصيني، بنك الصين، البناء الصيني", "بنك الصين، البناء الصيني، ICBC، البنك الزراعي الصيني، جيه بي مورغان"] },
+    { q: "ما هو الناتج المحلي الإجمالي للصين؟", a: "$17.7 تريليون", options: ["$15 تريليون", "$16 تريليون", "$17.7 تريليون", "$18 تريليون"] },
+    { q: "ما هو الناتج المحلي الإجمالي للهند؟", a: "$3.7 تريليون", options: ["$2.5 تريليون", "$3 تريليون", "$3.5 تريليون", "$3.7 تريليون"] },
+    { q: "ما هو الناتج المحلي الإجمالي لألمانيا؟", a: "$4.4 تريليون", options: ["$3.5 تريليون", "$4 تريليون", "$4.4 تريليون", "$5 تريليون"] },
+    { q: "ما هو الناتج المحلي الإجمالي لليابان؟", a: "$4.2 تريليون", options: ["$3.5 تريليون", "$4 تريليون", "$4.2 تريليون", "$4.5 تريليون"] },
+    { q: "ما هو الناتج المحلي الإجمالي لبريطانيا؟", a: "$3.1 تريليون", options: ["$2.5 تريليون", "$3 تريليون", "$3.1 تريليون", "$3.5 تريليون"] },
+    { q: "ما هو الناتج المحلي الإجمالي لفرنسا؟", a: "$2.9 تريليون", options: ["$2.5 تريليون", "$2.7 تريليون", "$2.9 تريليون", "$3 تريليون"] },
+    { q: "ما هو الناتج المحلي الإجمالي لكندا؟", a: "$2.1 تريليون", options: ["$1.5 تريليون", "$1.8 تريليون", "$2 تريليون", "$2.1 تريليون"] },
+    { q: "ما هو الناتج المحلي الإجمالي لإيطاليا؟", a: "$2 تريليون", options: ["$1.5 تريليون", "$1.8 تريليون", "$2 تريليون", "$2.2 تريليون"] },
+    { q: "ما هو الناتج المحلي الإجمالي للبرازيل؟", a: "$1.9 تريليون", options: ["$1.5 تريليون", "$1.7 تريليون", "$1.9 تريليون", "$2 تريليون"] }
+]
+            }
+        };
+        
+        let currentDifficulty = "medium";
+        let currentQuestionObj = null;
+        let currentRoom = "", myName = "", winScore = 70, isHost = false;
+        let toastTimeout = null;
+        
+        function showFloatingMessage(msg, success = false) {
+            if(toastTimeout) clearTimeout(toastTimeout);
+            document.querySelectorAll('.toast-msg').forEach(e => e.remove());
+            let toast = document.createElement('div');
+            toast.className = 'toast-msg';
+            toast.innerHTML = success ? `<i class="fas fa-bolt"></i> ${msg}` : msg;
+            document.body.appendChild(toast);
+            toastTimeout = setTimeout(() => toast.remove(), 2000);
+        }
+        
+        function setDifficulty(level) {
+            currentDifficulty = level;
+            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.difficulty-btn.${level}`).classList.add('active');
+            showFloatingMessage(`تم اختيار مستوى ${level === 'easy' ? 'سهل' : level === 'medium' ? 'متوسط' : 'صعب'}`, true);
+            loadQuestionByDifficultyAndCategory();
+        }
+        
+        function loadQuestionByDifficultyAndCategory() {
+            if (!isHost) return;
+            const category = document.getElementById('category-select-live').value;
+            const questionArray = questionsBank[currentDifficulty]?.[category];
+            
+            if (questionArray && questionArray.length > 0) {
+                const randomIndex = Math.floor(Math.random() * questionArray.length);
+                const questionData = questionArray[randomIndex];
+                currentQuestionObj = {
+                    q: questionData.q,
+                    a: questionData.a,
+                    options: questionData.options
+                };
+                document.getElementById('admin-q-text').innerText = currentQuestionObj.q;
+                document.getElementById('admin-a-text').innerText = currentQuestionObj.a;
+                
+                if (currentRoom) {
+                    db.ref(`rooms/${currentRoom}/currentQuestion`).set(currentQuestionObj);
+                    db.ref(`rooms/${currentRoom}/currentDifficulty`).set(currentDifficulty);
+                    db.ref(`rooms/${currentRoom}/currentCategory`).set(category);
+                }
+                showFloatingMessage(`تم تحميل سؤال ${currentDifficulty === 'easy' ? 'سهل' : currentDifficulty === 'medium' ? 'متوسط' : 'صعب'} من مجال ${category}`, true);
+            } else {
+                showFloatingMessage(`لا يوجد سؤال للمستوى ${currentDifficulty} في هذا المجال`, false);
+            }
+        }
+        
+        function initAdmin() {
+            let name = document.getElementById('user-name').value.trim() || "المضيف";
+            myName = name;
+            isHost = true;
+            currentRoom = Math.floor(1000 + Math.random() * 9000);
+            winScore = parseInt(document.getElementById('win-limit').value);
+            
+            const defaultCategory = "general";
+            const defaultQuestionArray = questionsBank.medium[defaultCategory];
+            const defaultQuestion = defaultQuestionArray[0];
+            currentQuestionObj = defaultQuestion;
+            
+            db.ref(`rooms/${currentRoom}`).set({
+                winLimit: winScore,
+                firstPress: null,
+                winner: null,
+                createdAt: Date.now(),
+                hostName: myName,
+                isQuestionVisible: false,
+                manualHideActive: true,
+                currentDifficulty: "medium",
+                currentCategory: defaultCategory,
+                currentQuestion: currentQuestionObj,
+                showOptions: true
+            });
+            
+            db.ref(`rooms/${currentRoom}/players/${myName}`).set({ name: myName, score: 0, isHost: true });
+            document.getElementById('admin-room-id').innerText = currentRoom;
+            document.getElementById('goal-display').innerText = winScore;
+            document.getElementById('admin-q-text').innerText = currentQuestionObj.q;
+            document.getElementById('admin-a-text').innerText = currentQuestionObj.a;
+            
+            showView('admin-view');
+            startSync();
+            showFloatingMessage(`🚀 تم إنشاء ساحة المعركة! الرمز: ${currentRoom}`, true);
+        }
+        
+        function joinRoom() {
+            let name = document.getElementById('user-name').value.trim();
+            if(!name) return showFloatingMessage("أدخل اسمك!", false);
+            myName = name;
+            let roomCode = document.getElementById('room-input').value.trim();
+            if(!roomCode) return showFloatingMessage("أدخل رمز الساحة!", false);
+            currentRoom = roomCode;
+            db.ref(`rooms/${currentRoom}`).once('value', snap => {
+                if(!snap.exists()) return showFloatingMessage("الساحة غير موجودة!", false);
+                db.ref(`rooms/${currentRoom}/players/${myName}`).set({ name: myName, score: 0, isHost: false });
+                showView('guest-view');
+                document.getElementById('guest-room-display').innerText = currentRoom;
+                startSync();
+                showFloatingMessage("انضممت إلى ساحة المعركة!", true);
+            });
+        }
+        
+        function showView(id) {
+            ['setup-screen', 'admin-view', 'guest-view'].forEach(v => document.getElementById(v).classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        }
+        
+        function toggleOptionsVisibility() {
+            db.ref(`rooms/${currentRoom}/showOptions`).once('value', snap => db.ref(`rooms/${currentRoom}/showOptions`).set(!snap.val()));
+        }
+        
+        function showQuestionOnly() {
+            db.ref(`rooms/${currentRoom}`).update({ isQuestionVisible: true, manualHideActive: false });
+            showFloatingMessage("تم عرض السؤال فقط", true);
+        }
+        
+        function showFullQuestionWithOptions() {
+            db.ref(`rooms/${currentRoom}`).update({ isQuestionVisible: true, manualHideActive: false, showOptions: true });
+            showFloatingMessage("تم عرض السؤال + الاقتراحات", true);
+        }
+        
+        function hideQuestionFromGuests() {
+            db.ref(`rooms/${currentRoom}`).update({ isQuestionVisible: false, manualHideActive: true });
+            showFloatingMessage("تم إخفاء السؤال", false);
+        }
+        
+        function kickPlayer(playerName) {
+            if(!isHost) return;
+            db.ref(`rooms/${currentRoom}/players/${playerName}`).remove();
             db.ref(`rooms/${currentRoom}/kicked/${playerName}`).set(true);
-        });
-    }
-
-    // تخطي الضغط: يمسح أول ضاغط دون تغيير نقاط ويسمح بضغط جديد
-    function skipBuzzer() {
-        db.ref(`rooms/${currentRoom}/firstPress`).set(null);
-        showFloatingMessage("⏩ تم تخطي الإجابة، يمكن للاعبين الضغط مجدداً", true);
-    }
-    
-    function startSync() {
-        db.ref(`rooms/${currentRoom}/winLimit`).on('value', snap=>{ winScore = snap.val()||70; if(document.getElementById('goal-display')) document.getElementById('goal-display').innerText = winScore; if(document.getElementById('guest-goal-display')) document.getElementById('guest-goal-display').innerText = winScore; });
+            showFloatingMessage(`تم طرد ${playerName} من الساحة`, false);
+        }
         
-        let qList = []; 
-        db.ref(`rooms/${currentRoom}/questionsList`).on('value', snap=>{ if(snap.exists()) qList = snap.val(); });
-        db.ref(`rooms/${currentRoom}/currentQuestionIndex`).on('value', snap=>{ let idx = snap.val()||0; if(qList.length) { currentQuestionObj = qList[idx % qList.length]; if(currentQuestionObj) { if(document.getElementById('admin-q-text')) document.getElementById('admin-q-text').innerText = currentQuestionObj.q; if(document.getElementById('admin-a-text')) document.getElementById('admin-a-text').innerText = currentQuestionObj.a; } } });
+        function skipBuzzer() {
+            db.ref(`rooms/${currentRoom}/firstPress`).set(null);
+            showFloatingMessage("تم تخطي الإجابة، يمكن للاعبين الضغط مجدداً", true);
+        }
         
-        db.ref(`rooms/${currentRoom}`).on('value', snapshot=>{ 
-            let data = snapshot.val(); if(!data) return; 
-            let visible = !data.manualHideActive && data.isQuestionVisible; 
-            let showOpt = data.showOptions !== false; 
-            let guestQ = document.getElementById('guest-q-text'); 
-            let guestOpts = document.getElementById('guest-options-area'); 
-            if(guestQ && currentQuestionObj) { 
-                if(!visible) { guestQ.innerText = "🔒 السؤال مخفي... استعد"; guestOpts.innerHTML = ""; } 
-                else { 
-                    guestQ.innerText = currentQuestionObj.q; 
-                    if(showOpt && currentQuestionObj.options) {
-                        guestOpts.innerHTML = currentQuestionObj.options.map(opt => `<div class="option-btn disabled-opt"><i class="fas fa-ban"></i> ${opt}</div>`).join('');
-                    } else guestOpts.innerHTML = `<div class="answer-hint">الاقتراحات مخفية حالياً</div>`; 
-                } 
-            } 
-            // التحقق من وجود الطرد: إذا كان اسمي موجوداً في قائمة المطرودين، يتم إخراجي
-            if(data.kicked && data.kicked[myName]) {
-                showFloatingMessage("⚠️ لقد تم طردك من الغرفة بواسطة المضيف!", false);
-                setTimeout(()=>{ window.location.reload(); }, 1500);
+        function startSync() {
+            db.ref(`rooms/${currentRoom}/winLimit`).on('value', snap => {
+                winScore = snap.val() || 70;
+                if(document.getElementById('goal-display')) document.getElementById('goal-display').innerText = winScore;
+                if(document.getElementById('guest-goal-display')) document.getElementById('guest-goal-display').innerText = winScore;
+            });
+            
+            db.ref(`rooms/${currentRoom}/currentQuestion`).on('value', snap => {
+                if(snap.exists()) {
+                    currentQuestionObj = snap.val();
+                    if(document.getElementById('admin-q-text')) document.getElementById('admin-q-text').innerText = currentQuestionObj.q;
+                    if(document.getElementById('admin-a-text')) document.getElementById('admin-a-text').innerText = currentQuestionObj.a;
+                }
+            });
+            
+            db.ref(`rooms/${currentRoom}`).on('value', snapshot => {
+                let data = snapshot.val();
+                if(!data) return;
+                let visible = !data.manualHideActive && data.isQuestionVisible;
+                let showOpt = data.showOptions !== false;
+                let guestQ = document.getElementById('guest-q-text');
+                let guestOpts = document.getElementById('guest-options-area');
+                if(guestQ && currentQuestionObj) {
+                    if(!visible) {
+                        guestQ.innerText = "🔒 السؤال مخفي... استعد للمعركة! 🔒";
+                        guestOpts.innerHTML = "";
+                    } else {
+                        guestQ.innerText = currentQuestionObj.q;
+                        if(showOpt && currentQuestionObj.options) {
+                            guestOpts.innerHTML = currentQuestionObj.options.map(opt => `<div class="option-btn"><i class="fas fa-shield-alt"></i> ${opt}</div>`).join('');
+                        } else {
+                            guestOpts.innerHTML = `<div class="option-btn">🔮 الاقتراحات مخفية 🔮</div>`;
+                        }
+                    }
+                }
+                if(data.kicked && data.kicked[myName]) {
+                    showFloatingMessage("⚠️ تم طردك من الساحة!", false);
+                    setTimeout(() => location.reload(), 1500);
+                }
+            });
+            
+            db.ref(`rooms/${currentRoom}/firstPress`).on('value', snap => {
+                let fp = snap.val();
+                if(fp) {
+                    document.getElementById('buzzer-alert')?.classList.remove('hidden');
+                    if(document.getElementById('first-player-name')) document.getElementById('first-player-name').innerText = fp;
+                    if(document.getElementById('msg-status')) document.getElementById('msg-status').innerHTML = `<i class="fas fa-bell"></i> ⚡ ${fp} ضغط أولاً! ⚡`;
+                    document.getElementById('buzzer-btn')?.setAttribute('disabled', 'disabled');
+                } else {
+                    document.getElementById('buzzer-alert')?.classList.add('hidden');
+                    if(document.getElementById('msg-status')) document.getElementById('msg-status').innerHTML = `<i class="fas fa-fist-raised"></i> اضغط الزر لتكون الأول!`;
+                    document.getElementById('buzzer-btn')?.removeAttribute('disabled');
+                }
+            });
+            
+            db.ref(`rooms/${currentRoom}/players`).on('value', snap => {
+                let players = snap.val() || {};
+                let filtered = Object.values(players).filter(p => !p.isHost);
+                filtered.sort((a, b) => b.score - a.score);
+                let adminHtml = "", guestHtml = "", r = 1;
+                for(let p of filtered) {
+                    adminHtml += `<tr><td>${r++}</td><td><i class="fas fa-user-astronaut"></i> ${p.name}</td><td style="color:#ffd93d;">${p.score}</td><td><button class="kick-btn" onclick="kickPlayer('${p.name.replace(/'/g, "\\'")}')"><i class="fas fa-trash"></i> طرد</button></td></tr>`;
+                }
+                r = 1;
+                for(let p of filtered) {
+                    guestHtml += `<tr><td>${r++}</td><td><i class="fas fa-user"></i> ${p.name}</td><td>🏅 ${p.score}</td></tr>`;
+                }
+                document.getElementById('admin-list').innerHTML = adminHtml || '<tr><td colspan="4">لا يوجد متسابقون بعد</td></tr>';
+                document.getElementById('guest-list').innerHTML = guestHtml || '<tr><td colspan="3">لا يوجد متسابقون بعد</td></tr>';
+                for(let p of filtered) {
+                    if(p.score >= winScore) db.ref(`rooms/${currentRoom}/winner`).set(p.name);
+                }
+            });
+            
+            db.ref(`rooms/${currentRoom}/winner`).on('value', snap => {
+                let w = snap.val();
+                if(w) {
+                    document.getElementById('game-content').classList.add('hidden');
+                    document.getElementById('winner-screen').classList.remove('hidden');
+                    document.getElementById('winner-name').innerText = w;
+                    if(document.getElementById('buzzer-btn')) document.getElementById('buzzer-btn').disabled = true;
+                    showFloatingMessage(`🏆 البطل ${w} انتصر في المعركة! 🏆`, true);
+                } else if(document.getElementById('game-content')?.classList.contains('hidden')) {
+                    document.getElementById('game-content').classList.remove('hidden');
+                    document.getElementById('winner-screen').classList.add('hidden');
+                }
+            });
+        }
+        
+        function pressBuzzer() {
+            if(currentRoom) {
+                db.ref(`rooms/${currentRoom}/firstPress`).transaction(cur => cur === null ? myName : cur);
             }
-        });
+        }
         
-        db.ref(`rooms/${currentRoom}/firstPress`).on('value', snap=>{ let fp = snap.val(); if(fp) { document.getElementById('buzzer-alert')?.classList.remove('hidden'); if(document.getElementById('first-player-name')) document.getElementById('first-player-name').innerText = fp; if(document.getElementById('msg-status')) document.getElementById('msg-status').innerHTML = `<i class="fas fa-bell"></i> ⚡ ${fp} ضغط أولاً! انتظر تقييم المضيف.`; document.getElementById('buzzer-btn')?.setAttribute('disabled','disabled'); } else { document.getElementById('buzzer-alert')?.classList.add('hidden'); if(document.getElementById('msg-status')) document.getElementById('msg-status').innerHTML = `<i class="fas fa-fist-raised"></i> اضغط الجرس لتكون أول من يجيب!`; document.getElementById('buzzer-btn')?.removeAttribute('disabled'); } });
+        function nextQuestion() {
+            loadQuestionByDifficultyAndCategory();
+            db.ref(`rooms/${currentRoom}/firstPress`).set(null);
+            db.ref(`rooms/${currentRoom}/currentQuestion`).set(currentQuestionObj);
+            showFloatingMessage("السؤال التالي!", true);
+        }
         
-        db.ref(`rooms/${currentRoom}/players`).on('value', snap=>{ 
-            let players = snap.val()||{}; 
-            let filtered = Object.values(players).filter(p=> !p.isHost && p.name !== players.hostName); 
-            filtered.sort((a,b)=>b.score - a.score); 
-            let adminHtml="", guestHtml="", r=1; 
-            for(let p of filtered) {
-                adminHtml += `<tr><td>${r++}</td><td><i class="fas fa-user-astronaut"></i> ${p.name}</td><td style="font-weight:bold;color:#f39c12;">${p.score}</td>
-                <td><button class="kick-btn" onclick="kickPlayer('${p.name.replace(/'/g, "\\'")}')"><i class="fas fa-user-slash"></i> طرد نهائي</button></td></tr>`;
-            }
-            r=1; for(let p of filtered) guestHtml += `<tr><td>${r++}</td><td><i class="fas fa-user"></i> ${p.name}</td><td>🏅 ${p.score}</td></tr>`; 
-            document.getElementById('admin-list').innerHTML = adminHtml || '<tr><td colspan="4">لا يوجد متسابقون بعد</td></tr>'; 
-            document.getElementById('guest-list').innerHTML = guestHtml || '<tr><td colspan="3">لا يوجد متسابقون بعد</td></tr>'; 
-            for(let p of filtered) if(p.score >= winScore) db.ref(`rooms/${currentRoom}/winner`).set(p.name); 
-        });
+        function handleAnswer(correct) {
+            db.ref(`rooms/${currentRoom}/firstPress`).once('value', snap => {
+                let p = snap.val();
+                if(!p) return showFloatingMessage("لا يوجد لاعب ضغط!", false);
+                if(correct) {
+                    db.ref(`rooms/${currentRoom}/players/${p}/score`).transaction(s => (s || 0) + 10);
+                    showFloatingMessage(`✔️ إجابة صحيحة للاعب ${p} +10 نقاط`, true);
+                    nextQuestion();
+                } else {
+                    db.ref(`rooms/${currentRoom}/players/${p}/score`).transaction(s => (s || 0) - 5);
+                    showFloatingMessage(`❌ إجابة خاطئة للاعب ${p} -5 نقاط`, false);
+                    db.ref(`rooms/${currentRoom}/firstPress`).set(null);
+                }
+            });
+        }
         
-        db.ref(`rooms/${currentRoom}/winner`).on('value', snap=>{ let w = snap.val(); if(w) { document.getElementById('game-content').classList.add('hidden'); document.getElementById('winner-screen').classList.remove('hidden'); document.getElementById('winner-name').innerText = w; if(document.getElementById('buzzer-btn')) document.getElementById('buzzer-btn').disabled = true; showFloatingMessage(`🏆 البطل ${w} فاز بالمسابقة!`, true); } else if(document.getElementById('game-content')?.classList.contains('hidden')) { document.getElementById('game-content').classList.remove('hidden'); document.getElementById('winner-screen').classList.add('hidden'); } });
-    }
-    
-    function pressBuzzer() { if(currentRoom) db.ref(`rooms/${currentRoom}/firstPress`).transaction(cur => cur === null ? myName : cur); }
-    function nextQuestion() { db.ref(`rooms/${currentRoom}/currentQuestionIndex`).transaction(idx=>(idx||0)+1); db.ref(`rooms/${currentRoom}/firstPress`).set(null); showFloatingMessage("السؤال التالي!", true); }
-    
-    function handleAnswer(correct) { 
-        db.ref(`rooms/${currentRoom}/firstPress`).once('value', snap=>{ let p = snap.val(); if(!p) return showFloatingMessage("لا يوجد لاعب ضغط!", false); if(correct) { db.ref(`rooms/${currentRoom}/players/${p}/score`).transaction(s=>(s||0)+10); showFloatingMessage(`✔️ إجابة صحيحة للاعب ${p} +10 نقاط`, true); nextQuestion(); } else { db.ref(`rooms/${currentRoom}/players/${p}/score`).transaction(s=>(s||0)-5); showFloatingMessage(`❌ إجابة خاطئة للاعب ${p} -5 نقاط`, false); db.ref(`rooms/${currentRoom}/firstPress`).set(null); } }); 
-    }
-    
-    window.initAdmin = initAdmin; window.joinRoom = joinRoom; window.pressBuzzer = pressBuzzer; window.nextQuestion = nextQuestion; window.handleAnswer = handleAnswer; 
-    window.showQuestionOnly = showQuestionOnly; window.showFullQuestionWithOptions = showFullQuestionWithOptions; 
-    window.hideQuestionFromGuests = hideQuestionFromGuests; window.changeCategory = changeCategory; window.toggleOptionsVisibility = toggleOptionsVisibility; 
-    window.kickPlayer = kickPlayer; window.skipBuzzer = skipBuzzer;
-</script>
+        window.initAdmin = initAdmin;
+        window.joinRoom = joinRoom;
+        window.setDifficulty = setDifficulty;
+        window.loadQuestionByDifficultyAndCategory = loadQuestionByDifficultyAndCategory;
+        window.pressBuzzer = pressBuzzer;
+        window.nextQuestion = nextQuestion;
+        window.handleAnswer = handleAnswer;
+        window.showQuestionOnly = showQuestionOnly;
+        window.showFullQuestionWithOptions = showFullQuestionWithOptions;
+        window.hideQuestionFromGuests = hideQuestionFromGuests;
+        window.toggleOptionsVisibility = toggleOptionsVisibility;
+        window.kickPlayer = kickPlayer;
+        window.skipBuzzer = skipBuzzer;
+    </script>
 </body>
 </html>
