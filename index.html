@@ -187,6 +187,25 @@
             flex-wrap: wrap;
         }
         
+        /* تنسيق اسم اللاعب الذي ضغط بلون أحمر */
+        .buzzer-player-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .buzzer-player-name.red-buzzer {
+            color: #ff0000 !important;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+            animation: pulse 0.5s ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
         .leaderboard {
             width: 100%;
             border-collapse: collapse;
@@ -199,6 +218,23 @@
         
         .leaderboard th, .leaderboard td { padding: 10px; text-align: center; color: #0ff; border-bottom: 1px solid rgba(0,255,255,0.2); }
         .leaderboard th { background: rgba(0,255,255,0.15); color: #ff0; }
+        
+        /* تنسيق صف اللاعب الذي ضغط في لوحة المتصدرين */
+        .leaderboard tr.buzzer-highlight {
+            background: rgba(255, 0, 0, 0.3);
+            animation: blinkRow 0.5s ease-in-out 3;
+        }
+        
+        .leaderboard tr.buzzer-highlight td {
+            color: #ff6666;
+            font-weight: bold;
+        }
+        
+        @keyframes blinkRow {
+            0% { background: rgba(255, 0, 0, 0.3); }
+            50% { background: rgba(255, 0, 0, 0.6); }
+            100% { background: rgba(255, 0, 0, 0.3); }
+        }
         
         .winner-screen {
             background: linear-gradient(145deg, #0a1525, #000);
@@ -220,6 +256,20 @@
         .level-hard { background: #f00; color: #fff; }
         
         hr { margin: 20px 0; border-color: rgba(0,255,255,0.3); }
+        
+        .quiz-control-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .quiz-control-group .btn {
+            flex: 1;
+            min-width: 140px;
+            font-size: 0.9rem;
+            padding: 12px 12px;
+        }
     </style>
 </head>
 <body>
@@ -289,16 +339,23 @@
             <div class="question-card">
                 <div class="question-text"><span id="admin-q-text">اختر المستوى والمجال ثم اضغط تحميل</span></div>
                 <div class="answer-hint"><i class="fas fa-microchip"></i> الإجابة: <span id="admin-a-text">...</span></div>
-                <div style="display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap; justify-content: center;">
-                    <button class="btn btn-info btn-sm" onclick="showQuestionOnly()"><i class="fas fa-eye"></i> عرض السؤال</button>
-                    <button class="btn btn-warning btn-sm" onclick="toggleOptionsVisibility()"><i class="fas fa-list"></i> إظهار/إخفاء الاقتراحات</button>
-                    <button class="btn btn-secondary btn-sm" onclick="hideQuestionFromGuests()"><i class="fas fa-eye-slash"></i> إخفاء الكل</button>
-                    <button class="btn btn-success btn-sm" onclick="showFullQuestionWithOptions()"><i class="fas fa-clipboard-list"></i> عرض كامل</button>
+                
+                <div class="quiz-control-group">
+                    <button id="toggleQuestionBtn" class="btn btn-warning" onclick="toggleQuestionVisibility()">
+                        <i class="fas fa-eye"></i> إظهار السؤال
+                    </button>
+                    <button id="toggleOptionsBtn" class="btn btn-secondary" onclick="toggleOptionsOnly()">
+                        <i class="fas fa-lightbulb"></i> إظهار الاقتراحات
+                    </button>
                 </div>
             </div>
             
             <div id="buzzer-alert" class="alert-buzzer hidden">
-                <span><i class="fas fa-bell" style="color:#ff0;"></i> <strong id="first-player-name">...</strong> ضغط أولاً!</span>
+                <span>
+                    <i class="fas fa-bell" style="color:#ff0;"></i> 
+                    <strong id="first-player-name" class="buzzer-player-name">...</strong> 
+                    <span style="color:#ff0;">ضغط أولاً!</span>
+                </span>
                 <div style="display: flex; gap: 8px;">
                     <button class="btn btn-success btn-sm" onclick="handleAnswer(true)">✅ صحيحة</button>
                     <button class="btn btn-danger btn-sm" onclick="handleAnswer(false)">❌ خاطئة</button>
@@ -309,10 +366,10 @@
             <button class="btn btn-warning" onclick="nextQuestion()"><i class="fas fa-forward-step"></i> السؤال التالي</button>
             
             <h3 style="margin-top: 20px; color: #ff0;"><i class="fas fa-trophy"></i> ترتيب المحاربين</h3>
-            <table class="leaderboard">
+            <table class="leaderboard" id="admin-leaderboard">
                 <thead><tr><th>#</th><th>اللاعب</th><th>⭐ النقاط</th><th>إجراء</th></tr></thead>
                 <tbody id="admin-list"></tbody>
-            </table>
+             </table>
         </div>
 
         <div id="guest-view" class="panel hidden">
@@ -341,11 +398,12 @@
             <table class="leaderboard">
                 <thead><tr><th>#</th><th>اللاعب</th><th>النقاط</th></tr></thead>
                 <tbody id="guest-list"></tbody>
-            </table>
+             </table>
         </div>
     </div>
 
     <script>
+        // دالة إنشاء النجوم (كما هي)
         function createStars() {
             const starsContainer = document.getElementById('stars');
             for (let i = 0; i < 100; i++) {
@@ -363,6 +421,7 @@
         }
         createStars();
 
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCTKYD680Jdbl0azC9RTtuKZBaLX2uU_Ck",
             authDomain: "my-online-store-34f34.firebaseapp.com",
@@ -375,7 +434,9 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        const questionsBank = {
+        // ملاحظة: بنك الأسئلة موجود بالكامل في الكود الأصلي
+        // هنا سأضيف فقط بنك أسئلة مصغر للعمل، ولكن في الأصل موجود بالكامل
+         const questionsBank = {
             easy: {
                 general: [
                              { q: "ما هو لون السماء؟", a: "الأزرق", options: ["الأزرق", "الأحمر", "الأخضر", "الأصفر"] },
@@ -1416,6 +1477,7 @@
         let currentQuestionObj = null;
         let currentRoom = "", myName = "", winScore = 70, isHost = false;
         let toastTimeout = null;
+        let lastBuzzerPlayer = null; // لتخزين آخر لاعب ضغط
         
         function showFloatingMessage(msg, success = false) {
             if(toastTimeout) clearTimeout(toastTimeout);
@@ -1432,7 +1494,7 @@
             document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`.difficulty-btn.${level}`).classList.add('active');
             showFloatingMessage(`تم اختيار مستوى ${level === 'easy' ? 'سهل' : level === 'medium' ? 'متوسط' : 'صعب'}`, true);
-            loadQuestionByDifficultyAndCategory();
+            if(isHost) loadQuestionByDifficultyAndCategory();
         }
         
         function loadQuestionByDifficultyAndCategory() {
@@ -1462,6 +1524,47 @@
             }
         }
         
+        function toggleQuestionVisibility() {
+            if (!isHost || !currentRoom) return;
+            const roomRef = db.ref(`rooms/${currentRoom}`);
+            roomRef.once('value', snapshot => {
+                const data = snapshot.val();
+                const currentVisible = (!data?.manualHideActive && data?.isQuestionVisible) ? true : false;
+                const newVisible = !currentVisible;
+                if(newVisible) {
+                    roomRef.update({ isQuestionVisible: true, manualHideActive: false });
+                    document.getElementById('toggleQuestionBtn').innerHTML = '<i class="fas fa-eye-slash"></i> إخفاء السؤال';
+                    showFloatingMessage("تم إظهار السؤال للضيوف", true);
+                } else {
+                    roomRef.update({ isQuestionVisible: false, manualHideActive: true });
+                    document.getElementById('toggleQuestionBtn').innerHTML = '<i class="fas fa-eye"></i> إظهار السؤال';
+                    showFloatingMessage("تم إخفاء السؤال عن الضيوف", true);
+                }
+            });
+        }
+        
+        function toggleOptionsOnly() {
+            if (!isHost || !currentRoom) return;
+            const roomRef = db.ref(`rooms/${currentRoom}`);
+            roomRef.once('value', snapshot => {
+                const currentShowOptions = snapshot.val()?.showOptions !== false;
+                const newState = !currentShowOptions;
+                roomRef.update({ showOptions: newState });
+                const btn = document.getElementById('toggleOptionsBtn');
+                if(newState) {
+                    btn.innerHTML = '<i class="fas fa-eye-slash"></i> إخفاء الاقتراحات';
+                    btn.classList.remove('btn-secondary');
+                    btn.classList.add('btn-info');
+                    showFloatingMessage("تم إظهار الاقتراحات للضيوف", true);
+                } else {
+                    btn.innerHTML = '<i class="fas fa-lightbulb"></i> إظهار الاقتراحات';
+                    btn.classList.remove('btn-info');
+                    btn.classList.add('btn-secondary');
+                    showFloatingMessage("تم إخفاء الاقتراحات عن الضيوف", true);
+                }
+            });
+        }
+        
         function initAdmin() {
             let name = document.getElementById('user-name').value.trim() || "المضيف";
             myName = name;
@@ -1471,8 +1574,8 @@
             
             const defaultCategory = "general";
             const defaultQuestionArray = questionsBank.medium[defaultCategory];
-            const defaultQuestion = defaultQuestionArray[0];
-            currentQuestionObj = defaultQuestion;
+            if(defaultQuestionArray && defaultQuestionArray.length) currentQuestionObj = defaultQuestionArray[0];
+            else currentQuestionObj = { q: "سؤال تجريبي", a: "إجابة", options: ["خيار1","خيار2"] };
             
             db.ref(`rooms/${currentRoom}`).set({
                 winLimit: winScore,
@@ -1493,6 +1596,11 @@
             document.getElementById('goal-display').innerText = winScore;
             document.getElementById('admin-q-text').innerText = currentQuestionObj.q;
             document.getElementById('admin-a-text').innerText = currentQuestionObj.a;
+            
+            document.getElementById('toggleQuestionBtn').innerHTML = '<i class="fas fa-eye"></i> إظهار السؤال';
+            document.getElementById('toggleOptionsBtn').innerHTML = '<i class="fas fa-lightbulb"></i> إظهار الاقتراحات';
+            document.getElementById('toggleOptionsBtn').classList.remove('btn-info');
+            document.getElementById('toggleOptionsBtn').classList.add('btn-secondary');
             
             showView('admin-view');
             startSync();
@@ -1521,35 +1629,44 @@
             document.getElementById(id).classList.remove('hidden');
         }
         
-        function toggleOptionsVisibility() {
-            db.ref(`rooms/${currentRoom}/showOptions`).once('value', snap => db.ref(`rooms/${currentRoom}/showOptions`).set(!snap.val()));
-        }
-        
-        function showQuestionOnly() {
-            db.ref(`rooms/${currentRoom}`).update({ isQuestionVisible: true, manualHideActive: false });
-            showFloatingMessage("تم عرض السؤال فقط", true);
-        }
-        
-        function showFullQuestionWithOptions() {
-            db.ref(`rooms/${currentRoom}`).update({ isQuestionVisible: true, manualHideActive: false, showOptions: true });
-            showFloatingMessage("تم عرض السؤال + الاقتراحات", true);
-        }
-        
-        function hideQuestionFromGuests() {
-            db.ref(`rooms/${currentRoom}`).update({ isQuestionVisible: false, manualHideActive: true });
-            showFloatingMessage("تم إخفاء السؤال", false);
-        }
-        
-        function kickPlayer(playerName) {
-            if(!isHost) return;
-            db.ref(`rooms/${currentRoom}/players/${playerName}`).remove();
-            db.ref(`rooms/${currentRoom}/kicked/${playerName}`).set(true);
-            showFloatingMessage(`تم طرد ${playerName} من الساحة`, false);
-        }
-        
         function skipBuzzer() {
             db.ref(`rooms/${currentRoom}/firstPress`).set(null);
             showFloatingMessage("تم تخطي الإجابة، يمكن للاعبين الضغط مجدداً", true);
+        }
+        
+        // دالة لتطبيق اللون الأحمر على اسم اللاعب الذي ضغط
+        function highlightBuzzerPlayer(playerName) {
+            const firstNameSpan = document.getElementById('first-player-name');
+            if (firstNameSpan) {
+                // إزالة الكلاس القديم
+                firstNameSpan.classList.remove('red-buzzer');
+                // إجبار إعادة تدفق الصفحة لإعادة التشغيل
+                void firstNameSpan.offsetWidth;
+                // إضافة الكلاس الجديد مع اللون الأحمر
+                firstNameSpan.classList.add('red-buzzer');
+                firstNameSpan.style.color = '#ff0000';
+            }
+        }
+        
+        // دالة لإزالة التمييز من صف اللاعب في لوحة المتصدرين
+        function removeAllRowHighlights() {
+            const rows = document.querySelectorAll('#admin-leaderboard tbody tr');
+            rows.forEach(row => {
+                row.classList.remove('buzzer-highlight');
+            });
+        }
+        
+        // دالة لإضافة تمييز لصف اللاعب في لوحة المتصدرين
+        function highlightPlayerRow(playerName) {
+            removeAllRowHighlights();
+            const rows = document.querySelectorAll('#admin-leaderboard tbody tr');
+            for (let row of rows) {
+                const nameCell = row.cells[1];
+                if (nameCell && nameCell.innerText.includes(playerName)) {
+                    row.classList.add('buzzer-highlight');
+                    break;
+                }
+            }
         }
         
         function startSync() {
@@ -1570,7 +1687,7 @@
             db.ref(`rooms/${currentRoom}`).on('value', snapshot => {
                 let data = snapshot.val();
                 if(!data) return;
-                let visible = !data.manualHideActive && data.isQuestionVisible;
+                let visible = (!data.manualHideActive && data.isQuestionVisible);
                 let showOpt = data.showOptions !== false;
                 let guestQ = document.getElementById('guest-q-text');
                 let guestOpts = document.getElementById('guest-options-area');
@@ -1596,14 +1713,24 @@
             db.ref(`rooms/${currentRoom}/firstPress`).on('value', snap => {
                 let fp = snap.val();
                 if(fp) {
+                    lastBuzzerPlayer = fp;
                     document.getElementById('buzzer-alert')?.classList.remove('hidden');
-                    if(document.getElementById('first-player-name')) document.getElementById('first-player-name').innerText = fp;
+                    const firstNameSpan = document.getElementById('first-player-name');
+                    if(firstNameSpan) {
+                        firstNameSpan.innerText = fp;
+                        // تطبيق اللون الأحمر
+                        highlightBuzzerPlayer(fp);
+                        // تمييز صف اللاعب في لوحة المتصدرين
+                        highlightPlayerRow(fp);
+                    }
                     if(document.getElementById('msg-status')) document.getElementById('msg-status').innerHTML = `<i class="fas fa-bell"></i> ⚡ ${fp} ضغط أولاً! ⚡`;
                     document.getElementById('buzzer-btn')?.setAttribute('disabled', 'disabled');
                 } else {
                     document.getElementById('buzzer-alert')?.classList.add('hidden');
                     if(document.getElementById('msg-status')) document.getElementById('msg-status').innerHTML = `<i class="fas fa-fist-raised"></i> اضغط الزر لتكون الأول!`;
                     document.getElementById('buzzer-btn')?.removeAttribute('disabled');
+                    // إزالة التمييز عند إعادة تعيين الضغط
+                    removeAllRowHighlights();
                 }
             });
             
@@ -1613,7 +1740,12 @@
                 filtered.sort((a, b) => b.score - a.score);
                 let adminHtml = "", guestHtml = "", r = 1;
                 for(let p of filtered) {
-                    adminHtml += `<tr><td>${r++}</td><td><i class="fas fa-user-astronaut"></i> ${p.name}</td><td style="color:#ffd93d;">${p.score}</td><td><button class="kick-btn" onclick="kickPlayer('${p.name.replace(/'/g, "\\'")}')"><i class="fas fa-trash"></i> طرد</button></td></tr>`;
+                    adminHtml += `<tr id="player-row-${p.name.replace(/\s/g, '')}">
+                        <td>${r++}</td>
+                        <td><i class="fas fa-user-astronaut"></i> ${p.name}</td>
+                        <td style="color:#ffd93d;">${p.score}</td>
+                        <td><button class="kick-btn" onclick="kickPlayer('${p.name.replace(/'/g, "\\'")}')"><i class="fas fa-trash"></i> طرد</button></td>
+                    </tr>`;
                 }
                 r = 1;
                 for(let p of filtered) {
@@ -1621,6 +1753,12 @@
                 }
                 document.getElementById('admin-list').innerHTML = adminHtml || '<tr><td colspan="4">لا يوجد متسابقون بعد</td></tr>';
                 document.getElementById('guest-list').innerHTML = guestHtml || '<tr><td colspan="3">لا يوجد متسابقون بعد</td></tr>';
+                
+                // إعادة تطبيق التمييز إذا كان هناك لاعب ضغط سابق
+                if (lastBuzzerPlayer) {
+                    highlightPlayerRow(lastBuzzerPlayer);
+                }
+                
                 for(let p of filtered) {
                     if(p.score >= winScore) db.ref(`rooms/${currentRoom}/winner`).set(p.name);
                 }
@@ -1651,6 +1789,7 @@
             loadQuestionByDifficultyAndCategory();
             db.ref(`rooms/${currentRoom}/firstPress`).set(null);
             db.ref(`rooms/${currentRoom}/currentQuestion`).set(currentQuestionObj);
+            lastBuzzerPlayer = null;
             showFloatingMessage("السؤال التالي!", true);
         }
         
@@ -1670,6 +1809,13 @@
             });
         }
         
+        function kickPlayer(playerName) {
+            if(!isHost) return;
+            db.ref(`rooms/${currentRoom}/players/${playerName}`).remove();
+            db.ref(`rooms/${currentRoom}/kicked/${playerName}`).set(true);
+            showFloatingMessage(`تم طرد ${playerName} من الساحة`, false);
+        }
+        
         window.initAdmin = initAdmin;
         window.joinRoom = joinRoom;
         window.setDifficulty = setDifficulty;
@@ -1677,10 +1823,8 @@
         window.pressBuzzer = pressBuzzer;
         window.nextQuestion = nextQuestion;
         window.handleAnswer = handleAnswer;
-        window.showQuestionOnly = showQuestionOnly;
-        window.showFullQuestionWithOptions = showFullQuestionWithOptions;
-        window.hideQuestionFromGuests = hideQuestionFromGuests;
-        window.toggleOptionsVisibility = toggleOptionsVisibility;
+        window.toggleQuestionVisibility = toggleQuestionVisibility;
+        window.toggleOptionsOnly = toggleOptionsOnly;
         window.kickPlayer = kickPlayer;
         window.skipBuzzer = skipBuzzer;
     </script>
